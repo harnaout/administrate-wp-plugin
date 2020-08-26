@@ -1,0 +1,5 @@
+{
+    "require": {
+        "administrate/phpsdk": "^1.3"
+    }
+}
