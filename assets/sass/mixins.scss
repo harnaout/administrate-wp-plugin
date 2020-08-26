@@ -1,0 +1,100 @@
+/* Mixins */
+@mixin vertical-separator-effect($right: $vertical-separator-right-side-color, $left: $vertical-separator-left-side-color) {
+  border-right: 1px solid $right;
+  border-left:  1px solid $left;
+}
+
+@mixin hotizontal-separator-effect($top: $vertical-separator-top-side-color, $bottom: $vertical-separator-bottom-side-color) {
+  border-top:     1px solid $top;
+  border-bottom:  1px solid $bottom;
+}
+
+// Box Sizing
+@mixin box-sizing($boxmodel) {
+  -webkit-box-sizing: $boxmodel;
+  -moz-box-sizing:    $boxmodel;
+  box-sizing:         $boxmodel;
+}
+
+// Box Hide
+@mixin hide() {
+  display:    none;
+  visibility: hidden;
+}
+
+// Box Show
+@mixin show() {
+  display:    block;
+  visibility: visible;
+}
+
+// Radius
+@mixin border-radius($radius: $border-radius) {
+  -webkit-border-radius:  $radius;
+  -moz-border-radius:     $radius;
+  border-radius:          $radius;
+}
+
+// Radius Right
+@mixin border-radius-right ($radius: $border-radius) {
+  -webkit-border-top-right-radius:    $radius;
+  -webkit-border-bottom-right-radius: $radius;
+  -moz-border-radius-topright:        $radius;
+  -moz-border-radius-bottomright:     $radius;
+  border-top-right-radius:            $radius;
+  border-bottom-right-radius:         $radius;
+}
+
+// Shadow
+@mixin shadow($shadow: $box-shadow) {
+  -webkit-box-shadow: $shadow;
+  -moz-box-shadow:    $shadow;
+  box-shadow:         $shadow;
+}
+
+// Opacity
+@mixin opacity($opacity: $float) {
+  -moz-opacity:   $opacity;
+  -khtml-opacity: $opacity;
+  opacity:        $opacity;
+}
+
+// Reset Margin and padding
+@mixin reset_margin_padding() {
+  margin:  0px;
+  padding: 0px;
+}
+
+// Background Opacity
+@mixin background-opacity($color: #000000, $opacity: 0.3) {
+  @if $color == transparent {
+      background: transparent;
+    } @else {
+      background: rgba($color, $opacity);
+    }
+}
+
+// Reset List Style
+@mixin reset_list_style() {
+  list-style-image: none;
+  list-style:       none;
+}
+
+// Reset Button
+@mixin reset_button_style() {
+  padding:        0px 10px;
+  border:         none;
+  outline:        none;
+  margin:         none;
+  text-shadow:    none;
+  box-shadow:     none;
+  margin:         none;
+}
+
+// Transition
+@mixin transition($property: $property, $duration: $duration, $timingfunction: $timingfunction, $delay: $delay) {
+  -webkit-transition: $property $duration $timingfunction $delay;
+  -moz-transition:    $property $duration $timingfunction $delay;
+  transition:         $property $duration $timingfunction $delay;
+  -webkit-backface-visibility: hidden;
+}
