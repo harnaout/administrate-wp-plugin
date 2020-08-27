@@ -145,6 +145,19 @@ if (!class_exists('Main')) {
             add_action('add_meta_boxes', array($this, 'addMetaBoxes'));
 
             add_action('save_post', array($this, 'savePost'));
+
+
+        }
+
+        public function restApiInit() {
+            register_rest_route(
+                'admwpp',
+                'oauth/callback',
+                array(
+                    'methods' => 'GET',
+                    'callback' => array('ADM\WPPlugin\Controllers\ActivationController', 'callback'),
+                )
+            );
         }
 
         /**

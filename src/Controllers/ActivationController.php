@@ -23,38 +23,43 @@ class ActivationController extends Base\ActionController
 
         $params = self::$params;
 
-        $app_id             = $params['admwpp_account_settings']['app_id'];
-        $app_secret         = $params['admwpp_account_settings']['app_secret'];
+        $instance = $params['admwpp_account_settings']['instance'];
+        $app_id = $params['admwpp_account_settings']['app_id'];
+        $app_secret = $params['admwpp_account_settings']['app_secret'];
 
+        ADMWPP\Settings::instance()->setSettingsOption('account', 'instance', $instance);
         ADMWPP\Settings::instance()->setSettingsOption('account', 'app_id', $app_id);
         ADMWPP\Settings::instance()->setSettingsOption('account', 'app_secret', $app_secret);
 
         $activate = Oauth2\Activate::instance();
 
-        $redirect_url = $activate->getAuthorizeUrl($app_id, $app_secret);
+        $redirect_url = $activate->getAuthorizeUrl();
 
         if (! empty($redirect_url)) {
             wp_redirect($redirect_url);
         } else {
             if (self::formatIsJson()) {
                 $response = array(
-                    'status'    => 'error',
-                    'message'   => 'App ID and Secret cannot be empty.',
+                    'status' => 'error',
+                    'message' => 'App ID and Secret cannot be empty.',
                 );
                 echo json_encode($response);
-                return;
+                exit;
             } else {
-                self::setFlash('App ID and Secret cannot be empty.', false);
-
+                self::setFlash('Instance, App ID and Secret cannot be empty.', false);
                 wp_redirect(admin_url(self::$activation_url));
-                return;
+                exit;
             }
         }
     }
 
     public static function callback()
     {
-        $params = self::$params;
+        if (self::$params) {
+            $params = self::$params;
+        } else {
+            $params = $_GET;
+        }
 
         $activate = Oauth2\Activate::instance();
 
@@ -65,30 +70,28 @@ class ActivationController extends Base\ActionController
 
             if (self::formatIsJson()) {
                 $response = array(
-                    'status'    => 'success',
-                    'message'   => 'Application successfully authenticated.',
+                    'status' => 'success',
+                    'message' => 'Application successfully authenticated.',
                 );
                 echo json_encode($response);
-                return;
+                exit;
             } else {
                 self::setFlash('Application successfully authenticated.');
-
                 wp_redirect(admin_url(self::$activation_url));
-                return;
+                exit;
             }
         } else {
-            if (self::format_is_json()) {
+            if (self::formatIsJson()) {
                 $response = array(
-                    'status'    => 'error',
-                    'message'   => 'Could not authenticate application.',
+                    'status' => 'error',
+                    'message' => 'Could not authenticate application.',
                 );
                 echo json_encode($response);
-                return;
+                exit;
             } else {
-                self::set_flash('Could not authenticate application.', false);
-
+                self::setFlash('Could not authenticate application.', false);
                 wp_redirect(admin_url(self::$activation_url));
-                return;
+                exit;
             }
         }
     }

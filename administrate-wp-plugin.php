@@ -98,6 +98,9 @@ if (class_exists('ADM\WPPlugin\Main')) {
 
     $instance = ADMWPP\Main::instance();
 
+    // Add new REST endpoints
+    add_action('rest_api_init', array($instance, 'restApiInit'));
+
     if (ADMWPP\Main::active()) {
         $instance->loadActiveFeatures();
     }

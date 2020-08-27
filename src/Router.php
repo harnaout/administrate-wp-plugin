@@ -224,7 +224,7 @@ if (!class_exists('Router')) {
                 echo '<pre>';
                 $routes_table;
                 ob_start();
-                include(ADMWPP_TEMPLATES_DIR . 'development/routes.phtml');
+                include(ADMWPP_TEMPLATES_DIR . 'development/routes.php');
                 $routes_table =  ob_get_contents();
                 ob_end_clean();
                 echo $routes_table;

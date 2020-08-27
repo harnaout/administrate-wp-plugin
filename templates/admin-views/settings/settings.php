@@ -52,6 +52,7 @@ endif;
     <?php if ('admwpp_account_settings' == $tab) : ?>
       <form class="admwpp_settings_form" id='admwpp-activation' action="<?php echo ADMWPP_URL_ROUTES; ?>" method="post">
       <input type="hidden" value="oauth/authorize" name="_uri">
+      <!-- <input type="hidden" value="true" name="_debug"> -->
     <?php else : ?>
       <form class="admwpp_settings_form" id='admwpp-settings' method="post" action="options.php">
     <?php endif; ?>

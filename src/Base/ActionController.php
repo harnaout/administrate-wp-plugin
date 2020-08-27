@@ -48,7 +48,7 @@ abstract class ActionController
         $saved =  $object->save();
 
         if ($saved) {
-            if ($class::format_is_json()) {
+            if ($class::formatIsJson()) {
                 $object = $object->to_array();
                 $response = array(
                     'status'    => 'success',
@@ -65,7 +65,7 @@ abstract class ActionController
                 return;
             }
         } else {
-            if ($class::format_is_json()) {
+            if ($class::formatIsJson()) {
                 $object = $object->to_array();
                 $response = array(
                     'status'    => 'error',
@@ -117,7 +117,7 @@ abstract class ActionController
         $saved = $class::$object->update_attributes($class::get_object_params());
 
         if ($saved) {
-            if ($class::format_is_json()) {
+            if ($class::formatIsJson()) {
                 $object = $class::$object->to_array();
                 $response = array(
                     'status'    => 'success',
@@ -133,7 +133,7 @@ abstract class ActionController
                 return;
             }
         } else {
-            if ($class::format_is_json()) {
+            if ($class::formatIsJson()) {
                 $object = $object->to_array();
                 $response = array(
                     'status'    => 'error',
@@ -188,7 +188,7 @@ abstract class ActionController
         }
 
         if ($saved) {
-            if ($class::format_is_json()) {
+            if ($class::formatIsJson()) {
                 $object = $class::$object->to_array();
                 $response = array(
                     'status'    => 'success',
@@ -204,7 +204,7 @@ abstract class ActionController
                 return;
             }
         } else {
-            if ($class::format_is_json()) {
+            if ($class::formatIsJson()) {
                 $object = $object->to_array();
                 $response = array(
                     'status'    => 'error',
@@ -237,7 +237,7 @@ abstract class ActionController
 
         $class::handle_object_not_found();
 
-        if ($class::format_is_json()) {
+        if ($class::formatIsJson()) {
             $object = $class::$object->to_array();
             $response = array(
                 'status'    => 'success',
@@ -270,7 +270,7 @@ abstract class ActionController
         $object = $class::$object->to_array();
         $class::$object->delete();
 
-        if ($class::format_is_json()) {
+        if ($class::formatIsJson()) {
             $response = array(
                 'status'    => 'success',
                 'message'   => 'Object deleted successfully',
@@ -317,7 +317,7 @@ abstract class ActionController
         $id     = $class::$object->get_id();
 
         if (empty($id)) {
-            if ($class::format_is_json()) {
+            if ($class::formatIsJson()) {
                 $response = array(
                     'status' => 'error',
                     'message' => 'Object not found!'

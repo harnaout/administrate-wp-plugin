@@ -98,47 +98,21 @@ if (!class_exists('Activate')) {
          * @return $request_url, string, the authorization URL.
          *
          * */
-        public function getAuthorizeUrl($appId, $appSecret)
+        public function getAuthorizeUrl()
         {
+            $instance = ADMWPP\Settings::instance()->getSettingsOption('account', 'instance');
+            $appId = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_id');
+            $appSecret = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_secret');
+
+            if (admwppBlank($instance) || admwppBlank($appId) || admwppBlank($appSecret)) {
+                return;
+            }
+
             $params = self::$params;
+            $params['instance'] = $instance;
             $params['clientId'] = $appId;
-            $params['clientSecret'] = $appSecret;
-
             self::$activationObj->setParams($params);
-
             return self::$activationObj->getAuthorizeUrl();
-        }
-
-
-        /**
-         * Function to build the API call headers
-         * @return $headers, array API Call Header configuration.
-         */
-        public static function setHeaders()
-        {
-            $headers = array(
-                'Content-Type' => 'application/json; charset=utf-8',
-                'Accept'       => 'application/json;',
-            );
-            return $headers;
-        }
-
-        /**
-         * Function to build the API call args
-         * @return $args, array API Call args configuration.
-         */
-        public static function setArgs()
-        {
-            $args = array(
-                'timeout'       => 10,
-                'redirection'   => 5,
-                'httpversion'   => '1.0',
-                'blocking'      => true,
-                'headers'       => self::setHeaders(),
-                'cookies'       => array(),
-                'sslverify'     => false,
-            );
-            return $args;
         }
 
         /**
@@ -149,33 +123,33 @@ if (!class_exists('Activate')) {
          * */
         public function getAuthorizeToken()
         {
-            $access_token = ADMWPP\Settings::instance()->getSettingsOption('account', 'access_token');
-            $token_type   = ADMWPP\Settings::instance()->getSettingsOption('account', 'token_type');
+            $accessToken = ADMWPP\Settings::instance()->getSettingsOption('account', 'access_token');
+            $tokenType   = ADMWPP\Settings::instance()->getSettingsOption('account', 'token_type');
 
-            $authorize_token = array(
-                'type'  => $token_type,
-                'token' => $access_token
+            $authorizeToken = array(
+                'type'  => $accessToken,
+                'token' => $tokenType
             );
 
-            $expiry_status = $this->accessTokenExpired();
+            $expiryStatus = $this->accessTokenExpired();
 
-            if ($expiry_status === self::TOKEN_EXPIRY_STATUS_GRACE_PERIOD) {
-                $token_status = ADMWPP\Settings::instance()->getSettingsOption('account', 'token_status');
-                if ($token_status === self::TOKEN_STATUS_RENEWING) {
-                    return $authorize_token;
+            if ($expiryStatus === self::TOKEN_EXPIRY_STATUS_GRACE_PERIOD) {
+                $tokentatus = ADMWPP\Settings::instance()->getSettingsOption('account', 'token_status');
+                if ($tokentatus === self::TOKEN_STATUS_RENEWING) {
+                    return $authorizeToken;
                 }
-            } elseif ($expiry_status === self::TOKEN_EXPIRY_STATUS_VALID) {
-                return $authorize_token;
+            } elseif ($expiryStatus === self::TOKEN_EXPIRY_STATUS_VALID) {
+                return $authorizeToken;
             }
 
             if (!$this->renewAuthorizeToken()) {
-                return $authorize_token;
+                return $authorizeToken;
             }
 
-            $authorize_token['token'] = ADMWPP\Settings::instance()->getSettingsOption('account', 'access_token');
-            $authorize_token['type']  = ADMWPP\Settings::instance()->getSettingsOption('account', 'token_type');
+            $authorizeToken['token'] = ADMWPP\Settings::instance()->getSettingsOption('account', 'access_token');
+            $authorizeToken['type']  = ADMWPP\Settings::instance()->getSettingsOption('account', 'token_type');
 
-            return $authorize_token;
+            return $authorizeToken;
         }
 
         /**
@@ -191,30 +165,20 @@ if (!class_exists('Activate')) {
                 self::TOKEN_STATUS_RENEWING
             );
 
-            $oauth_server = self::$oauth_server ?: self::setOauthServer();
+            $appId = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_id');
+            $clientSecret = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_secret');
+            $refreshToken = ADMWPP\Settings::instance()->getSettingsOption('account', 'refresh_token');
 
-            $app_id     = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_id');
-            $app_secret = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_secret');
-
-            if (admwppBlank($app_id) || admwppBlank($app_secret)) {
+            if (admwppBlank($appId) || admwppBlank($clientSecret) || admwppBlank($refreshToken)) {
                 return;
             }
 
-            //Request Token
-            $url  = $oauth_server . "oauth/token";
+            $params = self::$params;
+            $params['clientId'] = $appId;
+            $params['clientSecret'] = $clientSecret;
+            self::$activationObj->setParams($params);
+            $response = self::$activationObj->refreshTokens($refreshToken);
 
-            $args = self::setArgs();
-
-            $body = array(
-                'grant_type'    => 'client_credentials',
-                'client_id'     => $app_id,
-                'client_secret' => $app_secret,
-                'scope'         => "content orders public customer"
-            );
-
-            $args['body'] = json_encode($body);
-
-            $response = wp_remote_post($url, $args);
             return $this->saveAccessToken($response);
         }
 
@@ -224,7 +188,7 @@ if (!class_exists('Activate')) {
         protected function saveAccessToken($response)
         {
             // If the response gave us an error, return.
-            if (is_wp_error($response)) {
+            if ($response['status'] != "success") {
                 ADMWPP\Settings::instance()->setSettingsOption(
                     'account',
                     'token_status',
@@ -233,18 +197,22 @@ if (!class_exists('Activate')) {
                 return false;
             }
 
-            if ($response['response']['code'] === 200) {
-                $result = json_decode($response['body']);
+            if ($response['status'] === "success") {
+                $body = $response['body'];
 
-                $access_token  = $result->access_token;
-                $token_type    = $result->token_type;
-                $expires_in    = $result->expires_in;
-                $created_at    = $result->created_at;
+                $access_token = $body->access_token;
+                $token_type = $body->token_type;
+                $expires_in = $body->expires_in;
+                $scope = $body->scope;
+                $refresh_token = $body->refresh_token;
+                $created_at = time();
 
                 ADMWPP\Settings::instance()->setSettingsOption('account', 'access_token', $access_token);
                 ADMWPP\Settings::instance()->setSettingsOption('account', 'token_type', $token_type);
                 ADMWPP\Settings::instance()->setSettingsOption('account', 'expires_in', $expires_in);
                 ADMWPP\Settings::instance()->setSettingsOption('account', 'created_at', $created_at);
+                ADMWPP\Settings::instance()->setSettingsOption('account', 'scope', $scope);
+                ADMWPP\Settings::instance()->setSettingsOption('account', 'refresh_token', $refresh_token);
 
                 ADMWPP\Settings::instance()->setSettingsOption(
                     'account',
@@ -294,55 +262,6 @@ if (!class_exists('Activate')) {
         }
 
         /**
-         * Function to make secure oAuth Call.
-         *
-         * Check if the access token is expired before making a call
-         * to the oAuth server.
-         * If the access token is expired, fetch another one.
-         * To fetch a new access token, we must send the authorize API
-         * on the server the refresh token and get a new access token
-         * and refresh token to use.
-         *
-         * For more information:
-         * https://github.com/applicake/doorkeeper/wiki/Enable-Refresh-Token-Credentials
-         *
-         * */
-        protected function makeSecureOauthCall($request_uri)
-        {
-            $oauth_server       = self::$oauth_server ?: self::setOauthServer();
-            $url                = $oauth_server . $request_uri;
-
-            if ($this->accessTokenExpired()) {
-                $this->getAuthorizeToken();
-            }
-
-            $access_token = ADMWPP\Settings::instance()->getSettingsOption('account', 'access_token');
-
-            $post_body = array(
-                'access_token' => $access_token
-            );
-
-            $response = wp_remote_get(
-                $url,
-                array(
-                    'body'      => $post_body,
-                    'sslverify' => false,
-                )
-            );
-
-            // If the response gave us an error, return.
-            if (is_wp_error($response)) {
-                return false;
-            }
-
-            if ($response['response']['code'] === 200) {
-                return json_decode($response['body']);
-            } else {
-                return false;
-            }
-        }
-
-        /**
         * Function To Check if the existing access token has expired.
         */
         public function accessTokenExpired()
@@ -367,65 +286,20 @@ if (!class_exists('Activate')) {
         }
 
         /**
-        * Function to get a Refresh token.
-        */
-        public function refreshToken()
-        {
-            $app_id         = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_id');
-            $app_secret     = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_secret');
-            $refresh_token  = ADMWPP\Settings::instance()->getSettingsOption('account', 'refresh_token');
-
-            $oauth_server   = self::$oauth_server ?: self::setOauthServer();
-
-            //Request Token
-            $url = $oauth_server . "oauth/token";
-            $post_body = array(
-                'grant_type'    => 'refresh_token',
-                'refresh_token' => $refresh_token,
-                'client_id'     => $app_id,
-                'client_secret' => $app_secret,
-            );
-            $response = wp_remote_post(
-                $url,
-                array(
-                    'body'      => $post_body,
-                    'sslverify' => false,
-                )
-            );
-
-            return $this->saveAccessToken($response);
-        }
-
-        /**
         * Function to get a Access token.
         */
         protected function fetchAccessToken($code)
         {
-            $redirect_uri = self::$redirect_uri ?: self::setRedirectUri();
-            $oauth_server = self::$oauth_server ?: self::setOauthServer();
+            $appId = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_id');
+            $clientSecret = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_secret');
+            $instance = ADMWPP\Settings::instance()->getSettingsOption('account', 'instance');
 
-            $app_id     = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_id');
-            $app_secret = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_secret');
-
-            $grant_type = 'authorization_code';
-
-            //Request Token
-            $url = $oauth_server . "oauth/token";
-            $post_body = array(
-                'grant_type' =>     $grant_type,
-                'code' =>           $code,
-                'client_id' =>      $app_id,
-                'client_secret' =>  $app_secret,
-                'redirect_uri' =>   $redirect_uri,
-            );
-
-            $response = wp_remote_post(
-                $url,
-                array(
-                    'body'      => $post_body,
-                    'sslverify' => false,
-                )
-            );
+            $params = self::$params;
+            $params['clientId'] = $appId;
+            $params['clientSecret'] = $clientSecret;
+            $params['instance'] = $instance;
+            self::$activationObj->setParams($params);
+            $response = self::$activationObj->handleAuthorizeCallback(array('code' => $code));
 
             return $this->saveAccessToken($response);
         }
@@ -438,7 +312,8 @@ if (!class_exists('Activate')) {
          * */
         protected static function setRedirectUri()
         {
-            self::$redirect_uri = ADMWPP_URL_ROUTES .'?_uri=oauth/callback';
+            //self::$redirect_uri = ADMWPP_URL_ROUTES .'?_uri=oauth/callback';
+            self::$redirect_uri = site_url() . "/wp-json/admwpp/oauth/callback";
         }
 
         /**
