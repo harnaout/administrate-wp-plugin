@@ -98,7 +98,7 @@ if (!class_exists('FlashMessage')) {
                 $class = 'show';
 
                 ob_start();
-                include(ADMWPP_TEMPLATES_DIR . 'flash_message.php');
+                include(ADMWPP_TEMPLATES_DIR . 'flash-message.php');
                 $content = ob_get_contents();
                 ob_end_clean();
             }

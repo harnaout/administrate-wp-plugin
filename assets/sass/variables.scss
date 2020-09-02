@@ -48,13 +48,48 @@ $bottom-shadow:     0 8px 6px -6px #CCC;
 /* End Effects */
 
 /* Fonts */
-$font-szie:                 12px;
+$font-szie:               12px;
 
 /* Transition */
 $property:        top;
 $duration:        0.5s;
 $timingfunction:  ease;
 $delay:           0s;
+
+/* Metaboxes Blocks */
+
+/* Colors */
+$adm-border:              #666666;
+$adm-trashed-bg:          #FAE8E8;
+$adm-update-bg:           #CCEBCC;
+$adm-error-bg:            #F5D7E0;
+$adm-selected-bg:         #B2CEE8;
+$adm-status:              #e2001a;
+$adm-status-bg:           $white;
+
+$adm-even:                #EFF1F2;
+$adm-odd:                 #F9FAFA;
+
+$adm-action-font-size:    14px;
+$adm-action-btn-width:    20px;
+$adm-action-btn-height:   30px;
+$adm-action-btn:                $white;
+$adm-action-btn-bg:             #005bb3;
+$adm-action-btn-hover-bg:       #001A33;
+$adm-action-btn-disabled-bg:    $grey;
+$adm-action-btn-blink-bg:       #009933;
+$adm-action-btn-blink-error-bg: #E51931;
+
+$adm-delete-btn-bg:       #990000;
+$adm-delete-btn-hover-bg: #7A0000;
+
+$adm-edit-btn-bg:         #19A347;
+$adm-edit-btn-hover-bg:   #0F622B;
+
+/* Fonts */
+$adm-header-font-size:    16px;
+$adm-header-line-height:  20px;
+$adm-status-font-size:    12px;
 
 
 

@@ -1,6 +1,8 @@
 <?php
 namespace ADM\WPPlugin;
 
+use ADM\WPPlugin\PostTypes as PostTypes;
+
 /**
  * Construct the main plugin class "Main"
  * */
@@ -21,6 +23,9 @@ if (!class_exists('Main')) {
         protected $activation;
         protected $adminstrate_settings;
         protected $flash;
+
+        //PostTypes
+        protected $course;
 
         /**
          * Initializes plugin variables and sets up WordPress hooks/actions
@@ -72,6 +77,9 @@ if (!class_exists('Main')) {
 
                 // Setup the Administrate admin menu and pages
                 //$this->adminstrate_settings = AdminstrateSettings::instance();
+
+                // Add Custom Post Types
+                $this->course = PostTypes\Course::instance();
 
                 // Add all filters
                 $this->addFilters();
@@ -145,11 +153,10 @@ if (!class_exists('Main')) {
             add_action('add_meta_boxes', array($this, 'addMetaBoxes'));
 
             add_action('save_post', array($this, 'savePost'));
-
-
         }
 
-        public function restApiInit() {
+        public function restApiInit()
+        {
             register_rest_route(
                 'admwpp',
                 'oauth/callback',

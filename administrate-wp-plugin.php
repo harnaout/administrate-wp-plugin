@@ -46,6 +46,7 @@ define('ADMWPP_ASSETS_URL', plugin_dir_url(__FILE__) . "assets/");
 
 define('ADMWPP_DATE_FORMAT', 'Y-m-d H:i:s');
 define('ADMWPP_TEXT_DOMAIN', 'admwpp');
+define('ADMWPP_PREFIX', 'admwpp');
 
 define('ADMWPP_WEBSITE', 'http://getadministrate.com/');
 
