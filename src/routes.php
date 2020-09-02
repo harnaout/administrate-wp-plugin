@@ -42,7 +42,7 @@ $args = array(
 
 // Activation
 Router::addRoute('POST', 'oauth/authorize', 'activation#authorize');
-Router::addRoute('GET', 'oauth/callback', 'activation#callback');
+//Router::addRoute('GET', 'oauth/callback', 'activation#callback');
 
 // Settings
 Router::addRoute('PUT', 'settings/:id/reset', 'settings#reset');

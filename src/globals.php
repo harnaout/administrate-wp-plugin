@@ -16,14 +16,15 @@ global $ADMWPP_APP_ENVIRONMENT;
 $ADMWPP_APP_ENVIRONMENT = array(
   'production' => array(
     'label' => 'Production',
-    'administrate' => 'https://developer.stagingadministratehq.com/',
-    'instance' => 'https://d58d27f9cfca67.administrateapp.com/',
+    'administrate' => 'https://developer.getadministrate.com/',
     'oauthServer' => 'https://auth.getadministrate.com/oauth',
     'apiUri' => 'https://api.administrateapp.com/graphql',
   ),
-  'sandbox'     => array(
-    'label'     => 'Sandbox',
-    'administrate' => 'https://developer.stagingadministratehq.com/'
+  'staging' => array(
+    'label' => 'Staging',
+    'administrate' => 'https://developer.stagingadministratehq.com/',
+    'oauthServer' => 'https://auth.stagingadministratehq.com/oauth',
+    'apiUri' => 'https://api.stagingadministratehq.com/graphql',
   ),
 );
 

@@ -313,6 +313,20 @@ if (!class_exists('Settings')) {
             );
 
             add_settings_field(
+                'admwpp-instance',
+                __('Administrate Instance:', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldInput'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_account_section',
+                array(
+                    'field'        => 'instance',
+                    'settings_key' => $settings_key,
+                    'placeholder'  => 'Instance',
+                    'info'         => '<i>' . __('Instance Url to connect to', ADMWPP_TEXT_DOMAIN) . '</i>',
+                )
+            );
+
+            add_settings_field(
                 'admwpp-app-id',
                 __('Administrate APP ID:', ADMWPP_TEXT_DOMAIN),
                 array($this, 'settingsFieldInput'),
