@@ -74,6 +74,9 @@ if (!class_exists('Course')) {
                 self::$instance = new $className;
             }
 
+            //ADD taxonomies
+            Taxonomies\LearningCategory::instance();
+
             return self::$instance;
         }
 
