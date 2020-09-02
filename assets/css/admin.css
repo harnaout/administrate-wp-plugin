@@ -11,6 +11,9 @@
 /* End Effects */
 /* Fonts */
 /* Transition */
+/* Metaboxes Blocks */
+/* Colors */
+/* Fonts */
 /* Mixins */
 /* Extra small devices (phones, less than 768px) */
 /* No media query since this is the default in Bootstrap */
@@ -210,6 +213,230 @@
     .admwpp-settings-tabs-wrapper .admwpp-nav-tab.admwpp-active {
       background-color: black; }
 
+/* Messages */
+#admwpp-message-box {
+  display: none;
+  font-size: 14px;
+  padding: 10px;
+  margin: 0;
+  position: fixed;
+  width: 100%;
+  z-index: 999999;
+  border-left: solid 4px transparent;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+  #admwpp-message-box.success {
+    border-left-color: #36d14d;
+    background-color: #dcf7e0; }
+  #admwpp-message-box.error {
+    border-left-color: #cc3462;
+    background-color: #f5d7e0; }
+  #admwpp-message-box.show {
+    display: block; }
+
+/* End Messages */
+/********************************************************/
+/********************************************************/
+.admwpp-metabox-info {
+  width: 100%;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: solid 3px #ffffff; }
+  .admwpp-metabox-info strong {
+    background-color: #fff;
+    padding: 1px 5px; }
+
+.admwpp-field-group {
+  position: relative;
+  padding: 15px 10px; }
+
+.admwpp-metabox {
+  padding-top: 10px; }
+  .admwpp-metabox h4 {
+    margin: 0px 0px 10px 0px;
+    color: #ffffff;
+    background-color: #001A33;
+    border: solid 2px #ffffff;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    line-height: 20px;
+    height: 20px;
+    padding: 5px; }
+  .admwpp-metabox .admwpp-form-wrapper {
+    float: left; }
+    .admwpp-metabox .admwpp-form-wrapper label {
+      float: left;
+      height: 30px;
+      line-height: 30px;
+      width: 100%;
+      font-weight: bold; }
+    .admwpp-metabox .admwpp-form-wrapper input {
+      float: left;
+      height: 26px;
+      padding: 2px; }
+    .admwpp-metabox .admwpp-form-wrapper select {
+      float: left;
+      width: 100%;
+      height: 26px;
+      padding: 2px;
+      font-family: FontAwesome, Arial;
+      font-style: normal;
+      font-weight: normal; }
+    .admwpp-metabox .admwpp-form-wrapper .admwpp-field {
+      float: left;
+      width: 100%;
+      margin-bottom: 5px; }
+    .admwpp-metabox .admwpp-form-wrapper .admwpp-actions {
+      border-left: none;
+      border-right: none; }
+      .admwpp-metabox .admwpp-form-wrapper .admwpp-actions .admwpp-action-btn {
+        float: right;
+        padding: 0px 10px; }
+  .admwpp-metabox .admwpp-form-wrapper,
+  .admwpp-metabox .admwpp-sortable-wrapper {
+    float: left;
+    position: relative;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box; }
+  .admwpp-metabox .admwpp-form-wrapper {
+    position: relative;
+    height: 370px; }
+    .admwpp-metabox .admwpp-form-wrapper .admwpp-actions {
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      margin-bottom: 0px;
+      height: 30px; }
+      .admwpp-metabox .admwpp-form-wrapper .admwpp-actions .admwpp-action-btn.admwpp-disabled {
+        display: none; }
+  .admwpp-metabox .admwpp-sortable-wrapper .admwpp-actions {
+    margin-bottom: 0px; }
+  .admwpp-metabox .admwpp-sortable-content {
+    float: left;
+    width: 100%;
+    height: 306px;
+    background: #ffffff;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: none;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px; }
+  .admwpp-metabox .admwpp-sortable-block {
+    float: left;
+    width: 100%;
+    display: block !important;
+    border-bottom: solid 2px #ffffff;
+    overflow: hidden;
+    position: relative;
+    margin: 0px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-transition: background-color 0.5s ease 0s;
+    -moz-transition: background-color 0.5s ease 0s;
+    transition: background-color 0.5s ease 0s;
+    -webkit-backface-visibility: hidden; }
+    .admwpp-metabox .admwpp-sortable-block:nth-child(even) {
+      background: #EFF1F2; }
+    .admwpp-metabox .admwpp-sortable-block:nth-child(odd) {
+      background: #F9FAFA; }
+    .admwpp-metabox .admwpp-sortable-block .admwpp-actions {
+      margin: 0px;
+      border-bottom: none; }
+    .admwpp-metabox .admwpp-sortable-block.trashed {
+      background-color: #FAE8E8; }
+    .admwpp-metabox .admwpp-sortable-block.admwpp-blink {
+      background-color: #CCEBCC; }
+      .admwpp-metabox .admwpp-sortable-block.admwpp-blink.admwpp-blink-error {
+        background: #F5D7E0; }
+    .admwpp-metabox .admwpp-sortable-block.admwpp-selected {
+      background-color: #B2CEE8; }
+    .admwpp-metabox .admwpp-sortable-block .status {
+      font-size: 12px;
+      color: #e2001a;
+      background-color: #ffffff;
+      margin: 9px 0px;
+      padding: 2px 5px;
+      text-transform: uppercase;
+      -webkit-border-radius: 2px;
+      -moz-border-radius: 2px;
+      border-radius: 2px; }
+
+.admwpp-actions {
+  float: left;
+  margin: 5px 0px;
+  border: solid 3px #ffffff;
+  position: relative;
+  width: 100%;
+  padding: 10px 0px;
+  margin: 10px 0px;
+  -webkit-transition: height 0.5s ease 0s;
+  -moz-transition: height 0.5s ease 0s;
+  transition: height 0.5s ease 0s;
+  -webkit-backface-visibility: hidden; }
+  .admwpp-actions.expand {
+    height: 65px; }
+    .admwpp-actions.expand .shortcode {
+      padding: 0px 5px;
+      width: 200px; }
+  .admwpp-actions .admwpp-actions-row {
+    float: left;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 0px 10px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    line-height: 20px; }
+    .admwpp-actions .admwpp-actions-row .bwwpp-template-icon {
+      margin-right: 10px; }
+    .admwpp-actions .admwpp-actions-row:last-child {
+      margin-bottom: 0px; }
+  .admwpp-actions .admwpp-action-btn {
+    float: left;
+    margin-right: 5px;
+    padding: 0px 5px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: #ffffff;
+    background: #005bb3;
+    font-size: 14px;
+    min-width: 20px;
+    height: 30px;
+    line-height: 30px; }
+    .admwpp-actions .admwpp-action-btn:hover {
+      background: #001A33; }
+    .admwpp-actions .admwpp-action-btn.admwpp-disabled {
+      cursor: default;
+      background: #cccccc; }
+    .admwpp-actions .admwpp-action-btn.admwpp-blink {
+      background: #009933; }
+    .admwpp-actions .admwpp-action-btn.admwpp-blink-error {
+      background: #E51931; }
+    .admwpp-actions .admwpp-action-btn.admwpp-delete {
+      background: #990000; }
+      .admwpp-actions .admwpp-action-btn.admwpp-delete:hover {
+        background: #7A0000; }
+      .admwpp-actions .admwpp-action-btn.admwpp-delete.admwpp-disabled {
+        cursor: default;
+        background: #cccccc; }
+    .admwpp-actions .admwpp-action-btn.admwpp-edit {
+      background: #19A347; }
+      .admwpp-actions .admwpp-action-btn.admwpp-edit:hover {
+        background: #0F622B; }
+
+/********************************************************/
+/********************************************************/
 /* Small devices (tablets, 768px and up) */
 /* Medium devices (desktops, 992px and up) */
 @media (min-width: 995px) {

@@ -256,6 +256,261 @@
   }
 }
 
+/* Messages */
+#admwpp-message-box {
+  display: none;
+  font-size: 14px;
+  padding: 10px;
+  margin: 0;
+  position: fixed;
+  width: 100%;
+  z-index: 999999;
+  border-left: solid 4px transparent;
+  @include box-sizing(border-box);
+  &.success {
+    border-left-color: darken($success-message-background, 40%);
+    background-color: $success-message-background;
+  }
+  &.error {
+    border-left-color: darken($error-message-background, 40%);
+    background-color: $error-message-background;
+  }
+
+  &.show { display: block; }
+}
+/* End Messages */
+
+/********************************************************/
+// ADMWPP META BOX
+/********************************************************/
+.admwpp-metabox-info {
+  width:          100%;
+  margin-bottom:  10px;
+  padding-bottom: 10px;
+  border-bottom:  solid 3px $white;
+  strong {
+    background-color: #fff;
+    padding: 1px 5px;
+  }
+}
+
+.admwpp-field-group {
+  position: relative;
+  padding:  15px 10px;
+}
+
+.admwpp-metabox {
+  padding-top:        10px;
+  h4 {
+    margin:           0px 0px 10px 0px;
+    color:            $white;
+    background-color: $tabs_section_title_bg;
+    border:           solid 2px $white;
+    @include border-radius(3px);
+    text-transform:   uppercase;
+    line-height:      $adm-header-line-height;
+    height:           $adm-header-line-height;
+    padding:          5px;
+  }
+  .admwpp-form-wrapper {
+    float:              left;
+    label {
+      float:        left;
+      height:       $input-height;
+      line-height:  $input-height;
+      width:        100%;
+      font-weight:  bold;
+    }
+    input {
+      float:        left;
+      height:       26px;
+      padding:      2px;
+    }
+    select {
+      float:        left;
+      width:        100%;
+      height:       26px;
+      padding:      2px;
+      font-family:  FontAwesome, Arial;
+      font-style:   normal;
+      font-weight:  normal;
+    }
+    .admwpp-field {
+      float:         left;
+      width:         100%;
+      margin-bottom: 5px;
+    }
+    .admwpp-actions {
+      border-left:   none;
+      border-right:  none;
+      .admwpp-action-btn {
+        float:       right;
+        padding:     0px 10px;
+      }
+    }
+  }
+  .admwpp-form-wrapper,
+  .admwpp-sortable-wrapper {
+    float:           left;
+    position:        relative;
+    width:           100%;
+    @include box-sizing(border-box);
+  }
+  .admwpp-form-wrapper {
+    position:        relative;
+    height:          370px;
+    .admwpp-actions {
+      position:      absolute;
+      bottom:        0px;
+      left:          0px;
+      margin-bottom: 0px;
+      height:        30px;
+      .admwpp-action-btn {
+        &.admwpp-disabled {
+          display:   none;
+        }
+      }
+    }
+  }
+  .admwpp-sortable-wrapper {
+    .admwpp-actions {
+      margin-bottom: 0px;
+    }
+  }
+  .admwpp-sortable-content {
+    float:        left;
+    width:        100%;
+    height:       306px;
+    background:   $white;
+    position:     relative;
+    overflow-y:   auto;
+    overflow-x:   none;
+    @include border-radius(3px);
+  }
+  .admwpp-sortable-block {
+    float:            left;
+    width:            100%;
+    display:          block !important;
+    border-bottom:    solid 2px $white;
+    overflow:         hidden;
+    position:         relative;
+    margin:           0px;
+    @include border-radius(3px);
+    @include transition(background-color, 0.5s);
+    &:nth-child(even) {
+      background: $adm-even;
+    }
+    &:nth-child(odd) {
+      background: $adm-odd;
+    }
+    .admwpp-actions {
+      margin:         0px;
+      border-bottom:  none;
+    }
+    &.trashed {
+      background-color:      $adm-trashed-bg;
+    }
+    &.admwpp-blink {
+      background-color:      $adm-update-bg;
+      &.admwpp-blink-error {
+        background:          $adm-error-bg;
+      }
+    }
+    &.admwpp-selected {
+      background-color:      $adm-selected-bg;
+    }
+    .status {
+      font-size:              $adm-status-font-size;
+      color:                  $adm-status;
+      background-color:       $adm-status-bg;
+      margin:                 9px 0px;
+      padding:                2px 5px;
+      text-transform:         uppercase;
+      @include border-radius(2px);
+    }
+  }
+}
+
+.admwpp-actions {
+  float:              left;
+  margin:             5px 0px;
+  border:             solid 3px $white;
+  position:           relative;
+  width:              100%;
+  padding:            10px 0px;
+  margin:             10px 0px;
+  @include transition(height, 0.5s);
+  &.expand {
+    height:           65px;
+    .shortcode {
+      padding:        0px 5px;
+      width:          200px
+    }
+  }
+  .admwpp-actions-row {
+    float:          left;
+    width:          100%;
+    margin-bottom:  10px;
+    padding:        0px 10px;
+    @include box-sizing(border-box);
+    line-height:    20px;
+    .bwwpp-template-icon {
+      margin-right: 10px;
+    }
+    &:last-child {
+      margin-bottom:  0px;
+    }
+  }
+  .admwpp-action-btn {
+    float:            left;
+    margin-right:     5px;
+    padding:          0px 5px;
+    @include border-radius(2px);
+    text-align:       center;
+    text-decoration:  none;
+    text-transform:   uppercase;
+    color:            $adm-action-btn;
+    background:       $adm-action-btn-bg;
+    font-size:        $adm-action-font-size;
+    min-width:        $adm-action-btn-width;
+    height:           $adm-action-btn-height;
+    line-height:      $adm-action-btn-height;
+    &:hover {
+      background:     $adm-action-btn-hover-bg;
+    }
+    &.admwpp-disabled {
+      cursor:         default;
+      background:     $adm-action-btn-disabled-bg;
+    }
+    &.admwpp-blink {
+      background:       $adm-action-btn-blink-bg;
+    }
+    &.admwpp-blink-error {
+      background:       $adm-action-btn-blink-error-bg;
+    }
+    &.admwpp-delete {
+      background:       $adm-delete-btn-bg;
+      &:hover {
+        background:     $adm-delete-btn-hover-bg;
+      }
+      &.admwpp-disabled {
+        cursor:         default;
+        background:     $adm-action-btn-disabled-bg;
+      }
+    }
+    &.admwpp-edit {
+      background:       $adm-edit-btn-bg;
+      &:hover {
+        background:     $adm-edit-btn-hover-bg;
+      }
+    }
+  }
+}
+/********************************************************/
+// END ADMWPP META BOX
+/********************************************************/
+
+
 /* Small devices (tablets, 768px and up) */
 @media (min-width: 768px) {
 
@@ -279,5 +534,6 @@
 @media (min-width: 1200px) {
 
 }
+
 
 
