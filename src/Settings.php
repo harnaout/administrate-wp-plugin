@@ -27,6 +27,7 @@ if (!class_exists('Settings')) {
          */
         private $account_settings_key   = 'admwpp_account_settings';
         private $general_settings_key   = 'admwpp_general_settings';
+        private $advanced_settings_key  = 'admwpp_advanced_settings';
         private $uninstall_settings_key = 'admwpp_uninstall_settings';
 
         private $plugin_options_key     = 'admwpp-settings';
@@ -133,6 +134,7 @@ if (!class_exists('Settings')) {
             $this->settings = array(
                 'account'   => (array) get_option($this->account_settings_key),
                 'general'   => (array) get_option($this->general_settings_key),
+                'advanced'   => (array) get_option($this->advanced_settings_key),
                 'uninstall' => (array) get_option($this->uninstall_settings_key),
             );
         }
@@ -203,6 +205,7 @@ if (!class_exists('Settings')) {
 
             if (Main::active()) {
                 Settings::createGeneralTab();
+                Settings::createAdvancedTab();
                 Settings::createUninstallTab();
 
                 $this->createSubmenus();
@@ -256,20 +259,44 @@ if (!class_exists('Settings')) {
             $settings_index = 'general';
 
             if (empty($settings)) {
-                $locale = get_locale();
+                // $locale = get_locale();
 
-                if (file_exists(ADMWPP_DIR . '/languages/' . $locale . '.mo')) {
-                    $settings['language'] = $locale;
-                } else {
-                    $settings['language'] = key($ADMWPP_LANG);
-                }
+                // if (file_exists(ADMWPP_DIR . '/languages/' . $locale . '.mo')) {
+                //     $settings['language'] = $locale;
+                // } else {
+                //     $settings['language'] = key($ADMWPP_LANG);
+                // }
             }
 
             $this->settings[$settings_index] = $settings;
             update_option($settings_key, $settings);
 
-            Settings::createLanguageSection($settings_index);
+            //Settings::createLanguageSection($settings_index);
             Settings::seperatorSection($settings_index, 'language');
+        }
+
+        // --------------------------------------------------------------------
+        // Advanced Tab Creation
+        // --------------------------------------------------------------------
+        protected function createAdvancedTab()
+        {
+            $settings_key = $this->advanced_settings_key;
+            $this->plugin_settings_tabs[$settings_key] = 'Advanced';
+            register_setting($settings_key, $settings_key);
+
+            // Setting Default options values.
+            $settings = get_option($settings_key);
+
+            $settings_index = 'advanced';
+
+            if (empty($settings)) {
+                // Setup defaults
+            }
+
+            $this->settings[$settings_index] = $settings;
+            update_option($settings_key, $settings);
+
+            Settings::createAdvancedSynchSection($settings_index);
         }
 
         // --------------------------------------------------------------------
@@ -386,6 +413,44 @@ if (!class_exists('Settings')) {
         }
         /** END LANGUAGE SECTION */
 
+        /** ADVANCED Synch SECTION */
+        protected function createAdvancedSynchSection($settings_key)
+        {
+            add_settings_section(
+                'admwpp_advanced_synch_section',
+                "<span class='admwpp-section-title'>" . __('Courses Synchronization', ADMWPP_TEXT_DOMAIN) . "</span>",
+                array($this, 'synchSection'),
+                "admwpp_" . $settings_key . "_settings"
+            );
+
+            add_settings_field(
+                'admwpp_synch_title',
+                __('Synch title on Update', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldInputBoolean'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_advanced_synch_section',
+                array(
+                    'field'        => 'synch_title',
+                    'settings_key' => $settings_key,
+                    'info'         => __('This will Disable / Enable Synching the Title of course templates once it gets updated using webhooks', ADMWPP_TEXT_DOMAIN),
+                )
+            );
+
+            add_settings_field(
+                'admwpp_synch_description',
+                __('Synch Description on Update', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldInputBoolean'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_advanced_synch_section',
+                array(
+                    'field'        => 'synch_description',
+                    'settings_key' => $settings_key,
+                    'info'         => __('This will Disable / Enable Synching the Description of course templates once it gets updated using webhooks', ADMWPP_TEXT_DOMAIN),
+                )
+            );
+        }
+        /** END ADVANCED HEADER SECTION */
+
         /** UNISTALL SECTION */
         protected function createUninstallSection($settings_key)
         {
@@ -454,6 +519,14 @@ if (!class_exists('Settings')) {
            // Think of this as help text for the section.
             echo "<div class='settings-section-info'>";
             echo __("Set the language of your website below.", ADMWPP_TEXT_DOMAIN);
+            echo "</div>";
+        }
+
+        public function synchSection()
+        {
+            // Think of this as help text for the section.
+            echo "<div class='settings-section-info'>";
+            echo __('Options to Setup Courses Synchronization Parameters.', ADMWPP_TEXT_DOMAIN);
             echo "</div>";
         }
         // --------------------------------------------------------------------
@@ -999,6 +1072,7 @@ if (!class_exists('Settings')) {
             $tab = isset($_GET['tab']) ? $_GET['tab'] : $this->account_settings_key;
 
             switch ($tab) {
+                case 'admwpp_advanced_settings':
                 case 'admwpp_uninstall_settings':
                     $capability = "manage_options";
                     break;
@@ -1030,6 +1104,9 @@ if (!class_exists('Settings')) {
                     break;
                 case 'admwpp_general_settings':
                     return "<i class='fa fa-cog'></i>";
+                    break;
+                case 'admwpp_advanced_settings':
+                    return "<i class='fa fa-cogs'></i>";
                     break;
                 case 'admwpp_uninstall_settings':
                     return "<i class='fa fa-trash'></i>";
