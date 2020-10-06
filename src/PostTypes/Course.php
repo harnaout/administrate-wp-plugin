@@ -40,9 +40,9 @@ if (!class_exists('Course')) {
                 'type' => 'text',
                 'label' => 'TMS ID',
             ),
-            'admwpp_tms_legacyId' => array(
+            'admwpp_tms_legacy_id' => array(
                 'type' => 'text',
-                'label' => 'TMS Legacy ID',
+                'label' => 'TMS LegacyID',
             ),
         );
 
@@ -88,6 +88,20 @@ if (!class_exists('Course')) {
          */
         protected function addFilters()
         {
+            $learningCategory = Taxonomies\LearningCategory::$system_name;
+            // Learning categories Filters
+            add_filter(
+                'manage_edit-' . $learningCategory . '_columns',
+                array('ADM\WPPlugin\Taxonomies\LearningCategory', 'termMetasColumns'),
+                10,
+                1
+            );
+            add_filter(
+                'manage_' . $learningCategory . '_custom_column',
+                array('ADM\WPPlugin\Taxonomies\LearningCategory', 'termMetasCustomColumns'),
+                10,
+                3
+            );
         }
 
         public static function getSlug()
@@ -140,7 +154,35 @@ if (!class_exists('Course')) {
 
             // Save post hook
             add_action('save_post', array($this, 'savePost'), 10, 3);
+
+            $learningCategory = Taxonomies\LearningCategory::$system_name;
+            // Learning categories Actions
+            add_action(
+                $learningCategory . '_add_form_fields',
+                array('ADM\WPPlugin\Taxonomies\LearningCategory', 'AddCustomMetasToForm'),
+                10,
+                2
+            );
+            add_action(
+                $learningCategory . '_edit_form_fields',
+                array('ADM\WPPlugin\Taxonomies\LearningCategory', 'EditCustomMetasToForm'),
+                10,
+                2
+            );
+            add_action(
+                'edit_' . $learningCategory,
+                array('ADM\WPPlugin\Taxonomies\LearningCategory','saveTermMetas'),
+                10,
+                1
+            );
+            add_action(
+                'create_' . $learningCategory,
+                array('ADM\WPPlugin\Taxonomies\LearningCategory', 'saveTermMetas'),
+                10,
+                1
+            );
         }
+
 
         /**
          * [addShortcodes description]
@@ -153,6 +195,8 @@ if (!class_exists('Course')) {
         {
             $this->createPostType();
             $this->addAcfFields();
+
+            Taxonomies\LearningCategory::registerTerms();
         }
 
         /**
