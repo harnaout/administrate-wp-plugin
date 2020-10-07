@@ -36,13 +36,41 @@ if (!class_exists('Course')) {
         );
 
         static $metas = array(
-          'admwpp_tms_id' => array(
+            'admwpp_tms_id' => array(
                 'type' => 'text',
                 'label' => 'TMS ID',
             ),
             'admwpp_tms_legacy_id' => array(
                 'type' => 'text',
                 'label' => 'TMS LegacyID',
+            ),
+            'admwpp_tms_code' => array(
+                'type' => 'text',
+                'label' => 'TMS Code',
+            ),
+            'admwpp_tms_image_id' => array(
+                'type' => 'text',
+                'label' => 'TMS Image ID',
+            ),
+            'admwpp_tms_gallery' => array(
+                'type' => 'text',
+                'label' => 'TMS Image Gallery',
+            ),
+            'admwpp_tms_life_cycle_state' => array(
+                'type' => 'text',
+                'label' => 'TMS lifecycleState',
+            ),
+            'admwpp_tms_learning_categories' => array(
+                'type' => 'text',
+                'label' => 'TMS learningCategories',
+            ),
+            'admwpp_tms_price' => array(
+                'type' => 'text',
+                'label' => 'TMS Price (Normal)',
+            ),
+            'admwpp_tms_currency' => array(
+                'type' => 'text',
+                'label' => 'TMS Currency',
             ),
         );
 
