@@ -32,10 +32,14 @@ gulp.task('sass:watch', () => {
 });
 
 gulp.task('js:watch', () => {
-    gulp.watch('./assets/js/admin.js', gulp.series('js-min'));
+    gulp.watch([
+        './assets/js/common/*',
+        './assets/js/admin/*',
+        './assets/js/admin.js',
+    ], gulp.series('js-admin-min'));
 });
 
-gulp.task('watch', gulp.parallel('sass:watch'), function(done)
+gulp.task('watch', gulp.parallel('sass:watch', 'js:watch'), function(done)
 {
     done()
 })
@@ -47,13 +51,18 @@ gulp.task('clean', () => {
     ]);
 });
 
-gulp.task('js-min', () => {
-  return gulp.src('./assets/js/admin.js')
+gulp.task('js-admin-min', () => {
+  return gulp.src([
+        './assets/js/common/*',
+        './assets/js/admin/*',
+        './assets/js/admin.js',
+    ])
+  .pipe(concat('admin.js'))
   .pipe(minify({
     ext:{
         src:'-debug.js',
         min:'.min.js'
     }
 }))
-    .pipe(gulp.dest('./assets/js/admin/'))
+    .pipe(gulp.dest('./assets/js/'))
 });
