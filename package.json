@@ -21,7 +21,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "scss": "gulp sass",
     "scss-min": "gulp sass-min",
-    "watch": "gulp sass:watch",
+    "watch": "gulp sass:watch js:watch",
     "clean": "gulp clean",
     "js-min": "gulp js-min"
   }
