@@ -12,9 +12,11 @@ use Administrate\PhpSdk\Category;
 // $return type defined in client Class 'array' -> PHP array, 'obj' -> PHP Object and 'json' -> JSON
 $categoryClass = new Category($weblinkActivationParams);
 
-$fields = [];
-$returnType = 'json'; //array, obj, json
+$args = array(
+    //'returnType' => 'json', //array, obj, json
+    //'fields' => array('id','name'),
+);
 
-$category = $categoryClass->loadById($categoryId, $fields, $returnType);
+$category = $categoryClass->loadById($categoryId, $args);
 
 print_r($category);

@@ -85,29 +85,9 @@ class Client extends GqlClient
         if ($type == self::RESPONSE_PHP_ARRAY) {
             return $res;
         } elseif ($type == self::RESPONSE_OBJECT) {
-            return self::toObject($res);
+            return Helper::toObject($res);
         } elseif ($type == self::RESPOPNSE_JSON) {
             return json_encode($res);
         }
-    }
-    /**
-    *Function to convert array into stdClass object
-    * @param array
-    * @return stdClass Object
-    */
-    public static function toObject($Array)
-    {
-        // Create new stdClass object
-        $object = new class{};
-
-        // Use loop to convert array into
-        // stdClass object
-        foreach ($Array as $key => $value) {
-            if (is_array($value)) {
-                $value = self::ToObject($value);
-            }
-            $object->$key = $value;
-        }
-        return $object;
     }
 }

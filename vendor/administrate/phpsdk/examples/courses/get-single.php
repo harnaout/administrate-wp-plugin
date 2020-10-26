@@ -13,9 +13,11 @@ use Administrate\PhpSdk\Course;
 // $return type defined in client Class 'array' -> PHP array, 'obj' -> PHP Object and 'json' -> JSON
 $courseClass = new Course($weblinkActivationParams);
 
-$fields = [];
-$returnType = 'json'; //array, obj, json
+$args = array(
+    //'returnType' => 'json', //array, obj, json
+    //'fields' => array('id','name'),
+);
 
-$course = $courseClass->loadById($courseId, $fields, $returnType);
+$course = $courseClass->loadById($courseId, $args);
 
 print_r($course);

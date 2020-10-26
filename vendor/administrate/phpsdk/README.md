@@ -179,33 +179,39 @@ $params = [
 
 $categoryObj = new Category($params);
 
-$defaultFields = [
-    'id',
-    'name',
-    'shortDescription',
-    'parent'
+$categoryId = "TGVh....YeTox";
+$args = [
+    'filters' => [
+        // [
+        //     'field' => 'name',
+        //     'operation' => 'eq',
+        //     'value' => 'Example Category 5',
+        // ]
+    ],
+    'paging' => [
+        'page' => 1,
+        'perPage' => 2
+    ],
+    'sorting' => [
+        'field' => 'name',
+        'direction' => 'asc'
+    ],
+    'returnType' => 'json', //array, obj, json,
+    'fields' => [
+        'id',
+        'name',
+    ],
 ];
 
-$page = 1;
-$perPage = 5;
-$returnType = 'json'; //array, obj, json
-$categoryId = "TGVh....YeTox";
-$fields = []; // defaults to $defaultFields defined in Category Class
-$paging = ['page' => $page, 'perPage' => $perPage]; //defaults to ['page' => 1, 'perPage' => 25]
-$sorting = ['field' => 'id', 'direction' => 'desc']; //defaults to ['field' => 'name', 'direction' => 'asc']
-$filters = [];
+// Get Single Category
+$category = $categoryObj->loadById($categoryId, $args);
 
-//Get Single Category
-$category = $categoryObj->loadById($categoryId, $fields, $returnType);
+// Get all categories
+$categories = $categoryObj->loadAll($args);
 
-//Get all categories
-$categories = $categoryObj->loadAll($filters, $paging, $sorting, $fields, $returnType);
-
-#The parameter "defaultFields" is optional only pass it if you want to change the fields
 ```
-*Check [get-single.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/categories/get-single.php)
-and
-[get-multiple.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/categories/get-multiple.php) in examples folder*
+*Check [get-single.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/categories/get-single.php) and [get-multiple.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/categories/get-multiple.php) in examples folder*
+*Check [get-single-coreAPI.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/categories/get-single-coreAPI.php) and [get-multiple-coreAPI.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/categories/get-multiple-coreAPI.php) in examples folder*
 
 ### Courses Management
 ### List Courses
@@ -223,33 +229,104 @@ $params = [
 
 $CourseObj = new Course($params);
 
-$defaultFields = [
-    'id',
-    'name',
-    'description',
-    'category',
-    'imageUrl'
-];
 $categoryId = "TGVh......eTox"; //optional
 $keyword = "test_keyword_here"; //optional
-
 $courseId = "TGVh......eTox";
-$returnType = 'json'; //array, obj, json
-$fields = []; // defaults to $defaultFields defined in Course Class
-$paging = ['page' => 1, 'perPage' => 30]; //defaults to ['page' => 1, 'perPage' => 25]
-$sorting = ['field' => 'id', 'direction' => 'desc']; //defaults to ['field' => 'name', 'direction' => 'asc']
-$filters = ['categoryId' => $categoryId, 'keyword' => $keyword];
+
+$keyword = "Template 3";
+
+$args = [
+    'filters' => [
+        // [
+        //     "field" => "learningCategoryId",
+        //     "operation" => "eq",
+        //     "value" => $categoryId
+        // ],
+        // [
+        //     "field" => "name",
+        //     "operation" => "like",
+        //     "value" => "%".$keyword."%"
+        // ]
+    ],
+    'paging' => [
+        'page' => 1,
+        'perPage' => 2
+    ],
+    'sorting' => [
+        'field' => 'name',
+        'direction' => 'asc'
+    ],
+    'returnType' => 'json', //array, obj, json
+    // 'fields' => [
+    //     'id',
+    //     'name'
+    // ],
+    'coreApi' => false, //boolean to specify if call is a weblink or a core API call.
+);
 
 //Get single course
-$course = $CourseObj->loadById($courseId, $defaultFields);
+$course = $CourseObj->loadById($courseId, $args);
 
 //get Courses with filters
-$categories = $courseObj->loadAll($filters, $paging, $sorting, $fields, $returnType);
+$categories = $courseObj->loadAll($args);
 
 ```
 *Check [get-single.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/courses/get-single.php)
 and
 [get-multiple.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/courses/get-multiple.php) in examples folder*
+*Check [get-single-coreAPI.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/courses/get-single-coreAPI.php)
+and
+[get-multiple-coreAPI.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/courses/get-multiple-coreAPI.php) in examples folder*
+
+### Learning Paths Management
+#### List Learning Paths
+```php
+require_once '/vendor/autoload.php';
+
+use Administrate\PhpSdk\LearningPath;
+
+$params = [
+    'oauthServer' => 'https://portal-auth.administratehq.com', // Administrate weblink authorization endpoint
+    'apiUri' => 'https://weblink-api.administratehq.com/graphql', // Administrate Weblink endpoint
+    'portal' => 'APPNAME.administrateweblink.com',
+    'portalToken' => 'Tcdg...DIY9o',
+];
+
+$learningPathObj = new LearningPath($params);
+
+$learningPathId = "TGVh....YeTox";
+$args = [
+    'filters' => [
+        // [
+        //     'field' => 'name',
+        //     'operation' => 'eq',
+        //     'value' => 'Learning path test',
+        // ]
+    ],
+    'paging' => [
+        'page' => 1,
+        'perPage' => 2
+    ],
+    'sorting' => [
+        'field' => 'name',
+        'direction' => 'asc'
+    ],
+    'returnType' => 'json', //array, obj, json,
+    'fields' => [
+        'id',
+        'name',
+    ],
+];
+
+// Get Single Learning Path
+$learningPath = $learningPathObj->loadById($learningPathId, $args);
+
+// Get all Learning paths
+$learningPaths = $learningPathObj->loadAll($args);
+
+```
+*Check [get-single.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/learning-path/get-single.php) and [get-multiple.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/learning-path/get-multiple.php) in examples folder*
+*Check [get-single-coreAPI.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/learning-path/get-single-coreAPI.php) and [get-multiple-coreAPI.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/learning-path/get-multiple-coreAPI.php) in examples folder*
 
 ### Events Management
 ### List Events
@@ -267,34 +344,44 @@ $params = [
 
 $EventObj = new Event($params);
 
-$defaultFields = [
-    'id',
-    'name',
-    'start',
-    'end',
-    'location' => [
-        'name'
-    ]
-];
 $eventId = "TGVh......eTox";
 $courseCode = "Tls6....c99na";
 
-$returnType = 'json'; //array, obj, json
-$fields = []; // defaults to $defaultFields defined in Event Class
-$paging = ['page' => 1, 'perPage' => 30]; //defaults to ['page' => 1, 'perPage' => 25]
-$sorting = ['field' => 'id', 'direction' => 'desc']; //defaults to ['field' => 'title', 'direction' => 'asc']
+$args = [
+    'filters' => [
+        // [
+        //     'field' => 'name',
+        //     'operation' => 'eq',
+        //     'value' => 'Learning path test',
+        // ]
+    ],
+    'paging' => [
+        'page' => 1,
+        'perPage' => 2
+    ],
+    'sorting' => [
+        'field' => 'name',
+        'direction' => 'asc'
+    ],
+    'returnType' => 'json', //array, obj, json,
+    'fields' => [
+        'id',
+        'name',
+    ],
+    'courseCode' => "&GKJy...@ejlkge^",
+];
 
 //Get single event
-$event = $eventObj->loadById($eventId, $fields, $returnType);
+$event = $eventObj->loadById($eventId, $args);
 
 //get all events
-$events = $eventObj->loadAll($filters, $paging, $sorting, $fields, $returnType);
+$events = $eventObj->loadAll($args);
 
 //get all events for a single course
-$filters = ['courseCode' => $courseCode];
-$events = $eventObj->loadByCourseCode($filters, $paging, $sorting, $fields, $returnType);
+$events = $eventObj->loadByCourseCode($args);
 ```
 *Check [get-single.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/events/get-single.php), [get-multiple.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/events/get-multiple.php) and [get-events-by-course.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/events/get-events-by-courset.php) in examples folder*
+*Check [get-single-coreAPI.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/events/get-single-coreAPI.php), [get-multiple-coreAPI.php](https://github.com/Administrate/administrate-php-sdk/blob/trunk/examples/events/get-multiple-coreAPI.php) in examples folder*
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 

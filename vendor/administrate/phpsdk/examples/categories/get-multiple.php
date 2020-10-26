@@ -11,12 +11,29 @@ use Administrate\PhpSdk\Category;
 // $return type defined in client Class 'array' -> PHP array, 'obj' -> PHP Object and 'json' -> JSON
 $categoryClass = new Category($weblinkActivationParams);
 
-$fields = [];
-$returnType = 'json'; //array, obj, json
-$paging = ['page' => 1, 'perPage' => 25];
-$sorting = ['field' => 'name', 'direction' => 'asc'];
-$filters = [];
+$args = array(
+    'filters' => array(
+        // array(
+        //     'field' => 'name',
+        //     'operation' => 'eq',
+        //     'value' => 'Example Category 5',
+        // )
+    ),
+    'paging' => array(
+        'page' => 1,
+        'perPage' => 2
+    ),
+    'sorting' => array(
+        'field' => 'name',
+        'direction' => 'asc'
+    ),
+    'returnType' => 'json', //array, obj, json
+    // 'fields' => array(
+    //     'id',
+    //     'name'
+    // ),
+);
 
-$allCategories = $categoryClass->loadAll($filters, $paging, $sorting, $fields, $returnType);
+$allCategories = $categoryClass->loadAll($args);
 
 print_r($allCategories);

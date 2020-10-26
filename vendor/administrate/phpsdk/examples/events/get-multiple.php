@@ -9,14 +9,9 @@ use Administrate\PhpSdk\Event;
 
 // $weblinkActivationParams Set this value in config.php
 // $return type defined in client Class 'array' -> PHP array, 'obj' -> PHP Object and 'json' -> JSON
-
-$fields = [];
-$returnType = 'json'; //array, obj, json
-$paging = ['page' => 1, 'perPage' => 25];
-$sorting = ['field' => 'title', 'direction' => 'asc'];
-$filters = [];
+$args = array();
 
 $eventObj = new Event($weblinkActivationParams);
-$events = $eventObj->loadAll($filters, $paging, $sorting, $fields, $returnType);
+$events = $eventObj->loadAll($args);
 
 print_r($events);
