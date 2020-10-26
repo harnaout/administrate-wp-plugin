@@ -84,7 +84,6 @@ if (!class_exists('Activator')) {
                 $requestUrl .= "&instance=" . $this->params['instance'];
             }
 
-            $redirectUri = '';
             if (isset($this->params['redirectUri']) && !empty($this->params['redirectUri'])) {
                 $requestUrl .= "&redirect_uri=" . $this->params['redirectUri'];
             }
@@ -176,7 +175,11 @@ if (!class_exists('Activator')) {
             $clientSecret = $this->params['clientSecret'];
             $oauthServer = $this->params['oauthServer'];
             $lmsInstance = $this->params['instance'];
-            $redirectUri = $this->params['redirectUri'];
+
+            $redirectUri = '';
+            if (isset($this->params['redirectUri']) && !empty($this->params['redirectUri'])) {
+                $redirectUri = $this->params['redirectUri'];
+            }
 
             $grantType = 'authorization_code';
 
@@ -187,8 +190,11 @@ if (!class_exists('Activator')) {
                 'code' =>           $code,
                 'client_id' =>      $clientId,
                 'client_secret' =>  $clientSecret,
-                'redirect_uri' =>   $redirectUri,
             );
+
+            if ($redirectUri) {
+                $requestArgs['form_params']['redirect_uri'] = $redirectUri;
+            }
 
             $guzzleClient = new Client();
             $response = $guzzleClient->request('POST', $url, $requestArgs);
@@ -202,7 +208,6 @@ if (!class_exists('Activator')) {
          */
         public function getWeblinkPortalToken()
         {
-
             $oauthServer = $this->params['oauthServer'];
             $portal = $this->params['portal'];
 

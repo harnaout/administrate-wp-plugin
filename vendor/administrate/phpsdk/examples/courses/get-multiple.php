@@ -13,13 +13,36 @@ use Administrate\PhpSdk\Course;
 
 $courseClass = new Course($weblinkActivationParams);
 
-$keyword = "";
-$fields = [];
-$returnType = 'json'; //array, obj, json
-$paging = ['page' => 1, 'perPage' => 25];
-$sorting = ['field' => 'name', 'direction' => 'asc'];
-$filters = ['categoryId' => $categoryId, 'keyword' => $keyword];
+$keyword = "Template 3";
 
-$allCourses = $courseClass->loadAll($filters, $paging, $sorting, $fields, $returnType);
+$args = array(
+    'filters' => array(
+        // array(
+        //     "field" => "categoryId",
+        //     "operation" => "eq",
+        //     "value" => $categoryId
+        // ),
+        // array(
+        //     "field" => "name",
+        //     "operation" => "like",
+        //     "value" => "%".$keyword."%"
+        // )
+    ),
+    'paging' => array(
+        'page' => 1,
+        'perPage' => 2
+    ),
+    'sorting' => array(
+        'field' => 'name',
+        'direction' => 'asc'
+    ),
+    'returnType' => 'json', //array, obj, json
+    // 'fields' => array(
+    //     'id',
+    //     'name'
+    // ),
+);
+
+$allCourses = $courseClass->loadAll($args);
 
 print_r($allCourses);

@@ -15,9 +15,59 @@ use Administrate\PhpSdk\GraphQL\Client;
 class Course
 {
     public $params;
-    private static $defaultFields = array('id', 'code', 'name', 'description', 'category', 'imageUrl');
     private static $paging = array('page' => 1, 'perPage' => 25);
-    private static $sorting = array('field' => 'name', 'direction' => 'ASC');
+    private static $sorting = array('field' => 'name', 'direction' => 'asc');
+
+    private static $defaultFields = array(
+        'id',
+        'code',
+        'name',
+        'description',
+        'category',
+        'imageUrl'
+    );
+
+    private static $defaultCoreFields = array(
+        'id',
+        'legacyId',
+        'lifecycleState',
+        'code',
+        'title',
+        'image' => array(
+            'id',
+            'name',
+            'description',
+            'folder' => array('id', 'name')
+        ),
+        'imageGallery' => array(
+            'type' => 'edges',
+            'fields' => array('id', 'name', 'description')
+        ),
+        'learningCategories' => array(
+            'type' => 'edges',
+            'fields' => array('id', 'legacyId', 'name'),
+        ),
+        'publicPrices' => array(
+            'type' => 'edges',
+            'fields' => array(
+                'id',
+                'amount',
+                'priceLevel' => array('id', 'legacyId', 'name'),
+                'financialUnit' => array('name', '__typename'),
+                'region' => array(
+                    'id',
+                    'name',
+                    'code',
+                    'company' => array('id', 'name'),
+                ),
+            ),
+        ),
+        'customFieldValues' => array(
+            'definitionKey',
+            'definitionLocator',
+            'value'
+        ),
+    );
 
     /**
      * Default constructor.
@@ -44,39 +94,87 @@ class Course
 
     /**
      * Method to Get a single course Info from ID.
+     * @param  string $id LMS Course ID
+     * @param  array $args associative array to pass return type and fields
      *
-     * @param  string $id   LMS Course ID
+     * Example $args:
+     * $args = array(
+     *     'returnType' => 'json', //array, obj, json
+     *     'fields' => array('id','name'),
+     *     'coreApi' => false, //boolean to specify if call is a weblink or a core API call.
+     * );
      *
-     * @return String       JSON Object
+     * @return based on returnType
      */
-    public function loadById($courseId, $fields = [], $returnType = 'array')
+    public function loadById($courseId, $args)
     {
-        $filters = [
-            'id' => $courseId
-        ];
-        return self::load($filters, $fields, $returnType);
+        if ($courseId) {
+            $args['filters'] = array(
+                array(
+                    'field' => 'id',
+                    'operation' => 'eq',
+                    'value' => $courseId,
+                )
+            );
+        }
+        return self::load($args);
     }
 
     /**
      * Method to get course Info.
-     * @param array $filters
-     * @param array $fields //defaults array('id', 'name', 'shortDescription', 'parent')
-     * @param string $returnType //json, array, obj default: array
+     * @param  array $args associative array to pass return type and fields
+     *
+     * Example $args:
+     * $args = array(
+     *     'filters' => array(
+     *          array(
+     *               'field' => 'name',
+     *               'operation' => 'eq',
+     *               'value' => 'Example 1',
+     *          ),
+     *     ),
+     *     'paging' => array(
+     *           'page' => 1,
+     *           'perPage' => 2
+     *     ),
+     *     'sorting' => array(
+     *           'field' => 'name',
+     *           'direction' => 'asc'
+     *      ),
+     *      'returnType' => 'json', //array, obj, json
+     *      'fields' => array(
+     *            'id',
+     *            'name'
+     *      )
+     *      'coreApi' => false, //boolean to specify if call is a weblink or a core API call.
+     *);
+     *
      * @return based on returnType
      */
-    public function load($filters = [], $fields = [], $returnType = 'array')
+    public function load($args)
     {
-        if (!$fields) {
-            $fields = self::$defaultFields;
-        }
+        $defaultArgs = array(
+            'filters' => array(),
+            'fields' => self::$defaultFields,
+            'returnType' => 'json', //array, obj, json,
+            'coreApi' => false,
+        );
 
-        $node = (new QueryBuilder('node'));
-        foreach ($fields as $fieldKey) {
-            $node->selectField($fieldKey);
-        }
+        $courses = 'courses';
+        $coursesFilters = 'CourseFieldFilter';
 
-        $builder = (new QueryBuilder('courses'))
-            ->setVariable('filters', '[CourseFieldFilter]', true)
+        if (isset($args['coreApi']) && $args['coreApi']) {
+            $defaultArgs['fields'] = self::$defaultCoreFields;
+            $courses = 'courseTemplates';
+            $coursesFilters = 'CourseTemplateFieldGraphFilter';
+        }
+        $args = Helper::setArgs($defaultArgs, $args);
+        extract($args);
+
+        $node = QueryBuilder::buildNode($fields);
+
+        $builder = (new QueryBuilder($courses))
+            ->setVariable('filters', "[$coursesFilters]", true)
             ->setArgument('filters', '$filters')
             ->selectField(
                 (new QueryBuilder('edges'))
@@ -85,61 +183,75 @@ class Course
 
         $gqlQuery = $builder->getQuery();
 
-        $variablesArray = array(
-            "filters" => array(
-            )
-        );
-
-        foreach ($filters as $key => $value) {
-            $filter = array(
-                "field" => $key,
-                "operation" => "eq",
-                "value" => $value
-            );
-            array_push($variablesArray['filters'], $filter);
-        };
+        $variablesArray = array("filters" => $filters);
 
         $result = Client::sendSecureCall($this, $gqlQuery, $variablesArray);
 
-        if (isset($result['courses']['edges'][0]['node']) && !empty($result['courses']['edges'][0]['node'])) {
-            return Client::toType($returnType, $result['courses']['edges'][0]['node']);
+        if (isset($result[$courses]['edges'][0]['node']) && !empty($result[$courses]['edges'][0]['node'])) {
+            return Client::toType($returnType, $result[$courses]['edges'][0]['node']);
         }
     }
 
     /**
      * Method to get all Courses
-     * @param array $filters
-     * @param array $paging ['page' => '', 'perPage' => '']
-     * @param array $sorting ['field' => '', 'direction' => '']
-     * @param array $fields //defaults ['id', 'name', 'shortDescription', 'parent']
-     * @param string $returnType //json, array, obj default: array
+     * @param  array $args associative array to pass return type and fields
+     *
+     * Example $args:
+     * $args = array(
+     *     'filters' => array(
+     *          array(
+     *               'field' => 'name',
+     *               'operation' => 'eq',
+     *               'value' => 'Example 1',
+     *          ),
+     *     ),
+     *     'paging' => array(
+     *           'page' => 1,
+     *           'perPage' => 2
+     *     ),
+     *     'sorting' => array(
+     *           'field' => 'name',
+     *           'direction' => 'asc'
+     *      ),
+     *      'returnType' => 'json', //array, obj, json
+     *      'fields' => array(
+     *            'id',
+     *            'name'
+     *      ),
+     *      'coreApi' => false, //boolean to specify if call is a weblink or a core API call.
+     *);
+     *
      * @return based on returnType
      */
-    public function loadAll($filters = [], $paging = [], $sorting = [], $fields = [], $returnType = 'array')
+    public function loadAll($args)
     {
-        //set paging variables
-        if (empty($paging)) {
-            $paging = self::$paging;
+        $defaultArgs = array(
+            'filters' => array(),
+            'paging' => self::$paging,
+            'sorting' => self::$sorting,
+            'fields' => self::$defaultFields,
+            'returnType' => 'json', //array, obj, json,
+            'coreApi' => false,
+        );
+
+        $courses = 'courses';
+        $coursesOrders = 'CourseFieldOrder';
+        $coursesFilters = 'CourseFieldFilter';
+
+        if (isset($args['coreApi']) && $args['coreApi']) {
+            $defaultArgs['fields'] = self::$defaultCoreFields;
+            $courses = 'courseTemplates';
+            $coursesOrders = 'CourseTemplateFieldGraphOrder';
+            $coursesFilters = 'CourseTemplateFieldGraphFilter';
         }
+
+        $args = Helper::setArgs($defaultArgs, $args);
+        extract($args);
+
         $perPage = $paging['perPage'];
         $page = $paging['page'];
 
-
-        //set sorting variables
-        if (empty($sorting)) {
-            $sorting = self::$sorting;
-        }
-        $sortField = $sorting['field'];
-        $sortDirection = $sorting['direction'];
-
-        if (!$fields) {
-            $fields = self::$defaultFields;
-        }
-
-        $node = (new QueryBuilder('node'));
-        foreach ($fields as $fieldKey) {
-            $node->selectField($fieldKey);
-        }
+        $node = QueryBuilder::buildNode($fields);
 
         $first = $perPage;
         if ($page <= 0) {
@@ -148,12 +260,12 @@ class Course
 
         $offset = ($page - 1) * $perPage;
 
-        $builder = (new QueryBuilder('courses'))
-        ->setVariable('order', 'CourseFieldOrder', false)
+        $builder = (new QueryBuilder($courses))
+        ->setVariable('order', $coursesOrders, false)
          ->setArgument('order', '$order')
         ->setArgument('first', $first)
         ->setArgument('offset', $offset)
-        ->setVariable('filters', '[CourseFieldFilter]', true)
+        ->setVariable('filters', "[$coursesFilters]", true)
         ->setArgument('filters', '$filters')
         ->selectField(
             (new QueryBuilder('pageInfo'))
@@ -169,33 +281,9 @@ class Course
         $gqlQuery = $builder->getQuery();
 
         $variablesArray = array(
-            "filters" => array(),
-            "order" => ''
+            'filters' => $filters,
+            'order' => Helper::toObject($sorting),
         );
-
-        if (isset($filters['categoryId']) && $filters['categoryId'] != "") {
-            array_push($variablesArray['filters'], array(
-                "field" => "categoryId",
-                "operation" => "eq",
-                "value" => $filters['categoryId']
-            ));
-        }
-        if (isset($filters['keyword']) && $filters['keyword'] != "") {
-            array_push($variablesArray['filters'], array(
-                "field" => "name",
-                "operation" => "like",
-                "value" => "%".$filters['keyword']."%"
-            ));
-        }
-
-        if (!empty($sorting)) {
-            $sortingObject = new Class{
-            };
-            $sortingObject->field = $sortField;
-            $sortingObject->direction = $sortDirection;
-            //$sortingObject = new RawObject('{"field": "'.$sortField.'", "direction": "'.$sortDirection.'"}');
-            $variablesArray['order'] = $sortingObject;
-        }
 
         $result = Client::sendSecureCall($this, $gqlQuery, $variablesArray);
         return Client::toType($returnType, $result);

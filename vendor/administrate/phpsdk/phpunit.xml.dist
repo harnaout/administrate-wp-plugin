@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpunit bootstrap="vendor/autoload.php">
+    <php>
+    <get name="baseURL" value=""/>
+    <get name="authorizationCode" value=""/>
+	<get name="clientId" value=""/>
+	<get name="clientSecret" value=""/>
+	<get name="instance" value="https://INSTANCE_NAME.administrateapp.com/"/>
+	<get name="coreOauthServer" value="https://auth.getadministrate.com/oauth"/>
+	<get name="coreApiUri" value="https://api.administrateapp.com/graphql"/>
+	<get name="redirectUri" value="/examples/authentication/oauth-callback.php"/>
+	<get name="accessToken" value=""/>
+	<get name="refreshToken" value=""/>
+	<get name="weblinkOauthServer" value="https://portal-auth.administratehq.com"/>
+	<get name="weblinkApiUri" value="https://weblink-api.administratehq.com/graphql/"/>
+	<get name="portal" value=""/>
+	<get name="portalToken" value=""/>
+	<get name="learnerId" value=""/>
+	<get name="courseId" value=""/>
+	<get name="courseCode" value=""/>
+	<get name="eventId" value=""/>
+	<get name="categoryId" value=""/>
+    </php>
+</phpunit>

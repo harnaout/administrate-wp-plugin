@@ -8,6 +8,7 @@ $learnerId = '';
 $courseId = '';
 $courseCode = '';
 $eventId = '';
+$learningPathId = "";
 
 
 //Authorzation code
