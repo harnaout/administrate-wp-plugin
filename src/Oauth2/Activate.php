@@ -4,6 +4,7 @@ namespace ADM\WPPlugin\Oauth2;
 use Administrate\PhpSdk\Oauth\Activator;
 
 use ADM\WPPlugin as ADMWPP;
+use ADM\WPPlugin\Settings;
 
 if (file_exists('../../../../wp-load.php')) {
     require_once('../../../../wp-load.php');
@@ -100,9 +101,9 @@ if (!class_exists('Activate')) {
          * */
         public function getAuthorizeUrl()
         {
-            $instance = ADMWPP\Settings::instance()->getSettingsOption('account', 'instance');
-            $appId = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_id');
-            $appSecret = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_secret');
+            $instance = Settings::instance()->getSettingsOption('account', 'instance');
+            $appId = Settings::instance()->getSettingsOption('account', 'app_id');
+            $appSecret = Settings::instance()->getSettingsOption('account', 'app_secret');
 
             if (admwppBlank($instance) || admwppBlank($appId) || admwppBlank($appSecret)) {
                 return;
@@ -111,6 +112,7 @@ if (!class_exists('Activate')) {
             $params = self::$params;
             $params['instance'] = $instance;
             $params['clientId'] = $appId;
+
             self::$activationObj->setParams($params);
             return self::$activationObj->getAuthorizeUrl();
         }
@@ -123,18 +125,18 @@ if (!class_exists('Activate')) {
          * */
         public function getAuthorizeToken()
         {
-            $accessToken = ADMWPP\Settings::instance()->getSettingsOption('account', 'access_token');
-            $tokenType   = ADMWPP\Settings::instance()->getSettingsOption('account', 'token_type');
+            $accessToken = Settings::instance()->getSettingsOption('account', 'access_token');
+            $tokenType   = Settings::instance()->getSettingsOption('account', 'token_type');
 
             $authorizeToken = array(
-                'type'  => $accessToken,
-                'token' => $tokenType
+                'token'  => $accessToken,
+                'type' => $tokenType
             );
 
             $expiryStatus = $this->accessTokenExpired();
 
             if ($expiryStatus === self::TOKEN_EXPIRY_STATUS_GRACE_PERIOD) {
-                $tokentatus = ADMWPP\Settings::instance()->getSettingsOption('account', 'token_status');
+                $tokentatus = Settings::instance()->getSettingsOption('account', 'token_status');
                 if ($tokentatus === self::TOKEN_STATUS_RENEWING) {
                     return $authorizeToken;
                 }
@@ -146,8 +148,8 @@ if (!class_exists('Activate')) {
                 return $authorizeToken;
             }
 
-            $authorizeToken['token'] = ADMWPP\Settings::instance()->getSettingsOption('account', 'access_token');
-            $authorizeToken['type']  = ADMWPP\Settings::instance()->getSettingsOption('account', 'token_type');
+            $authorizeToken['token'] = Settings::instance()->getSettingsOption('account', 'access_token');
+            $authorizeToken['type']  = Settings::instance()->getSettingsOption('account', 'token_type');
 
             return $authorizeToken;
         }
@@ -159,15 +161,15 @@ if (!class_exists('Activate')) {
         public function renewAuthorizeToken()
         {
 
-            ADMWPP\Settings::instance()->setSettingsOption(
+            Settings::instance()->setSettingsOption(
                 'account',
                 'token_status',
                 self::TOKEN_STATUS_RENEWING
             );
 
-            $appId = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_id');
-            $clientSecret = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_secret');
-            $refreshToken = ADMWPP\Settings::instance()->getSettingsOption('account', 'refresh_token');
+            $appId = Settings::instance()->getSettingsOption('account', 'app_id');
+            $clientSecret = Settings::instance()->getSettingsOption('account', 'app_secret');
+            $refreshToken = Settings::instance()->getSettingsOption('account', 'refresh_token');
 
             if (admwppBlank($appId) || admwppBlank($clientSecret) || admwppBlank($refreshToken)) {
                 return;
@@ -189,7 +191,7 @@ if (!class_exists('Activate')) {
         {
             // If the response gave us an error, return.
             if ($response['status'] != "success") {
-                ADMWPP\Settings::instance()->setSettingsOption(
+                Settings::instance()->setSettingsOption(
                     'account',
                     'token_status',
                     self::TOKEN_STATUS_ERROR
@@ -207,14 +209,14 @@ if (!class_exists('Activate')) {
                 $refresh_token = $body->refresh_token;
                 $created_at = time();
 
-                ADMWPP\Settings::instance()->setSettingsOption('account', 'access_token', $access_token);
-                ADMWPP\Settings::instance()->setSettingsOption('account', 'token_type', $token_type);
-                ADMWPP\Settings::instance()->setSettingsOption('account', 'expires_in', $expires_in);
-                ADMWPP\Settings::instance()->setSettingsOption('account', 'created_at', $created_at);
-                ADMWPP\Settings::instance()->setSettingsOption('account', 'scope', $scope);
-                ADMWPP\Settings::instance()->setSettingsOption('account', 'refresh_token', $refresh_token);
+                Settings::instance()->setSettingsOption('account', 'access_token', $access_token);
+                Settings::instance()->setSettingsOption('account', 'token_type', $token_type);
+                Settings::instance()->setSettingsOption('account', 'expires_in', $expires_in);
+                Settings::instance()->setSettingsOption('account', 'created_at', $created_at);
+                Settings::instance()->setSettingsOption('account', 'scope', $scope);
+                Settings::instance()->setSettingsOption('account', 'refresh_token', $refresh_token);
 
-                ADMWPP\Settings::instance()->setSettingsOption(
+                Settings::instance()->setSettingsOption(
                     'account',
                     'token_status',
                     self::TOKEN_STATUS_NEW
@@ -222,7 +224,7 @@ if (!class_exists('Activate')) {
 
                 return true;
             } else {
-                ADMWPP\Settings::instance()->setSettingsOption(
+                Settings::instance()->setSettingsOption(
                     'account',
                     'token_status',
                     self::TOKEN_STATUS_ERROR
@@ -266,8 +268,8 @@ if (!class_exists('Activate')) {
         */
         public function accessTokenExpired()
         {
-            $expires_in = (int) ADMWPP\Settings::instance()->getSettingsOption('account', 'expires_in');
-            $created_at = (int) ADMWPP\Settings::instance()->getSettingsOption('account', 'created_at');
+            $expires_in = (int) Settings::instance()->getSettingsOption('account', 'expires_in');
+            $created_at = (int) Settings::instance()->getSettingsOption('account', 'created_at');
 
             $grace_period   = (int) ($created_at + ($expires_in * self::TOKEN_GRACE_PERIOD));
             $expires_on     = $created_at + $expires_in;
@@ -290,14 +292,15 @@ if (!class_exists('Activate')) {
         */
         protected function fetchAccessToken($code)
         {
-            $appId = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_id');
-            $clientSecret = ADMWPP\Settings::instance()->getSettingsOption('account', 'app_secret');
-            $instance = ADMWPP\Settings::instance()->getSettingsOption('account', 'instance');
+            $appId = Settings::instance()->getSettingsOption('account', 'app_id');
+            $clientSecret = Settings::instance()->getSettingsOption('account', 'app_secret');
+            $instance = Settings::instance()->getSettingsOption('account', 'instance');
 
             $params = self::$params;
             $params['clientId'] = $appId;
             $params['clientSecret'] = $clientSecret;
             $params['instance'] = $instance;
+
             self::$activationObj->setParams($params);
             $response = self::$activationObj->handleAuthorizeCallback(array('code' => $code));
 

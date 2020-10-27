@@ -290,13 +290,15 @@ if (!class_exists('Settings')) {
             $settings_index = 'advanced';
 
             if (empty($settings)) {
-                // Setup defaults
+                //Setup defaults
             }
 
             $this->settings[$settings_index] = $settings;
             update_option($settings_key, $settings);
 
-            Settings::createAdvancedSynchSection($settings_index);
+            Settings::createAdvancedSynchCoursesSection($settings_index);
+            Settings::seperatorSection($settings_index, 'courses');
+            Settings::createAdvancedSynchCategoriesSection($settings_index);
         }
 
         // --------------------------------------------------------------------
@@ -319,7 +321,7 @@ if (!class_exists('Settings')) {
         protected function seperatorSection($settings_key, $sep_id)
         {
             add_settings_section(
-                'admwpp_seperatorSection admwpp_' . $sep_id,
+                'admwpp_seperator_section admwpp_' . $sep_id,
                 '',
                 array($this, 'seperatorSettingsSection'),
                 "admwpp_" . $settings_key . "_settings"
@@ -414,10 +416,10 @@ if (!class_exists('Settings')) {
         /** END LANGUAGE SECTION */
 
         /** ADVANCED Synch SECTION */
-        protected function createAdvancedSynchSection($settings_key)
+        protected function createAdvancedSynchCoursesSection($settings_key)
         {
             add_settings_section(
-                'admwpp_advanced_synch_section',
+                'admwpp_advanced_synch_courses_section',
                 "<span class='admwpp-section-title'>" . __('Courses Synchronization', ADMWPP_TEXT_DOMAIN) . "</span>",
                 array($this, 'synchSection'),
                 "admwpp_" . $settings_key . "_settings"
@@ -428,7 +430,7 @@ if (!class_exists('Settings')) {
                 __('Synch title on Update', ADMWPP_TEXT_DOMAIN),
                 array($this, 'settingsFieldInputBoolean'),
                 "admwpp_" . $settings_key . "_settings",
-                'admwpp_advanced_synch_section',
+                'admwpp_advanced_synch_courses_section',
                 array(
                     'field'        => 'synch_title',
                     'settings_key' => $settings_key,
@@ -441,7 +443,7 @@ if (!class_exists('Settings')) {
                 __('Synch Description on Update', ADMWPP_TEXT_DOMAIN),
                 array($this, 'settingsFieldInputBoolean'),
                 "admwpp_" . $settings_key . "_settings",
-                'admwpp_advanced_synch_section',
+                'admwpp_advanced_synch_courses_section',
                 array(
                     'field'        => 'synch_description',
                     'settings_key' => $settings_key,
@@ -450,6 +452,16 @@ if (!class_exists('Settings')) {
             );
         }
         /** END ADVANCED HEADER SECTION */
+
+        protected function createAdvancedSynchCategoriesSection($settings_key)
+        {
+            add_settings_section(
+                'admwpp_advanced_synch_categories_section',
+                "<span class='admwpp-section-title'>" . __('Learning Categories Synchronization', ADMWPP_TEXT_DOMAIN) . "</span>",
+                array($this, 'synchCategoriesSection'),
+                "admwpp_" . $settings_key . "_settings"
+            );
+        }
 
         /** UNISTALL SECTION */
         protected function createUninstallSection($settings_key)
@@ -528,6 +540,22 @@ if (!class_exists('Settings')) {
             echo "<div class='settings-section-info'>";
             echo __('Options to Setup Courses Synchronization Parameters.', ADMWPP_TEXT_DOMAIN);
             echo "</div>";
+        }
+
+        public function synchCategoriesSection()
+        {
+            // Think of this as help text for the section.
+            echo "<div class='settings-section-info'>";
+            echo __('Import Learning Categories.', ADMWPP_TEXT_DOMAIN);
+            echo "</div>";
+            echo "<a href='javascript:void(0);' class='button admwpp-settings-button'
+            id='admwpp-import-categories-button' title='" .
+            __('Import', ADMWPP_TEXT_DOMAIN) . "' data-per_page='20' data-page='1' data-imported='0' data-exists='0'>
+            <i class='fa fa-clone'></i>" .
+            __('Import', ADMWPP_TEXT_DOMAIN);
+            echo "<i class='fa fa-refresh fa-spin admwpp_spinner'></i>";
+            echo "</a>";
+            echo "<div class='settings-section-info' id='admwpp-import-info'></div>";
         }
         // --------------------------------------------------------------------
         // END Section Helper Text

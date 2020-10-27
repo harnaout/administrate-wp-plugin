@@ -139,14 +139,7 @@
       return is_active_editor;
     },
 
-    url_param: function (name) {
-      var key;
-      if (!name) {
-        key = $.BWBase.defaults.param_name;
-      } else {
-        key = name;
-      }
-
+    url_param: function (key) {
       var regexp = new RegExp(key + '=' + '(.+?)(&|$)');
       return decodeURI((regexp.exec(location.search) || [, null])[1]);
     },
@@ -177,12 +170,12 @@
   };
 
   $.ADMBase.defaults = {
-    clippy_swf:                admwpp_base_url + 'assets/js/plugins/clippy/clippy.swf',
-    admin_bar:                 '#wpadminbar',
-    param_name:                'page',
-    required:                  'admwpp-required',
-    loader:                    '.admwpp-loader-image',
-    meta_loader:               '.admwpp-loader',
-    selectable:                '.admwpp-selectable',
+    clippy_swf: admwpp_base_url + 'assets/js/plugins/clippy/clippy.swf',
+    admin_bar: '#wpadminbar',
+    required: 'admwpp-required',
+    loader: '.admwpp-loader-image',
+    meta_loader: '.admwpp-loader',
+    selectable: '.admwpp-selectable',
+    loaddingClass: 'admwpp-loading',
   };
 }(jQuery));

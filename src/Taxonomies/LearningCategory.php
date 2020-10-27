@@ -26,10 +26,12 @@ if (! class_exists('LearningCategory')) {
           'admwpp_tms_id' => array(
                 'type' => 'text',
                 'label' => 'TMS ID',
+                'tmsKey' => 'id',
             ),
             'admwpp_tms_legacy_id' => array(
                 'type' => 'text',
                 'label' => 'TMS LegacyID',
+                'tmsKey' => 'legacyId',
             ),
         );
 

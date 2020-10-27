@@ -277,14 +277,7 @@
       return is_active_editor;
     },
 
-    url_param: function (name) {
-      var key;
-      if (!name) {
-        key = $.BWBase.defaults.param_name;
-      } else {
-        key = name;
-      }
-
+    url_param: function (key) {
       var regexp = new RegExp(key + '=' + '(.+?)(&|$)');
       return decodeURI((regexp.exec(location.search) || [, null])[1]);
     },
@@ -315,13 +308,13 @@
   };
 
   $.ADMBase.defaults = {
-    clippy_swf:                admwpp_base_url + 'assets/js/plugins/clippy/clippy.swf',
-    admin_bar:                 '#wpadminbar',
-    param_name:                'page',
-    required:                  'admwpp-required',
-    loader:                    '.admwpp-loader-image',
-    meta_loader:               '.admwpp-loader',
-    selectable:                '.admwpp-selectable',
+    clippy_swf: admwpp_base_url + 'assets/js/plugins/clippy/clippy.swf',
+    admin_bar: '#wpadminbar',
+    required: 'admwpp-required',
+    loader: '.admwpp-loader-image',
+    meta_loader: '.admwpp-loader',
+    selectable: '.admwpp-selectable',
+    loaddingClass: 'admwpp-loading',
   };
 }(jQuery));
 
@@ -333,21 +326,91 @@
     self.base     = base;
     self.message  = message;
 
+    var defaults = $.ADMSettings.defaults;
+    var baseDefaults  = $.ADMBase.defaults;
+
     // Ajax Call Flag.
     self.call = 0;
 
     // init logic
     var defaults = $.ADMSettings.defaults;
 
+    $(defaults.importCategoriesBtn).on(
+      'click',
+      function(){
+
+        var button = $(this);
+
+        if (button.hasClass(baseDefaults.loaddingClass)) {
+          return;
+        }
+
+        button.data('page', 1);
+        button.data('imported', 0);
+        button.data('exists', 0);
+
+        self.importCategories(button);
+      }
+    );
+
 
   };
 
   $.ADMSettings.prototype = {
+    importCategories: function(button) {
+      var self = this;
+      var defaults = $.ADMSettings.defaults;
+      var baseDefaults  = $.ADMBase.defaults;
 
+      if (button.hasClass(baseDefaults.loaddingClass)) {
+        return;
+      }
+
+      button.addClass(baseDefaults.loaddingClass);
+
+      var page = parseInt(button.data('page'));
+      var per_page = parseInt(button.data('per_page'));
+      var imported = parseInt(button.data('imported'));
+      var exists = parseInt(button.data('exists'));
+
+      var data = {
+        "_uri" : "settings/importLearningCategories",
+        "page" : page,
+        "per_page" : per_page,
+        "imported" : imported,
+        "exists" : exists,
+      };
+
+      $.ajax({
+        type: "get",
+        url: admwpp_route_url,
+        data: data,
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function (response) {
+
+          button.removeClass(baseDefaults.loaddingClass);
+
+          button.data('imported', response.imported);
+          button.data('exists', response.exists);
+
+          if (response.hasNextPage) {
+            page = page + 1;
+            button.data('page', page);
+            self.importCategories(button);
+          }
+
+          if (response.message) {
+            $(defaults.importInfo).html(response.message);
+          }
+        }
+      });
+    }
   };
 
   $.ADMSettings.defaults = {
-
+    importCategoriesBtn: '#admwpp-import-categories-button',
+    importInfo: '#admwpp-import-info',
   };
 
 }(jQuery));

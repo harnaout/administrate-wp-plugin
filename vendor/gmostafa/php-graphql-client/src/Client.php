@@ -107,12 +107,14 @@ class Client
     {
         $request = new Request($this->requestMethod, $this->endpointUrl);
 
-        foreach($this->httpHeaders as $header => $value) {
+        foreach ($this->httpHeaders as $header => $value) {
             $request = $request->withHeader($header, $value);
         }
 
         // Convert empty variables array to empty json object
-        if (empty($variables)) $variables = (object) null;
+        if (empty($variables)) {
+            $variables = (object) null;
+        }
         // Set query in the request body
         $bodyArray = ['query' => (string) $queryString, 'variables' => $variables];
         $request = $request->withBody(Psr7\stream_for(json_encode($bodyArray)));
@@ -120,8 +122,7 @@ class Client
         // Send api request and get response
         try {
             $response = $this->httpClient->sendRequest($request);
-        }
-        catch (ClientException $exception) {
+        } catch (ClientException $exception) {
             $response = $exception->getResponse();
 
             // If exception thrown by client is "400 Bad Request ", then it can be treated as a successful API request
