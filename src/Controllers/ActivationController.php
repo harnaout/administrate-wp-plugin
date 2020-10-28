@@ -1,9 +1,10 @@
 <?php
 namespace ADM\WPPlugin\Controllers;
 
-use ADM\WPPlugin\Base as Base;
+use ADM\WPPlugin\Base;
+use ADM\WPPlugin\Oauth2;
+use ADM\WPPlugin\Settings;
 use ADM\WPPlugin as ADMWPP;
-use ADM\WPPlugin\Oauth2 as Oauth2;
 
 if (file_exists('../../../../../wp-load.php')) {
     require_once('../../../../../wp-load.php');
@@ -27,9 +28,9 @@ class ActivationController extends Base\ActionController
         $app_id = $params['admwpp_account_settings']['app_id'];
         $app_secret = $params['admwpp_account_settings']['app_secret'];
 
-        ADMWPP\Settings::instance()->setSettingsOption('account', 'instance', $instance);
-        ADMWPP\Settings::instance()->setSettingsOption('account', 'app_id', $app_id);
-        ADMWPP\Settings::instance()->setSettingsOption('account', 'app_secret', $app_secret);
+        Settings::instance()->setSettingsOption('account', 'instance', $instance);
+        Settings::instance()->setSettingsOption('account', 'app_id', $app_id);
+        Settings::instance()->setSettingsOption('account', 'app_secret', $app_secret);
 
         $activate = Oauth2\Activate::instance();
 

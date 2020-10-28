@@ -163,6 +163,7 @@ if (!class_exists('Main')) {
                 array(
                     'methods' => 'GET',
                     'callback' => array('ADM\WPPlugin\Controllers\ActivationController', 'callback'),
+                    'permission_callback' => '__return_true',
                 )
             );
         }
@@ -413,13 +414,6 @@ if (!class_exists('Main')) {
             // ------------------------------------------------------
             // Register the css
             // ------------------------------------------------------
-            // wp_register_style(
-            //     'administrate-colors',
-            //     ADMWPP_URL . 'assets/css/administrate-colors.php',
-            //     '',
-            //     ADMWPP_VERSION
-            // );
-
             wp_register_style(
                 'administrate',
                 $admwpp_css,
@@ -440,7 +434,6 @@ if (!class_exists('Main')) {
                 'thickbox',
                 'wp-jquery-ui-dialog',
                 'administrate',
-                'administrate-colors',
                 )
             );
 

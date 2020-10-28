@@ -35,7 +35,7 @@
 // Define some useful constants
 // --------------------------------------------------------------------
 
-define('ADMWPP_VERSION', '3.4.3');
+define('ADMWPP_VERSION', '1.0.0');
 define('ADMWPP_DIR', plugin_dir_path(__FILE__));
 define('ADMWPP_URL', plugin_dir_url(__FILE__));
 define('ADMWPP_SRC', 'src/');
