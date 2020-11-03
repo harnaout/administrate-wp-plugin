@@ -4,6 +4,10 @@ global $post;
 //$course = new ADM\WPPlugin\PostTypes\Course();
 $course = $metabox['args']['class'];
 $metas = $course::$metas;
+global $TMS_CUSTOM_FILEDS;
+if (!empty($TMS_CUSTOM_FILEDS)) {
+    $metas = array_merge($metas, $TMS_CUSTOM_FILEDS);
+}
 ?>
 <div class="admwpp-form-wrapper admwpp-metabox">
     <?php if (!empty($metabox['args']['info'])) : ?>
@@ -33,13 +37,15 @@ $metas = $course::$metas;
                 </label>
                 <?php
                 switch ($type) {
-                    case 'bool':
-                      # code...
+                    case 'textarea':
+                        ?>
+                        <textarea id="admwpp-course-<?php echo $key; ?>" name="<?php echo $key; ?>" class="admwpp-field-textarea"><?php echo $meta_value; ?></textarea>
+                        <?php
                         break;
 
                     default:
                         ?>
-                    <input type="<?php echo $type; ?>" id="admwpp-course-<?php echo $key; ?>" name="<?php echo $key; ?>" value="<?php echo esc_attr($meta_value) ?>" class="admwpp-field-input" />
+                    <input type="<?php echo $type; ?>" id="admwpp-course-<?php echo $key; ?>" name="<?php echo $key; ?>" value="<?php echo esc_attr($meta_value); ?>" class="admwpp-field-input" />
                         <?php
                         break;
                 }

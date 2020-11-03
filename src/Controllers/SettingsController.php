@@ -5,8 +5,10 @@ use ADM\WPPlugin\Base;
 use ADM\WPPlugin\Oauth2;
 use ADM\WPPlugin\Settings;
 use ADM\WPPlugin\Taxonomies\LearningCategory;
+use ADM\WPPlugin\PostTypes\Course as CourseTemplates;
 
 use Administrate\PhpSdk\Category;
+use Administrate\PhpSdk\Course;
 
 if (file_exists('../../../../../wp-load.php')) {
     require_once('../../../../../wp-load.php');
@@ -129,6 +131,53 @@ class SettingsController extends Base\ActionController
                     update_term_meta($termId, $key, $node[$tmsKey]);
                 }
             }
+        }
+
+        $results['message'] = 'Total: ' . $results['totalRecords'];
+        $results['message'] .= '<br/>Imported: ' . $results['imported'];
+        $results['message'] .= '<br/>Exists: ' . $results['exists'];
+
+        if ($results['hasNextPage'] == true) {
+            $next = (int) $params['page'] + 1;
+            $results['message'] .= '<br/>Next Page: ' . $next;
+        }
+
+        echo json_encode($results);
+        die();
+    }
+
+    public static function importCourses()
+    {
+        $params = self::$params;
+
+        $allCourses = CourseTemplates::getCourses($params);
+
+        $courseTemplates = $allCourses['courseTemplates'];
+        $pageInfo = $courseTemplates['pageInfo'];
+        $courseTemplates = $courseTemplates['edges'];
+
+        $results = array(
+            'totalRecords' => $pageInfo['totalRecords'],
+            'hasNextPage' => $pageInfo['hasNextPage'],
+            'hasPreviousPage' => $pageInfo['hasPreviousPage'],
+            'message' => '',
+            'imported' => (int) $params['imported'],
+            'exists' => (int) $params['exists'],
+        );
+
+        if (empty($courseTemplates)) {
+            $results['message'] = 'No Learning Categories found...';
+            echo json_encode($results);
+            die();
+        }
+
+        foreach ($courseTemplates as $node) {
+            $node = $node['node'];
+
+            $import = CourseTemplates::nodeToPost($node);
+
+            $results['imported'] += $import['imported'];
+            $results['exists'] += $import['exists'];
         }
 
         $results['message'] = 'Total: ' . $results['totalRecords'];
