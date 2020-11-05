@@ -272,6 +272,8 @@ class Course
                 ->selectField('startCursor')
                 ->selectField('endCursor')
                 ->selectField('totalRecords')
+                ->selectField('hasNextPage')
+                ->selectField('hasPreviousPage')
         )
         ->selectField(
             (new QueryBuilder('edges'))
