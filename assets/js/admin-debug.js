@@ -341,7 +341,7 @@
 
         var button = $(this);
 
-        if (button.hasClass(baseDefaults.loaddingClass)) {
+        if (button.hasClass(baseDefaults.loadingClass)) {
           return;
         }
 
@@ -359,7 +359,7 @@
 
         var button = $(this);
 
-        if (button.hasClass(baseDefaults.loaddingClass)) {
+        if (button.hasClass(baseDefaults.loadingClass)) {
           return;
         }
 
@@ -380,11 +380,11 @@
       var defaults = $.ADMSettings.defaults;
       var baseDefaults  = $.ADMBase.defaults;
 
-      if (button.hasClass(baseDefaults.loaddingClass)) {
+      if (button.hasClass(baseDefaults.loadingClass)) {
         return;
       }
 
-      button.addClass(baseDefaults.loaddingClass);
+      button.addClass(baseDefaults.loadingClass);
 
       var page = parseInt(button.data('page'));
       var per_page = parseInt(button.data('per_page'));
@@ -407,7 +407,7 @@
         contentType: "application/json; charset=utf-8",
         success: function (response) {
 
-          button.removeClass(baseDefaults.loaddingClass);
+          button.removeClass(baseDefaults.loadingClass);
 
           button.data('imported', response.imported);
           button.data('exists', response.exists);
@@ -430,11 +430,11 @@
       var defaults = $.ADMSettings.defaults;
       var baseDefaults  = $.ADMBase.defaults;
 
-      if (button.hasClass(baseDefaults.loaddingClass)) {
+      if (button.hasClass(baseDefaults.loadingClass)) {
         return;
       }
 
-      button.addClass(baseDefaults.loaddingClass);
+      button.addClass(baseDefaults.loadingClass);
 
       var page = parseInt(button.data('page'));
       var per_page = parseInt(button.data('per_page'));
@@ -457,7 +457,7 @@
         contentType: "application/json; charset=utf-8",
         success: function (response) {
 
-          button.removeClass(baseDefaults.loaddingClass);
+          button.removeClass(baseDefaults.loadingClass);
 
           button.data('imported', response.imported);
           button.data('exists', response.exists);
