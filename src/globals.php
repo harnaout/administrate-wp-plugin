@@ -48,6 +48,7 @@ $ADMWPP_LANG = array(
 );
 
 define('TMS_SHORT_DESCRIPTION_KEY', 'admwpp_tms_short_descripton');
+define('TMS_LANGUAGE_KEY', 'admwpp_tms_language');
 
 global $TMS_COURSE_CONTENT;
 $TMS_COURSE_CONTENT = array(

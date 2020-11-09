@@ -489,6 +489,20 @@ if (!class_exists('Course')) {
             wp_set_post_terms($postId, $termIds, self::$taxonomy);
         }
 
+        public static function setLang($postId, $lang) {
+            global $sitepress;
+            $contentType = "post_" . self::$slug;
+            $transId = $sitepress->get_element_trid($postId, $contentType);
+            if ($transId) {
+                $sitepress->set_element_language_details(
+                    $postId,
+                    $contentType,
+                    $transId,
+                    strtolower($lang)
+                );
+            }
+        }
+
         public static function setImage($postId, $imageId)
         {
             // Get Image Url
@@ -554,6 +568,7 @@ if (!class_exists('Course')) {
                     $imagePostId = self::checkifExists($imageId);
                     if ($imagePostId) {
                         set_post_thumbnail($postId, $imagePostId);
+                        return wp_get_attachment_url($attachmentId);
                     } else {
                         $attachmentId = media_handle_sideload($file, $postId, $imageName, $imageArgs);
 
@@ -765,6 +780,11 @@ if (!class_exists('Course')) {
                 if ($postId) {
                     $results['imported'] = 1;
                 }
+            }
+
+            // Set course language if WPML exists
+            if (is_plugin_active(ADMWPP_WPML_PATH) && !empty($postArgs['meta_input'][TMS_LANGUAGE_KEY])) {
+                self::setLang($postId, $postArgs['meta_input'][TMS_LANGUAGE_KEY]);
             }
 
             // Update Post Terms
