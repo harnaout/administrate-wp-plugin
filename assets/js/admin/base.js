@@ -176,6 +176,6 @@
     loader: '.admwpp-loader-image',
     meta_loader: '.admwpp-loader',
     selectable: '.admwpp-selectable',
-    loaddingClass: 'admwpp-loading',
+    loadingClass: 'admwpp-loading',
   };
 }(jQuery));
