@@ -2,7 +2,12 @@
 namespace ADM\WPPlugin\PostTypes;
 
 use ADM\WPPlugin as ADMWPP;
-use ADM\WPPlugin\Taxonomies as Taxonomies;
+use ADM\WPPlugin\Taxonomies;
+use ADM\WPPlugin\Oauth2;
+use ADM\WPPlugin\Settings;
+
+use Administrate\PhpSdk\Course as SDKCourse;
+use Administrate\PhpSdk\GraphQL\Client as SDKClient;
 
 /**
  * Construct the "Design" post type
@@ -38,43 +43,54 @@ if (!class_exists('Course')) {
         static $metas = array(
             'admwpp_tms_id' => array(
                 'type' => 'text',
-                'label' => 'TMS ID',
+                'label' => 'ID',
+                'tmsKey' => 'id',
             ),
             'admwpp_tms_legacy_id' => array(
                 'type' => 'text',
-                'label' => 'TMS LegacyID',
+                'label' => 'LegacyID',
+                'tmsKey' => 'legacyId',
             ),
             'admwpp_tms_code' => array(
                 'type' => 'text',
-                'label' => 'TMS Code',
+                'label' => 'Code',
+                'tmsKey' => 'code',
             ),
             'admwpp_tms_image_id' => array(
                 'type' => 'text',
-                'label' => 'TMS Image ID',
+                'label' => 'Image ID',
+                'tmsKey' => 'image',
             ),
             'admwpp_tms_gallery' => array(
                 'type' => 'text',
-                'label' => 'TMS Image Gallery',
+                'label' => 'Image Gallery',
+                'tmsKey' => 'imageGallery',
             ),
             'admwpp_tms_life_cycle_state' => array(
                 'type' => 'text',
-                'label' => 'TMS lifecycleState',
+                'label' => 'lifecycleState',
+                'tmsKey' => 'lifecycleState',
             ),
             'admwpp_tms_learning_categories' => array(
                 'type' => 'text',
-                'label' => 'TMS learningCategories',
+                'label' => 'learningCategories',
+                'tmsKey' => 'learningCategories',
             ),
             'admwpp_tms_price' => array(
                 'type' => 'text',
-                'label' => 'TMS Price (Normal)',
+                'label' => 'Price (Normal)',
+                'tmsKey' => 'publicPrices',
             ),
             'admwpp_tms_currency' => array(
                 'type' => 'text',
-                'label' => 'TMS Currency',
+                'label' => 'Currency',
+                'tmsKey' => 'financialUnit',
             ),
         );
 
         static $inlineMetas = array();
+
+        static $taxonomy = 'learning-category';
 
         function __construct()
         {
@@ -437,6 +453,332 @@ if (!class_exists('Course')) {
                 // Update the post's meta field
                 update_post_meta($postId, $fieldName, $value);
             }
+        }
+
+        public static function checkifExists($tmsId)
+        {
+            global $wpdb;
+            $postMetasTable = $wpdb->postmeta;
+            $sql = "SELECT post_id FROM $postMetasTable WHERE meta_key = %s AND meta_value = %s";
+            $sql = $wpdb->prepare($sql, 'admwpp_tms_id', $tmsId);
+            $wpPost = $wpdb->get_results($sql);
+            if (isset($wpPost[0])) {
+                return (int) $wpPost[0]->post_id;
+            }
+            return 0;
+        }
+
+        public static function setTerms($postId, $learningCategoriesIds)
+        {
+            global $wpdb;
+            $termMetasTable = $wpdb->termmeta;
+            $sql = "SELECT term_id FROM $termMetasTable WHERE meta_key = %s AND meta_value IN (%s);";
+            $sql = $wpdb->prepare(
+                $sql,
+                'admwpp_tms_id',
+                join("','", $learningCategoriesIds)
+            );
+            $sql = stripcslashes($sql);
+            $wpTermIds = $wpdb->get_results($sql);
+            $termIds = array();
+            if ($wpTermIds) {
+                foreach ($wpTermIds as $term) {
+                    $termIds[] = $term->term_id;
+                }
+            }
+            wp_set_post_terms($postId, $termIds, self::$taxonomy);
+        }
+
+        public static function setImage($postId, $imageId)
+        {
+            // Get Image Url
+            $gql = "
+            query {
+                downloadDocument (documentId: $imageId) {
+                    url
+                    document {
+                      id
+                      name
+                      description
+                    }
+                }
+            }";
+
+            $activate = Oauth2\Activate::instance();
+            $apiParams = $activate::$params;
+
+            $accessToken = $activate->getAuthorizeToken()['token'];
+            $appId = Settings::instance()->getSettingsOption('account', 'app_id');
+            $instance = Settings::instance()->getSettingsOption('account', 'instance');
+
+            $apiParams['accessToken'] = $accessToken;
+            $apiParams['clientId'] = $appId;
+            $apiParams['instance'] = $instance;
+
+            $authorizationHeaders = SDKClient::setHeaders($apiParams);
+            $client = new SDKClient($apiParams['apiUri'], $authorizationHeaders);
+            $results = $client->runRawQuery($gql);
+            $document = $results->getData();
+            $imageURL = "";
+            $imageName = "";
+            $imageDesc = "";
+            if ($document) {
+                $imageURL = $document->downloadDocument->url;
+                $imageName = $document->downloadDocument->document->name;
+                $imageDesc = $document->downloadDocument->document->description;
+            }
+
+            include_once(ABSPATH . 'wp-admin/includes/admin.php');
+
+            $image = "";
+            if ($imageURL != "") {
+                $file = array();
+                $file['caption'] = $imageDesc;
+                $file['name'] = $imageName;
+                $file['tmp_name'] = download_url($imageURL);
+
+                if (is_wp_error($file['tmp_name'])) {
+                    @unlink($file['tmp_name']);
+                    return $file['tmp_name']->get_error_messages();
+                } else {
+                    $imageArgs = array(
+                        'post_title' => $imageName,
+                        'post_name' => sanitize_title($imageName),
+                        'post_content' => $imageDesc,
+                        'meta_input' => array(
+                            'admwpp_tms_id' => $imageId
+                        ),
+                    );
+
+                    // Check if image already synced and use it before uploading another one
+                    $imagePostId = self::checkifExists($imageId);
+                    if ($imagePostId) {
+                        set_post_thumbnail($postId, $imagePostId);
+                    } else {
+                        $attachmentId = media_handle_sideload($file, $postId, $imageName, $imageArgs);
+
+                        if (is_wp_error($attachmentId)) {
+                            @unlink($file['tmp_name']);
+                            return $attachmentId->get_error_messages();
+                        } else {
+                            set_post_thumbnail($postId, $attachmentId);
+                            return wp_get_attachment_url($attachmentId);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static function getCourses($params)
+        {
+            $activate = Oauth2\Activate::instance();
+            $apiParams = $activate::$params;
+
+            $accessToken = $activate->getAuthorizeToken()['token'];
+            $appId = Settings::instance()->getSettingsOption('account', 'app_id');
+            $instance = Settings::instance()->getSettingsOption('account', 'instance');
+
+            $apiParams['accessToken'] = $accessToken;
+            $apiParams['clientId'] = $appId;
+            $apiParams['instance'] = $instance;
+
+            $SDKCourse = new SDKCourse($apiParams);
+
+            $courseFields = array(
+                'id',
+                'legacyId',
+                'lifecycleState',
+                'code',
+                'title',
+                'introduction',
+                'image' => array(
+                    'id',
+                    'name'
+                ),
+                'imageGallery' => array(
+                    'type' => 'edges',
+                    'fields' => array('id', 'name')
+                ),
+                'learningCategories' => array(
+                    'type' => 'edges',
+                    'fields' => array('id', 'legacyId', 'name'),
+                ),
+                'publicPrices' => array(
+                    'type' => 'edges',
+                    'fields' => array(
+                        'amount',
+                        'financialUnit' => array(
+                            'name',
+                            '... on Currency' => array('symbol')
+                        ),
+                        'region' => array(
+                            'code',
+                        ),
+                    ),
+                ),
+                'customFieldValues' => array(
+                    'definitionKey',
+                    'value'
+                ),
+            );
+
+            $args = array(
+                'filters' => array(
+                    array(
+                        'field' => 'lifecycleState',
+                        'operation' => 'eq',
+                        'value' => 'published',
+                    ),
+                    // array(
+                    //     'field' => 'code',
+                    //     'operation' => 'eq',
+                    //     'value' => 'TESTSYNCHWP',
+                    // )
+                ),
+                'fields' => $courseFields,
+                'paging' => array(
+                    'page' => (int) $params['page'],
+                    'perPage' => (int) $params['per_page']
+                ),
+                'sorting' => array(
+                    'field' => 'id',
+                    'direction' => 'asc'
+                ),
+                'returnType' => 'array', //array, obj, json
+                'coreApi' => true,
+            );
+
+            return $SDKCourse->loadAll($args);
+        }
+
+        public static function nodeToPost($node)
+        {
+            $results = array(
+                'imported' => 0,
+                'exists' => 0
+            );
+
+            $postArgs = array(
+                'post_type' => self::$slug,
+                'post_title' => $node['title'],
+                'post_name' => sanitize_title($node['title']),
+                'post_content' => '',
+                'post_status' => 'pending',
+            );
+
+            if ($node['lifecycleState'] === 'published') {
+                $postArgs['post_status'] = 'publish';
+            }
+
+            $postMetas = array();
+            $metas = self::$metas;
+            $learningCategoriesIds = array();
+            $imageId = '';
+            foreach ($metas as $key => $value) {
+                $tmsKey = $value['tmsKey'];
+
+                switch ($tmsKey) {
+                    case 'image':
+                        $tmsValue = $node[$tmsKey]['id'];
+                        $imageId = $tmsValue;
+                        break;
+                    case 'imageGallery':
+                        $imageGallery = $node[$tmsKey]['edges'];
+                        $imageGalleryString = array();
+                        foreach ($imageGallery as $image) {
+                            $imageGalleryString[] = $image['node'];
+                        }
+                        $tmsValue = json_encode($imageGalleryString);
+                        break;
+                    case 'learningCategories':
+                        $learningCategories = $node[$tmsKey]['edges'];
+                        foreach ($learningCategories as $category) {
+                            $learningCategoriesIds[] = $category['node']['id'];
+                        }
+                        $tmsValue = implode(',', $learningCategoriesIds);
+                        break;
+                    case 'publicPrices':
+                        $publicPrices = $node[$tmsKey]['edges'];
+                        $pricesAmounts = array();
+                        foreach ($publicPrices as $prices) {
+                            $pricesAmounts[] = $prices['node']['amount'];
+                        }
+                        $tmsValue = implode(',', $pricesAmounts);
+                        break;
+                    case 'financialUnit':
+                        $publicPrices = $node['publicPrices']['edges'];
+                        $pricesCurencies = array();
+                        foreach ($publicPrices as $prices) {
+                            $pricesCurencies[] = $prices['node']['financialUnit']['name'] . "-" . $prices['node']['financialUnit']['symbol'];
+                        }
+                        $tmsValue = implode(',', $pricesCurencies);
+                        break;
+
+                    default:
+                        $tmsValue = $node[$tmsKey];
+                        break;
+                }
+                $postMetas[$key] = $tmsValue;
+            }
+
+            // Process Custom Fields
+            $customFields = array();
+            $customFieldValues = $node['customFieldValues'];
+            foreach ($customFieldValues as $field) {
+                $customFields[$field['definitionKey']] = $field['value'];
+            }
+
+            global $TMS_CUSTOM_FILEDS;
+            if (!empty($TMS_CUSTOM_FILEDS) && $customFieldValues) {
+                foreach ($TMS_CUSTOM_FILEDS as $key => $value) {
+                    $tmsKey = $value['tmsKey'];
+                    $postMetas[$key] = $customFields[$tmsKey];
+                }
+            }
+
+            if ($postMetas) {
+                $postArgs['meta_input'] = $postMetas;
+
+                $postArgs['post_excerpt'] = strip_tags($postMetas[TMS_SHORT_DESCRIPTION_KEY]);
+
+                // Post content is a contact of several custom fields from the TMS
+                global $TMS_COURSE_CONTENT;
+                $content = '';
+                foreach ($TMS_COURSE_CONTENT as $fieldKey) {
+                    $content .= $postMetas[$fieldKey];
+                    $content .= "<br/>";
+                }
+                $postArgs['post_content'] = $content;
+            }
+
+            // Check if course exists and set ID in postArgs
+            $postId = self::checkifExists($node['id']);
+
+            if ($postId) {
+                $postArgs['ID'] = $postId;
+                $updated = wp_insert_post($postArgs);
+                if ($updated) {
+                    $results['exists'] = 1;
+                }
+            } else {
+                $postId = wp_insert_post($postArgs);
+                if ($postId) {
+                    $results['imported'] = 1;
+                }
+            }
+
+            // Update Post Terms
+            // TODO: To be able to add new categories if not synced before
+            if ($postId && $learningCategoriesIds) {
+                self::setTerms($postId, $learningCategoriesIds);
+            }
+
+            // Update Post Image
+            if ($postId && $imageId) {
+                $results['image'] = self::setImage($postId, $imageId);
+            }
+
+            return $results;
         }
     }
 

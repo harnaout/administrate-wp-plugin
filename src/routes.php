@@ -47,5 +47,7 @@ Router::addRoute('POST', 'oauth/authorize', 'activation#authorize');
 // Settings
 Router::addRoute('PUT', 'settings/:id/reset', 'settings#reset');
 Router::addRoute('GET', 'settings/importLearningCategories', 'settings#importLearningCategories');
+Router::addRoute('GET', 'settings/importCourses', 'settings#importCourses');
+Router::addRoute('GET', 'settings/importLearningPath', 'settings#importLearningPath');
 
 Router::run($args);

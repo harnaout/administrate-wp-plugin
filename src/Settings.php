@@ -450,13 +450,27 @@ if (!class_exists('Settings')) {
                     'info'         => __('This will Disable / Enable Synching the Description of course templates once it gets updated using webhooks', ADMWPP_TEXT_DOMAIN),
                 )
             );
+
+            add_settings_section(
+                'admwpp_advanced_synch_courses_action',
+                "<span class='admwpp-section-title'>" . __('Courses Synchronization', ADMWPP_TEXT_DOMAIN) . "</span>",
+                array($this, 'synchCoursesSection'),
+                "admwpp_" . $settings_key . "_settings"
+            );
+
+            // add_settings_section(
+            //     'admwpp_advanced_synch_lerning_path_action',
+            //     "<span class='admwpp-section-title'>" . __('Learning Path Synchronization', ADMWPP_TEXT_DOMAIN) . "</span>",
+            //     array($this, 'synchLearnignPathSection'),
+            //     "admwpp_" . $settings_key . "_settings"
+            // );
         }
         /** END ADVANCED HEADER SECTION */
 
         protected function createAdvancedSynchCategoriesSection($settings_key)
         {
             add_settings_section(
-                'admwpp_advanced_synch_categories_section',
+                'admwpp_advanced_synch_categories_action',
                 "<span class='admwpp-section-title'>" . __('Learning Categories Synchronization', ADMWPP_TEXT_DOMAIN) . "</span>",
                 array($this, 'synchCategoriesSection'),
                 "admwpp_" . $settings_key . "_settings"
@@ -544,7 +558,6 @@ if (!class_exists('Settings')) {
 
         public function synchCategoriesSection()
         {
-            // Think of this as help text for the section.
             echo "<div class='settings-section-info'>";
             echo __('Import Learning Categories.', ADMWPP_TEXT_DOMAIN);
             echo "</div>";
@@ -555,7 +568,37 @@ if (!class_exists('Settings')) {
             __('Import', ADMWPP_TEXT_DOMAIN);
             echo "<i class='fa fa-refresh fa-spin admwpp_spinner'></i>";
             echo "</a>";
-            echo "<div class='settings-section-info' id='admwpp-import-info'></div>";
+            echo "<div class='settings-section-info' id='admwpp-import-info-categories'></div>";
+        }
+
+        public function synchCoursesSection()
+        {
+            echo "<div class='settings-section-info'>";
+            echo __('Import Courses.', ADMWPP_TEXT_DOMAIN);
+            echo "</div>";
+            echo "<a href='javascript:void(0);' class='button admwpp-settings-button'
+            id='admwpp-import-courses-button' title='" .
+            __('Import', ADMWPP_TEXT_DOMAIN) . "' data-per_page='5' data-page='1' data-imported='0' data-exists='0'>
+            <i class='fa fa-clone'></i>" .
+            __('Import', ADMWPP_TEXT_DOMAIN);
+            echo "<i class='fa fa-refresh fa-spin admwpp_spinner'></i>";
+            echo "</a>";
+            echo "<div class='settings-section-info' id='admwpp-import-info-courses'></div>";
+        }
+
+        public function synchLearnignPathSection()
+        {
+            echo "<div class='settings-section-info'>";
+            echo __('Import Learning Paths.', ADMWPP_TEXT_DOMAIN);
+            echo "</div>";
+            echo "<a href='javascript:void(0);' class='button admwpp-settings-button'
+            id='admwpp-import-learning-path-button' title='" .
+            __('Import', ADMWPP_TEXT_DOMAIN) . "' data-per_page='5' data-page='1' data-imported='0' data-exists='0'>
+            <i class='fa fa-clone'></i>" .
+            __('Import', ADMWPP_TEXT_DOMAIN);
+            echo "<i class='fa fa-refresh fa-spin admwpp_spinner'></i>";
+            echo "</a>";
+            echo "<div class='settings-section-info' id='admwpp-import-info-learning-path'></div>";
         }
         // --------------------------------------------------------------------
         // END Section Helper Text
