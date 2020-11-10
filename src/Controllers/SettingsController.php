@@ -178,6 +178,8 @@ class SettingsController extends Base\ActionController
 
             $results['imported'] += $import['imported'];
             $results['exists'] += $import['exists'];
+
+            $results[$node['id']] = $import;
         }
 
         $results['message'] = 'Total: ' . $results['totalRecords'];
