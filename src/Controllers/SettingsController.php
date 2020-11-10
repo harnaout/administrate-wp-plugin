@@ -5,10 +5,7 @@ use ADM\WPPlugin\Base;
 use ADM\WPPlugin\Oauth2;
 use ADM\WPPlugin\Settings;
 use ADM\WPPlugin\Taxonomies\LearningCategory;
-use ADM\WPPlugin\PostTypes\Course as CourseTemplates;
-
-use Administrate\PhpSdk\Category;
-use Administrate\PhpSdk\Course;
+use ADM\WPPlugin\PostTypes\Course;
 
 if (file_exists('../../../../../wp-load.php')) {
     require_once('../../../../../wp-load.php');
@@ -31,45 +28,7 @@ class SettingsController extends Base\ActionController
     {
         $params = self::$params;
 
-        $activate = Oauth2\Activate::instance();
-        $apiParams = $activate::$params;
-
-        $accessToken = $activate->getAuthorizeToken()['token'];
-        $appId = Settings::instance()->getSettingsOption('account', 'app_id');
-        $instance = Settings::instance()->getSettingsOption('account', 'instance');
-
-        $apiParams['accessToken'] = $accessToken;
-        $apiParams['clientId'] = $appId;
-        $apiParams['instance'] = $instance;
-
-        $categories = new Category($apiParams);
-
-        $args = array(
-            'paging' => array(
-                'page' => (int) $params['page'],
-                'perPage' => (int) $params['per_page']
-            ),
-            'sorting' => array(
-                'field' => 'id',
-                'direction' => 'asc'
-            ),
-            'fields' => array(
-                'id',
-                'legacyId',
-                'name',
-                'description',
-                'parentCategory' => array(
-                    'id',
-                    'legacyId',
-                    'name',
-                    'description'
-                ),
-            ),
-            'returnType' => 'array', //array, obj, json
-            'coreApi' => true,
-        );
-
-        $allCategories = $categories->loadAll($args);
+        $allCategories = LearningCategory::getCategories($params);
 
         $learningCategories = $allCategories['learningCategories'];
         $pageInfo = $learningCategories['pageInfo'];
@@ -93,44 +52,51 @@ class SettingsController extends Base\ActionController
         foreach ($learningCategories as $node) {
             $node = $node['node'];
 
-            $name = $node['name'];
-            $description = $node['description'];
-            $parentCategory = $node['parentCategory'];
+            $import = LearningCategory::nodeToTerm($node);
 
-            $taxonomy = LearningCategory::$system_name;
+            $results['imported'] += $import['imported'];
+            $results['exists'] += $import['exists'];
 
-            $termArgs = array(
-                'description' => $description,
-                'slug' => sanitize_title($name),
-            );
+            $results[$node['id']] = $import;
 
-            if (!empty($parentCategory)) {
-                $parentName = $parentCategory['name'];
-                $parentSlug = sanitize_title($parentName);
-                $parentTerm = get_term_by('slug', $parentSlug, $taxonomy);
-                $termArgs['parent'] = $parentTerm->term_id;
-                $termArgs['slug'] .= "-" . sanitize_title($parentName);
-            }
+            // $name = $node['name'];
+            // $description = $node['description'];
+            // $parentCategory = $node['parentCategory'];
 
-            $term = wp_insert_term(
-                $name,
-                $taxonomy,
-                $termArgs
-            );
+            // $taxonomy = LearningCategory::$system_name;
 
-            if (is_wp_error($term)) {
-                $termId = $term->get_error_data('term_exists');
-                $results['exists']++;
-            } else {
-                $termId = $term['term_id'];
-                $results['imported']++;
+            // $termArgs = array(
+            //     'description' => $description,
+            //     'slug' => sanitize_title($name),
+            // );
 
-                $metas = LearningCategory::$metas;
-                foreach ($metas as $key => $value) {
-                    $tmsKey = $value['tmsKey'];
-                    update_term_meta($termId, $key, $node[$tmsKey]);
-                }
-            }
+            // if (!empty($parentCategory)) {
+            //     $parentName = $parentCategory['name'];
+            //     $parentSlug = sanitize_title($parentName);
+            //     $parentTerm = get_term_by('slug', $parentSlug, $taxonomy);
+            //     $termArgs['parent'] = $parentTerm->term_id;
+            //     $termArgs['slug'] .= "-" . sanitize_title($parentName);
+            // }
+
+            // $term = wp_insert_term(
+            //     $name,
+            //     $taxonomy,
+            //     $termArgs
+            // );
+
+            // if (is_wp_error($term)) {
+            //     $termId = $term->get_error_data('term_exists');
+            //     $results['exists']++;
+            // } else {
+            //     $termId = $term['term_id'];
+            //     $results['imported']++;
+
+            //     $metas = LearningCategory::$metas;
+            //     foreach ($metas as $key => $value) {
+            //         $tmsKey = $value['tmsKey'];
+            //         update_term_meta($termId, $key, $node[$tmsKey]);
+            //     }
+            // }
         }
 
         $results['message'] = 'Total: ' . $results['totalRecords'];
@@ -150,7 +116,7 @@ class SettingsController extends Base\ActionController
     {
         $params = self::$params;
 
-        $allCourses = CourseTemplates::getCourses($params);
+        $allCourses = Course::getCourses($params);
 
         $courseTemplates = $allCourses['courseTemplates'];
         $pageInfo = $courseTemplates['pageInfo'];
@@ -174,7 +140,7 @@ class SettingsController extends Base\ActionController
         foreach ($courseTemplates as $node) {
             $node = $node['node'];
 
-            $import = CourseTemplates::nodeToPost($node);
+            $import = Course::nodeToPost($node);
 
             $results['imported'] += $import['imported'];
             $results['exists'] += $import['exists'];
