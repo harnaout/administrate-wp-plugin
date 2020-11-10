@@ -533,10 +533,18 @@ if (!class_exists('Course')) {
 
         public static function setImage($postId, $imageId)
         {
+
+            // Check if image already synced and use it before uploading another one
+            $imagePostId = self::checkifExists($imageId);
+            if ($imagePostId) {
+                set_post_thumbnail($postId, $imagePostId);
+                return wp_get_attachment_url($imagePostId);
+            }
+
             // Get Image Url
-            $gql = "
-            query {
-                downloadDocument (documentId: $imageId) {
+            $gql = '
+            query document {
+                downloadDocument (documentId: "' . $imageId . '") {
                     url
                     document {
                       id
@@ -544,7 +552,7 @@ if (!class_exists('Course')) {
                       description
                     }
                 }
-            }";
+            }';
 
             $activate = Oauth2\Activate::instance();
             $apiParams = $activate::$params;
@@ -592,21 +600,14 @@ if (!class_exists('Course')) {
                         ),
                     );
 
-                    // Check if image already synced and use it before uploading another one
-                    $imagePostId = self::checkifExists($imageId);
-                    if ($imagePostId) {
-                        set_post_thumbnail($postId, $imagePostId);
-                        return wp_get_attachment_url($attachmentId);
-                    } else {
-                        $attachmentId = media_handle_sideload($file, $postId, $imageName, $imageArgs);
+                    $attachmentId = media_handle_sideload($file, $postId, $imageName, $imageArgs);
 
-                        if (is_wp_error($attachmentId)) {
-                            @unlink($file['tmp_name']);
-                            return $attachmentId->get_error_messages();
-                        } else {
-                            set_post_thumbnail($postId, $attachmentId);
-                            return wp_get_attachment_url($attachmentId);
-                        }
+                    if (is_wp_error($attachmentId)) {
+                        @unlink($file['tmp_name']);
+                        return $attachmentId->get_error_messages();
+                    } else {
+                        set_post_thumbnail($postId, $attachmentId);
+                        return wp_get_attachment_url($attachmentId);
                     }
                 }
             }
