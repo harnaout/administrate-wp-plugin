@@ -41,6 +41,11 @@ if (!class_exists('Course')) {
         );
 
         static $metas = array(
+            'admwpp_tms_type' => array(
+                'type' => 'text',
+                'label' => 'Type',
+                'tmsKey' => '',
+            ),
             'admwpp_tms_id' => array(
                 'type' => 'text',
                 'label' => 'ID',
@@ -503,6 +508,29 @@ if (!class_exists('Course')) {
             }
         }
 
+        public static function setTermsLang($postId, $lang) {
+            $postTermIds = wp_get_post_terms(
+                $postId,
+                self::$taxonomy,
+                array('fields' => 'ids')
+            );
+            if ($postTermIds) {
+                foreach ($postTermIds as $termid) {
+                    global $sitepress;
+                    $contentType = "tax_" . self::$taxonomy;
+                    $transId = $sitepress->get_element_trid($termid, $contentType);
+                    if ($transId) {
+                        $sitepress->set_element_language_details(
+                            $termid,
+                            $contentType,
+                            $transId,
+                            strtolower($lang)
+                        );
+                    }
+                }
+            }
+        }
+
         public static function setImage($postId, $imageId)
         {
             // Get Image Url
@@ -644,11 +672,11 @@ if (!class_exists('Course')) {
                         'operation' => 'eq',
                         'value' => 'published',
                     ),
-                    // array(
-                    //     'field' => 'code',
-                    //     'operation' => 'eq',
-                    //     'value' => 'TESTSYNCHWP',
-                    // )
+                    array(
+                        'field' => 'code',
+                        'operation' => 'eq',
+                        'value' => 'TESTSYNCHWP',
+                    )
                 ),
                 'fields' => $courseFields,
                 'paging' => array(
@@ -701,16 +729,18 @@ if (!class_exists('Course')) {
                         $imageGallery = $node[$tmsKey]['edges'];
                         $imageGalleryString = array();
                         foreach ($imageGallery as $image) {
-                            $imageGalleryString[] = $image['node'];
+                            if (isset($image['node']) && !empty($image['node'])) {
+                                $imageGalleryString[] = $image['node']['id'];
+                            }
                         }
-                        $tmsValue = json_encode($imageGalleryString);
+                        $tmsValue = implode('|', $learningCategoriesIds);
                         break;
                     case 'learningCategories':
                         $learningCategories = $node[$tmsKey]['edges'];
                         foreach ($learningCategories as $category) {
                             $learningCategoriesIds[] = $category['node']['id'];
                         }
-                        $tmsValue = implode(',', $learningCategoriesIds);
+                        $tmsValue = implode('|', $learningCategoriesIds);
                         break;
                     case 'publicPrices':
                         $publicPrices = $node[$tmsKey]['edges'];
@@ -718,17 +748,16 @@ if (!class_exists('Course')) {
                         foreach ($publicPrices as $prices) {
                             $pricesAmounts[] = $prices['node']['amount'];
                         }
-                        $tmsValue = implode(',', $pricesAmounts);
+                        $tmsValue = implode('|', $pricesAmounts);
                         break;
                     case 'financialUnit':
                         $publicPrices = $node['publicPrices']['edges'];
                         $pricesCurencies = array();
                         foreach ($publicPrices as $prices) {
-                            $pricesCurencies[] = $prices['node']['financialUnit']['name'] . "-" . $prices['node']['financialUnit']['symbol'];
+                            $pricesCurencies[] = $prices['node']['financialUnit']['name'] . "|" . $prices['node']['financialUnit']['symbol'];
                         }
-                        $tmsValue = implode(',', $pricesCurencies);
+                        $tmsValue = implode('|', $pricesCurencies);
                         break;
-
                     default:
                         $tmsValue = $node[$tmsKey];
                         break;
@@ -782,11 +811,6 @@ if (!class_exists('Course')) {
                 }
             }
 
-            // Set course language if WPML exists
-            if (is_plugin_active(ADMWPP_WPML_PATH) && !empty($postArgs['meta_input'][TMS_LANGUAGE_KEY])) {
-                self::setLang($postId, $postArgs['meta_input'][TMS_LANGUAGE_KEY]);
-            }
-
             // Update Post Terms
             // TODO: To be able to add new categories if not synced before
             if ($postId && $learningCategoriesIds) {
@@ -796,6 +820,15 @@ if (!class_exists('Course')) {
             // Update Post Image
             if ($postId && $imageId) {
                 $results['image'] = self::setImage($postId, $imageId);
+            }
+
+            // Set course language if WPML exists
+            if (is_plugin_active(ADMWPP_WPML_PATH) && !empty($postArgs['meta_input'][TMS_LANGUAGE_KEY])) {
+                $langCode = strtolower($postArgs['meta_input'][TMS_LANGUAGE_KEY]);
+                if (in_array($langCode, array_keys(icl_get_languages()))) {
+                    self::setLang($postId, $langCode);
+                    self::setTermsLang($postId, $langCode);
+                }
             }
 
             return $results;
