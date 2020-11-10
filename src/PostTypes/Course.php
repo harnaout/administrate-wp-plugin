@@ -644,7 +644,18 @@ if (!class_exists('Course')) {
                 ),
                 'learningCategories' => array(
                     'type' => 'edges',
-                    'fields' => array('id', 'legacyId', 'name'),
+                    'fields' => array(
+                        'id',
+                        'legacyId',
+                        'name',
+                        'description',
+                        'parentCategory' => array(
+                            'id',
+                            'legacyId',
+                            'name',
+                            'description'
+                        ),
+                    ),
                 ),
                 'publicPrices' => array(
                     'type' => 'edges',
@@ -672,11 +683,11 @@ if (!class_exists('Course')) {
                         'operation' => 'eq',
                         'value' => 'published',
                     ),
-                    array(
-                        'field' => 'code',
-                        'operation' => 'eq',
-                        'value' => 'TESTSYNCHWP',
-                    )
+                    // array(
+                    //     'field' => 'code',
+                    //     'operation' => 'eq',
+                    //     'value' => 'TESTSYNCHWP',
+                    // )
                 ),
                 'fields' => $courseFields,
                 'paging' => array(

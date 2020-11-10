@@ -1,7 +1,13 @@
 <?php
 namespace ADM\WPPlugin\Taxonomies;
 
+use ADM\WPPlugin as ADMWPP;
 use ADM\WPPlugin\Base as Base;
+use ADM\WPPlugin\Oauth2;
+use ADM\WPPlugin\Settings;
+
+use Administrate\PhpSdk\Category as SDKCategory;
+use Administrate\PhpSdk\GraphQL\Client as SDKClient;
 
 if (! class_exists('LearningCategory')) {
 
@@ -138,5 +144,101 @@ if (! class_exists('LearningCategory')) {
                 }
             }
         }
+
+        public static function getCategories($params) {
+            $activate = Oauth2\Activate::instance();
+            $apiParams = $activate::$params;
+
+            $accessToken = $activate->getAuthorizeToken()['token'];
+            $appId = Settings::instance()->getSettingsOption('account', 'app_id');
+            $instance = Settings::instance()->getSettingsOption('account', 'instance');
+
+            $apiParams['accessToken'] = $accessToken;
+            $apiParams['clientId'] = $appId;
+            $apiParams['instance'] = $instance;
+
+            $SDKCategory = new SDKCategory($apiParams);
+
+            $args = array(
+                'paging' => array(
+                    'page' => (int) $params['page'],
+                    'perPage' => (int) $params['per_page']
+                ),
+                'sorting' => array(
+                    'field' => 'id',
+                    'direction' => 'asc'
+                ),
+                'fields' => array(
+                    'id',
+                    'legacyId',
+                    'name',
+                    'description',
+                    'parentCategory' => array(
+                        'id',
+                        'legacyId',
+                        'name',
+                        'description'
+                    ),
+                ),
+                'returnType' => 'array', //array, obj, json
+                'coreApi' => true,
+            );
+
+            return $SDKCategory->loadAll($args);
+        }
+
+        public static function nodeToTerm($node)
+        {
+            $results = array(
+                'imported' => 0,
+                'exists' => 0
+            );
+
+            $name = $node['name'];
+            $description = $node['description'];
+            $parentCategory = $node['parentCategory'];
+
+            $taxonomy = self::$system_name;
+
+            $termArgs = array(
+                'description' => $description,
+                'slug' => sanitize_title($name),
+            );
+
+            if (!empty($parentCategory)) {
+                $parentName = $parentCategory['name'];
+                $parentSlug = sanitize_title($parentName);
+                $parentTerm = get_term_by('slug', $parentSlug, $taxonomy);
+                $termArgs['parent'] = $parentTerm->term_id;
+                $termArgs['slug'] .= "-" . sanitize_title($parentName);
+            }
+
+            $term = wp_insert_term(
+                $name,
+                $taxonomy,
+                $termArgs
+            );
+
+            if (is_wp_error($term)) {
+                $termId = $term->get_error_data('term_exists');
+                $results['exists'] = 1;
+            } else {
+                $termId = $term['term_id'];
+                $results['imported'] = 1;
+
+                $metas = self::$metas;
+                foreach ($metas as $key => $value) {
+                    $tmsKey = $value['tmsKey'];
+                    update_term_meta($termId, $key, $node[$tmsKey]);
+                }
+            }
+
+            if ($termId) {
+                $results['termId'] = $termId;
+            }
+
+            return $results;
+        }
+
     }
 }
