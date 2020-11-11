@@ -2,9 +2,10 @@
 namespace ADM\WPPlugin\PostTypes;
 
 use ADM\WPPlugin as ADMWPP;
-use ADM\WPPlugin\Taxonomies;
 use ADM\WPPlugin\Oauth2;
 use ADM\WPPlugin\Settings;
+
+use ADM\WPPlugin\Taxonomies;
 
 use Administrate\PhpSdk\Course as SDKCourse;
 use Administrate\PhpSdk\GraphQL\Client as SDKClient;
@@ -351,13 +352,13 @@ if (!class_exists('Course')) {
         }
 
         /**
-     * CALLBACK FUNCTION FOR:
-     * add_action('save_post', array($this, 'save_post'));
-     * Save the metaboxes for the Custom Post Type
-     *
-     * @return void
-     * @author Jad khater
-     **/
+         * CALLBACK FUNCTION FOR:
+         * add_action('save_post', array($this, 'save_post'));
+         * Save the metaboxes for the Custom Post Type
+         *
+         * @return void
+         * @author Jad khater
+        **/
         public function savePost($post_id, $post, $update)
         {
             $post_type = self::getSlug();
@@ -473,28 +474,33 @@ if (!class_exists('Course')) {
             return 0;
         }
 
-        public static function setTerms($postId, $learningCategoriesIds)
+        public static function setTerms($postId, $learningCategories)
         {
             global $wpdb;
-            $termMetasTable = $wpdb->termmeta;
-            $sql = "SELECT term_id FROM $termMetasTable WHERE meta_key = %s AND meta_value IN (%s);";
-            $sql = $wpdb->prepare(
-                $sql,
-                'admwpp_tms_id',
-                join("','", $learningCategoriesIds)
-            );
-            $sql = stripcslashes($sql);
-            $wpTermIds = $wpdb->get_results($sql);
             $termIds = array();
-            if ($wpTermIds) {
-                foreach ($wpTermIds as $term) {
-                    $termIds[] = $term->term_id;
+            foreach ($learningCategories as $node) {
+                $node = $node['node'];
+                $tmsId = $node['id'];
+                $termId = Taxonomies\LearningCategory::checkifExists($tmsId);
+                if (!$termId) {
+                    $results = Taxonomies\LearningCategory::nodeToTerm($node);
+                    if (!empty($results['termId'])) {
+                        $termId[] = $results['termId'];
+                    }
+                }
+                if ($termId) {
+                    $termIds[] = $termId;
                 }
             }
-            wp_set_post_terms($postId, $termIds, self::$taxonomy);
+            if ($termIds) {
+                wp_set_post_terms($postId, $termIds, self::$taxonomy);
+                return $termIds;
+            }
+            return array();
         }
 
-        public static function setLang($postId, $lang) {
+        public static function setLang($postId, $lang)
+        {
             global $sitepress;
             $contentType = "post_" . self::$slug;
             $transId = $sitepress->get_element_trid($postId, $contentType);
@@ -508,12 +514,8 @@ if (!class_exists('Course')) {
             }
         }
 
-        public static function setTermsLang($postId, $lang) {
-            $postTermIds = wp_get_post_terms(
-                $postId,
-                self::$taxonomy,
-                array('fields' => 'ids')
-            );
+        public static function setTermsLang($postId, $lang, $postTermIds)
+        {
             if ($postTermIds) {
                 foreach ($postTermIds as $termid) {
                     global $sitepress;
@@ -531,11 +533,11 @@ if (!class_exists('Course')) {
             }
         }
 
-        public static function setImage($postId, $imageId)
+        public static function setImage($postId, $imageTmsId)
         {
 
             // Check if image already synced and use it before uploading another one
-            $imagePostId = self::checkifExists($imageId);
+            $imagePostId = self::checkifExists($imageTmsId);
             if ($imagePostId) {
                 set_post_thumbnail($postId, $imagePostId);
                 return wp_get_attachment_url($imagePostId);
@@ -544,7 +546,7 @@ if (!class_exists('Course')) {
             // Get Image Url
             $gql = '
             query document {
-                downloadDocument (documentId: "' . $imageId . '") {
+                downloadDocument (documentId: "' . $imageTmsId . '") {
                     url
                     document {
                       id
@@ -596,7 +598,7 @@ if (!class_exists('Course')) {
                         'post_name' => sanitize_title($imageName),
                         'post_content' => $imageDesc,
                         'meta_input' => array(
-                            'admwpp_tms_id' => $imageId
+                            'admwpp_tms_id' => $imageTmsId
                         ),
                     );
 
@@ -727,8 +729,8 @@ if (!class_exists('Course')) {
 
             $postMetas = array();
             $metas = self::$metas;
-            $learningCategoriesIds = array();
-            $imageId = '';
+            $learningCategories = array();
+            $imageTmsId = '';
             foreach ($metas as $key => $value) {
                 $tmsKey = $value['tmsKey'];
 
@@ -737,7 +739,7 @@ if (!class_exists('Course')) {
                     switch ($tmsKey) {
                         case 'image':
                             $tmsValue = $node[$tmsKey]['id'];
-                            $imageId = $tmsValue;
+                            $imageTmsId = $tmsValue;
                             break;
                         case 'imageGallery':
                             $imageGallery = $node[$tmsKey]['edges'];
@@ -747,10 +749,11 @@ if (!class_exists('Course')) {
                                     $imageGalleryString[] = $image['node']['id'];
                                 }
                             }
-                            $tmsValue = implode('|', $learningCategoriesIds);
+                            $tmsValue = implode('|', $imageGalleryString);
                             break;
                         case 'learningCategories':
                             $learningCategories = $node[$tmsKey]['edges'];
+                            $learningCategoriesIds = array();
                             foreach ($learningCategories as $category) {
                                 $learningCategoriesIds[] = $category['node']['id'];
                             }
@@ -827,14 +830,13 @@ if (!class_exists('Course')) {
             }
 
             // Update Post Terms
-            // TODO: To be able to add new categories if not synced before
-            if ($postId && $learningCategoriesIds) {
-                self::setTerms($postId, $learningCategoriesIds);
+            if ($postId && $learningCategories) {
+                $postTermIds = self::setTerms($postId, $learningCategories);
             }
 
             // Update Post Image
-            if ($postId && $imageId) {
-                $results['image'] = self::setImage($postId, $imageId);
+            if ($postId && $imageTmsId) {
+                $results['image'] = self::setImage($postId, $imageTmsId);
             }
 
             // Set course language if WPML exists
@@ -842,7 +844,7 @@ if (!class_exists('Course')) {
                 $langCode = strtolower($postArgs['meta_input'][TMS_LANGUAGE_KEY]);
                 if (in_array($langCode, array_keys(icl_get_languages()))) {
                     self::setLang($postId, $langCode);
-                    self::setTermsLang($postId, $langCode);
+                    self::setTermsLang($postId, $langCode, $postTermIds);
                 }
             }
 

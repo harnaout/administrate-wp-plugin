@@ -145,7 +145,21 @@ if (! class_exists('LearningCategory')) {
             }
         }
 
-        public static function getCategories($params) {
+        public static function checkifExists($tmsId)
+        {
+            global $wpdb;
+            $termsMetasTable = $wpdb->termmeta;
+            $sql = "SELECT term_id FROM $termsMetasTable WHERE meta_key = %s AND meta_value = %s";
+            $sql = $wpdb->prepare($sql, 'admwpp_tms_id', $tmsId);
+            $termId = $wpdb->get_var($sql);
+            if ($termId) {
+                return (int) $termId;
+            }
+            return 0;
+        }
+
+        public static function getCategories($params)
+        {
             $activate = Oauth2\Activate::instance();
             $apiParams = $activate::$params;
 
@@ -194,6 +208,7 @@ if (! class_exists('LearningCategory')) {
                 'exists' => 0
             );
 
+            $tmsId = $node['id'];
             $name = $node['name'];
             $description = $node['description'];
             $parentCategory = $node['parentCategory'];
@@ -206,23 +221,28 @@ if (! class_exists('LearningCategory')) {
             );
 
             if (!empty($parentCategory)) {
+                $parentTmsId = $parentCategory['id'];
                 $parentName = $parentCategory['name'];
-                $parentSlug = sanitize_title($parentName);
-                $parentTerm = get_term_by('slug', $parentSlug, $taxonomy);
-                $termArgs['parent'] = $parentTerm->term_id;
+                $parentDescription = $parentCategory['description'];
+                $parentTermId = self::checkifExists($parentTmsId);
+                if (!$parentTermId) {
+                    $parentTerm = $self::nodeToTerm($parentCategory);
+                    $parentTermId = $parentTerm['termId'];
+                }
+                $termArgs['parent'] = $parentTermId;
                 $termArgs['slug'] .= "-" . sanitize_title($parentName);
             }
 
-            $term = wp_insert_term(
-                $name,
-                $taxonomy,
-                $termArgs
-            );
+            $termId = self::checkifExists($tmsId);
 
-            if (is_wp_error($term)) {
-                $termId = $term->get_error_data('term_exists');
+            if ($termId) {
                 $results['exists'] = 1;
             } else {
+                $term = wp_insert_term(
+                    $name,
+                    $taxonomy,
+                    $termArgs
+                );
                 $termId = $term['term_id'];
                 $results['imported'] = 1;
 
@@ -239,6 +259,5 @@ if (! class_exists('LearningCategory')) {
 
             return $results;
         }
-
     }
 }
