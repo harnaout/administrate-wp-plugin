@@ -152,6 +152,14 @@ if (!class_exists('Course')) {
                 10,
                 3
             );
+
+            // Admin Columns
+            add_filter(
+                'manage_posts_columns',
+                array($this, 'adminColumnsHead'),
+                10,
+                1
+            );
         }
 
         public static function getSlug()
@@ -230,6 +238,14 @@ if (!class_exists('Course')) {
                 array('ADM\WPPlugin\Taxonomies\LearningCategory', 'saveTermMetas'),
                 10,
                 1
+            );
+
+            // Admin Columns
+            add_action(
+                'manage_posts_custom_column',
+                array($this, 'adminColumnsContent'),
+                10,
+                2
             );
         }
 
@@ -458,6 +474,22 @@ if (!class_exists('Course')) {
                 }
                 // Update the post's meta field
                 update_post_meta($postId, $fieldName, $value);
+            }
+        }
+
+        public static function adminColumnsHead($defaults)
+        {
+            $defaults['image'] = 'Image';
+            return $defaults;
+        }
+
+        public static function adminColumnsContent($columnName, $postId)
+        {
+            if ($columnName == 'image') {
+                $postFeaturedImageUrl = get_the_post_thumbnail_url($postId, 'thumbnail');
+                if ($postFeaturedImageUrl) {
+                    echo '<img src="' . $postFeaturedImageUrl . '" />';
+                }
             }
         }
 
