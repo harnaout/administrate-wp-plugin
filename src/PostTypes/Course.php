@@ -509,6 +509,8 @@ if (!class_exists('Course')) {
         public static function setTerms($postId, $learningCategories)
         {
             global $wpdb;
+            // Remove terms before adding new ones.
+            wp_delete_object_term_relationships($postId, self::$taxonomy);
             $termIds = array();
             foreach ($learningCategories as $node) {
                 $node = $node['node'];
