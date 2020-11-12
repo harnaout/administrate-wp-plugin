@@ -160,7 +160,6 @@ if (!class_exists('Activate')) {
          * */
         public function renewAuthorizeToken()
         {
-
             Settings::instance()->setSettingsOption(
                 'account',
                 'token_status',

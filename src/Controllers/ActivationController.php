@@ -1,10 +1,10 @@
 <?php
 namespace ADM\WPPlugin\Controllers;
 
+use ADM\WPPlugin as ADMWPP;
 use ADM\WPPlugin\Base;
 use ADM\WPPlugin\Oauth2;
 use ADM\WPPlugin\Settings;
-use ADM\WPPlugin as ADMWPP;
 
 if (file_exists('../../../../../wp-load.php')) {
     require_once('../../../../../wp-load.php');

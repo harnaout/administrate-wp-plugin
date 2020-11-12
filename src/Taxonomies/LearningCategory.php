@@ -48,7 +48,7 @@ if (! class_exists('LearningCategory')) {
          *
          * @return MinionTaxonimy object
          * */
-        public static function instance($post_type = '')
+        public static function instance()
         {
 
             if (!isset(self::$instance)) {

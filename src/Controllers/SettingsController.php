@@ -58,45 +58,6 @@ class SettingsController extends Base\ActionController
             $results['exists'] += $import['exists'];
 
             $results[$node['id']] = $import;
-
-            // $name = $node['name'];
-            // $description = $node['description'];
-            // $parentCategory = $node['parentCategory'];
-
-            // $taxonomy = LearningCategory::$system_name;
-
-            // $termArgs = array(
-            //     'description' => $description,
-            //     'slug' => sanitize_title($name),
-            // );
-
-            // if (!empty($parentCategory)) {
-            //     $parentName = $parentCategory['name'];
-            //     $parentSlug = sanitize_title($parentName);
-            //     $parentTerm = get_term_by('slug', $parentSlug, $taxonomy);
-            //     $termArgs['parent'] = $parentTerm->term_id;
-            //     $termArgs['slug'] .= "-" . sanitize_title($parentName);
-            // }
-
-            // $term = wp_insert_term(
-            //     $name,
-            //     $taxonomy,
-            //     $termArgs
-            // );
-
-            // if (is_wp_error($term)) {
-            //     $termId = $term->get_error_data('term_exists');
-            //     $results['exists']++;
-            // } else {
-            //     $termId = $term['term_id'];
-            //     $results['imported']++;
-
-            //     $metas = LearningCategory::$metas;
-            //     foreach ($metas as $key => $value) {
-            //         $tmsKey = $value['tmsKey'];
-            //         update_term_meta($termId, $key, $node[$tmsKey]);
-            //     }
-            // }
         }
 
         $results['message'] = 'Total: ' . $results['totalRecords'];
@@ -106,6 +67,10 @@ class SettingsController extends Base\ActionController
         if ($results['hasNextPage'] == true) {
             $next = (int) $params['page'] + 1;
             $results['message'] .= '<br/>Next Page: ' . $next;
+        }
+
+        if (($results['imported'] + $results['exists']) == $results['totalRecords']) {
+            self::setFlash(__('Successfully Imported Categories.', ADMWPP_TEXT_DOMAIN));
         }
 
         echo json_encode($results);
@@ -132,7 +97,7 @@ class SettingsController extends Base\ActionController
         );
 
         if (empty($courseTemplates)) {
-            $results['message'] = 'No Learning Categories found...';
+            $results['message'] = 'No Courses found...';
             echo json_encode($results);
             die();
         }
@@ -155,6 +120,10 @@ class SettingsController extends Base\ActionController
         if ($results['hasNextPage'] == true) {
             $next = (int) $params['page'] + 1;
             $results['message'] .= '<br/>Next Page: ' . $next;
+        }
+
+        if (($results['imported'] + $results['exists']) == $results['totalRecords']) {
+            self::setFlash(__('Successfully Imported Courses.', ADMWPP_TEXT_DOMAIN));
         }
 
         echo json_encode($results);

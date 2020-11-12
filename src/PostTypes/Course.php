@@ -6,6 +6,7 @@ use ADM\WPPlugin\Oauth2;
 use ADM\WPPlugin\Settings;
 
 use ADM\WPPlugin\Taxonomies;
+use ADM\WPPlugin\Webhooks;
 
 use Administrate\PhpSdk\Course as SDKCourse;
 use Administrate\PhpSdk\GraphQL\Client as SDKClient;
@@ -98,6 +99,55 @@ if (!class_exists('Course')) {
 
         static $taxonomy = 'learning-category';
 
+        static $courseFields = array(
+            'id',
+            'legacyId',
+            'lifecycleState',
+            'code',
+            'title',
+            'introduction',
+            'image' => array(
+                'id',
+                'name'
+            ),
+            'imageGallery' => array(
+                'type' => 'edges',
+                'fields' => array('id', 'name')
+            ),
+            'learningCategories' => array(
+                'type' => 'edges',
+                'fields' => array(
+                    'id',
+                    'legacyId',
+                    'name',
+                    'description',
+                    'parentCategory' => array(
+                        'id',
+                        'legacyId',
+                        'name',
+                        'description'
+                    ),
+                ),
+            ),
+            'publicPrices' => array(
+                'type' => 'edges',
+                'fields' => array(
+                    'amount',
+                    'financialUnit' => array(
+                        'name',
+                        '... on Currency' => array('symbol')
+                    ),
+                    'region' => array(
+                        'code',
+                    ),
+                ),
+            ),
+            'customFieldValues' => array(
+                'definitionKey',
+                'value'
+            ),
+        );
+
         function __construct()
         {
             if (file_exists('../../../../../wp-load.php')) {
@@ -126,6 +176,10 @@ if (!class_exists('Course')) {
 
             //ADD taxonomies
             Taxonomies\LearningCategory::instance();
+
+            //ADD webhooks
+            $webhook = Webhooks\Webhook::instance();
+            $webhook->createSynchWebhooks();
 
             return self::$instance;
         }
@@ -539,24 +593,26 @@ if (!class_exists('Course')) {
             $contentType = "post_" . self::$slug;
             $transId = $sitepress->get_element_trid($postId, $contentType);
             if ($transId) {
-                $sitepress->set_element_language_details(
+                return (int) $sitepress->set_element_language_details(
                     $postId,
                     $contentType,
                     $transId,
                     strtolower($lang)
                 );
             }
+            return 0;
         }
 
         public static function setTermsLang($postId, $lang, $postTermIds)
         {
+            $transIds = array();
             if ($postTermIds) {
                 foreach ($postTermIds as $termid) {
                     global $sitepress;
                     $contentType = "tax_" . self::$taxonomy;
                     $transId = $sitepress->get_element_trid($termid, $contentType);
                     if ($transId) {
-                        $sitepress->set_element_language_details(
+                        $transIds[] = (int) $sitepress->set_element_language_details(
                             $termid,
                             $contentType,
                             $transId,
@@ -565,6 +621,7 @@ if (!class_exists('Course')) {
                     }
                 }
             }
+            return $transIds;
         }
 
         public static function setImage($postId, $imageTmsId)
@@ -664,55 +721,6 @@ if (!class_exists('Course')) {
 
             $SDKCourse = new SDKCourse($apiParams);
 
-            $courseFields = array(
-                'id',
-                'legacyId',
-                'lifecycleState',
-                'code',
-                'title',
-                'introduction',
-                'image' => array(
-                    'id',
-                    'name'
-                ),
-                'imageGallery' => array(
-                    'type' => 'edges',
-                    'fields' => array('id', 'name')
-                ),
-                'learningCategories' => array(
-                    'type' => 'edges',
-                    'fields' => array(
-                        'id',
-                        'legacyId',
-                        'name',
-                        'description',
-                        'parentCategory' => array(
-                            'id',
-                            'legacyId',
-                            'name',
-                            'description'
-                        ),
-                    ),
-                ),
-                'publicPrices' => array(
-                    'type' => 'edges',
-                    'fields' => array(
-                        'amount',
-                        'financialUnit' => array(
-                            'name',
-                            '... on Currency' => array('symbol')
-                        ),
-                        'region' => array(
-                            'code',
-                        ),
-                    ),
-                ),
-                'customFieldValues' => array(
-                    'definitionKey',
-                    'value'
-                ),
-            );
-
             $args = array(
                 'filters' => array(
                     array(
@@ -726,7 +734,7 @@ if (!class_exists('Course')) {
                     //     'value' => 'TESTSYNCHWP',
                     // )
                 ),
-                'fields' => $courseFields,
+                'fields' => self::$courseFields,
                 'paging' => array(
                     'page' => (int) $params['page'],
                     'perPage' => (int) $params['per_page']
@@ -876,9 +884,13 @@ if (!class_exists('Course')) {
                 }
             }
 
+            // Set post id in results
+            $results['postId'] = $postId;
+
             // Update Post Terms
             if ($postId && $learningCategories) {
                 $postTermIds = self::setTerms($postId, $learningCategories);
+                $results['terms'] = $postTermIds;
             }
 
             // Update Post Image
@@ -890,8 +902,8 @@ if (!class_exists('Course')) {
             if (is_plugin_active(ADMWPP_WPML_PATH) && !empty($postArgs['meta_input'][TMS_LANGUAGE_KEY])) {
                 $langCode = strtolower($postArgs['meta_input'][TMS_LANGUAGE_KEY]);
                 if (in_array($langCode, array_keys(icl_get_languages()))) {
-                    self::setLang($postId, $langCode);
-                    self::setTermsLang($postId, $langCode, $postTermIds);
+                    $results['transId'] = self::setLang($postId, $langCode);
+                    $results['termsTransId'] = self::setTermsLang($postId, $langCode, $postTermIds);
                 }
             }
 

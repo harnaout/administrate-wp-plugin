@@ -10,7 +10,7 @@ function admwppBlank($value)
 
 function admwppPresent($value)
 {
-    return !blank($value);
+    return !admwppBlank($value);
 }
 
 /**
