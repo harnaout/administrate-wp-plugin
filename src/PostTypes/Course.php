@@ -767,13 +767,16 @@ if (!class_exists('Course')) {
                 $tmsKey = $value['tmsKey'];
 
                 $tmsValue = '';
-                if (isset($node[$tmsKey])) {
-                    switch ($tmsKey) {
-                        case 'image':
+
+                switch ($tmsKey) {
+                    case 'image':
+                        if (isset($node[$tmsKey])) {
                             $tmsValue = $node[$tmsKey]['id'];
                             $imageTmsId = $tmsValue;
-                            break;
-                        case 'imageGallery':
+                        }
+                        break;
+                    case 'imageGallery':
+                        if (isset($node[$tmsKey])) {
                             $imageGallery = $node[$tmsKey]['edges'];
                             $imageGalleryString = array();
                             foreach ($imageGallery as $image) {
@@ -782,35 +785,45 @@ if (!class_exists('Course')) {
                                 }
                             }
                             $tmsValue = implode('|', $imageGalleryString);
-                            break;
-                        case 'learningCategories':
+                        }
+                        break;
+                    case 'learningCategories':
+                        if (isset($node[$tmsKey])) {
                             $learningCategories = $node[$tmsKey]['edges'];
                             $learningCategoriesIds = array();
                             foreach ($learningCategories as $category) {
                                 $learningCategoriesIds[] = $category['node']['id'];
                             }
                             $tmsValue = implode('|', $learningCategoriesIds);
-                            break;
-                        case 'publicPrices':
+                        }
+                        break;
+                    case 'publicPrices':
+                        if (isset($node[$tmsKey])) {
                             $publicPrices = $node[$tmsKey]['edges'];
                             $pricesAmounts = array();
                             foreach ($publicPrices as $prices) {
                                 $pricesAmounts[] = $prices['node']['amount'];
                             }
                             $tmsValue = implode('|', $pricesAmounts);
-                            break;
-                        case 'financialUnit':
+                        }
+                        break;
+                    case 'financialUnit':
+                        if (isset($node['publicPrices'])) {
                             $publicPrices = $node['publicPrices']['edges'];
                             $pricesCurencies = array();
                             foreach ($publicPrices as $prices) {
-                                $pricesCurencies[] = $prices['node']['financialUnit']['name'] . "|" . $prices['node']['financialUnit']['symbol'];
+                                if (isset($prices['node']['financialUnit']['name']) &&
+                                    isset($prices['node']['financialUnit']['symbol'])) {
+                                    $pricesCurencies[] = $prices['node']['financialUnit']['name'] .
+                                    "|" . $prices['node']['financialUnit']['symbol'];
+                                }
                             }
                             $tmsValue = implode('|', $pricesCurencies);
-                            break;
-                        default:
-                            $tmsValue = $node[$tmsKey];
-                            break;
-                    }
+                        }
+                        break;
+                    default:
+                        $tmsValue = $node[$tmsKey];
+                        break;
                 }
                 $postMetas[$key] = $tmsValue;
             }
