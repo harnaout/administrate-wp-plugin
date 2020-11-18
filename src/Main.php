@@ -21,7 +21,6 @@ if (!class_exists('Main')) {
         protected static $instance;
         protected $settings;
         protected $activation;
-        protected $adminstrate_settings;
         protected $flash;
 
         //PostTypes
@@ -74,9 +73,6 @@ if (!class_exists('Main')) {
 
                 // Add all actions
                 $this->addActions();
-
-                // Setup the Administrate admin menu and pages
-                //$this->adminstrate_settings = AdminstrateSettings::instance();
 
                 // Add Custom Post Types
                 $this->course = PostTypes\Course::instance();
@@ -157,12 +153,24 @@ if (!class_exists('Main')) {
 
         public function restApiInit()
         {
+            // Activation Callback route
             register_rest_route(
                 'admwpp',
                 'oauth/callback',
                 array(
                     'methods' => 'GET',
                     'callback' => array('ADM\WPPlugin\Controllers\ActivationController', 'callback'),
+                    'permission_callback' => '__return_true',
+                )
+            );
+
+            // Webhooks Callback route
+            register_rest_route(
+                'admwpp',
+                'webhook/callback',
+                array(
+                    'methods' => 'POST',
+                    'callback' => array('ADM\WPPlugin\Controllers\WebhookController', 'callback'),
                     'permission_callback' => '__return_true',
                 )
             );

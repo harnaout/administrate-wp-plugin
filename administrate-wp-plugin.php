@@ -71,6 +71,10 @@ if (!defined('ADMWPP_DEVELOPMENT')) {
     define('ADMWPP_DEVELOPMENT', false);
 }
 
+if (!defined('ADMWPP_SITE_URL')) {
+    define('ADMWPP_SITE_URL', get_site_url());
+}
+
 // Load globals, helpers, Autoloader
 require_once(ADMWPP_DIR . ADMWPP_SRC . 'globals.php');
 require_once(ADMWPP_DIR . ADMWPP_SRC . 'helpers.php');

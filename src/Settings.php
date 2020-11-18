@@ -60,6 +60,7 @@ if (!class_exists('Settings')) {
                 $className = __CLASS__;
                 self::$instance = new $className;
             }
+            self::$instance->loadSettings();
             return self::$instance;
         }
 
@@ -299,6 +300,8 @@ if (!class_exists('Settings')) {
             Settings::createAdvancedSynchCoursesSection($settings_index);
             Settings::seperatorSection($settings_index, 'courses');
             Settings::createAdvancedSynchCategoriesSection($settings_index);
+            Settings::seperatorSection($settings_index, 'categories');
+            Settings::createAdvancedWebhookSection($settings_index);
         }
 
         // --------------------------------------------------------------------
@@ -465,7 +468,6 @@ if (!class_exists('Settings')) {
             //     "admwpp_" . $settings_key . "_settings"
             // );
         }
-        /** END ADVANCED HEADER SECTION */
 
         protected function createAdvancedSynchCategoriesSection($settings_key)
         {
@@ -476,6 +478,45 @@ if (!class_exists('Settings')) {
                 "admwpp_" . $settings_key . "_settings"
             );
         }
+
+        protected function createAdvancedWebhookSection($settings_key)
+        {
+            add_settings_section(
+                'admwpp_advanced_webhook_action',
+                "<span class='admwpp-section-title'>" . __('Setup Webhooks for Synchronization', ADMWPP_TEXT_DOMAIN) . "</span>",
+                array($this, 'synchWebHookSection'),
+                "admwpp_" . $settings_key . "_settings"
+            );
+
+            add_settings_field(
+                'admwpp-course-webhook-id',
+                __('Course Update Webhook Type ID:', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldInput'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_advanced_webhook_action',
+                array(
+                    'field'        => 'courses_webhook_type_id',
+                    'settings_key' => $settings_key,
+                    'placeholder'  => 'WEBHOOK ID',
+                    'info'         => '<i>' . __('You must enter a valid Administrate WEBHOOK ID.', ADMWPP_TEXT_DOMAIN) . '</i>',
+                )
+            );
+
+            // add_settings_field(
+            //     'admwpp-event-webhook-id',
+            //     __('Event Update Webhook Type ID:', ADMWPP_TEXT_DOMAIN),
+            //     array($this, 'settingsFieldInput'),
+            //     "admwpp_" . $settings_key . "_settings",
+            //     'admwpp_advanced_webhook_action',
+            //     array(
+            //         'field'        => 'events_webhook_type_id',
+            //         'settings_key' => $settings_key,
+            //         'placeholder'  => 'WEBHOOK ID',
+            //         'info'         => '<i>' . __('You must enter a valid Administrate WEBHOOK ID.', ADMWPP_TEXT_DOMAIN) . '</i>',
+            //     )
+            // );
+        }
+        /** END ADVANCED Synch SECTION */
 
         /** UNISTALL SECTION */
         protected function createUninstallSection($settings_key)
@@ -569,6 +610,13 @@ if (!class_exists('Settings')) {
             echo "<i class='fa fa-refresh fa-spin admwpp_spinner'></i>";
             echo "</a>";
             echo "<div class='settings-section-info' id='admwpp-import-info-categories'></div>";
+        }
+
+        public function synchWebHookSection()
+        {
+            echo "<div class='settings-section-info'>";
+            echo __('Create Webhooks.', ADMWPP_TEXT_DOMAIN);
+            echo "</div>";
         }
 
         public function synchCoursesSection()
