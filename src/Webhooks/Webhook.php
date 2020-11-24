@@ -51,7 +51,9 @@ if (! class_exists('Webhook')) {
                     && !empty($settings['courses_webhook_type_id'])
                 ) {
                     //Check if saved already before creating a webhook
-                    if (!isset($settings['courses_webhook_id'])) {
+                    if (!isset($settings['courses_webhook_id'])
+                        || empty($settings['courses_webhook_id'])
+                    ) {
                         self::createSynchWebhook($settings['courses_webhook_type_id']);
                     }
                 }
