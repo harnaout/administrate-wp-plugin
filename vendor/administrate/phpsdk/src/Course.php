@@ -262,7 +262,7 @@ class Course
 
         $builder = (new QueryBuilder($courses))
         ->setVariable('order', $coursesOrders, false)
-         ->setArgument('order', '$order')
+        ->setArgument('order', '$order')
         ->setArgument('first', $first)
         ->setArgument('offset', $offset)
         ->setVariable('filters', "[$coursesFilters]", true)

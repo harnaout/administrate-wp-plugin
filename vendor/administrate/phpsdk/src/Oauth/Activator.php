@@ -145,7 +145,6 @@ if (!class_exists('Activator')) {
             $clientId = $this->params['clientId'];
             $clientSecret = $this->params['clientSecret'];
             $oauthServer = $this->params['oauthServer'];
-            $instance = $this->params['instance'];
 
             $grantType = 'refresh_token';
 
