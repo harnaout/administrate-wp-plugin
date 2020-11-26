@@ -77,15 +77,14 @@ if (!class_exists('Activate')) {
          * @return void
          *
          * */
-        public function setParams()
+        public function setParams($weblink = false)
         {
             global $ADMWPP_APP_ENVIRONMENT;
-            $env = ADMWPP_ENV;
 
-            if (!empty($env)) {
-                self::$params = $ADMWPP_APP_ENVIRONMENT[$env];
-            } else {
-                self::$params = $ADMWPP_APP_ENVIRONMENT['sandbox'];
+            self::$params = $ADMWPP_APP_ENVIRONMENT[ADMWPP_ENV];
+
+            if ($weblink) {
+                self::$params = $ADMWPP_APP_ENVIRONMENT[ADMWPP_ENV]['weblink'];
             }
 
             self::setRedirectUri();
@@ -232,6 +231,38 @@ if (!class_exists('Activate')) {
             }
         }
 
+        /**
+        * Function to get a Save Portal Token.
+        */
+        protected function savePortalToken($response)
+        {
+            // If the response gave us an error, return.
+            if ($response['status'] != "success") {
+                Settings::instance()->setSettingsOption(
+                    'account',
+                    'portal_token_status',
+                    self::TOKEN_STATUS_ERROR
+                );
+                return false;
+            }
+
+            if ($response['status'] === "success") {
+                $body = $response['body'];
+
+                $portal_token = $body->portal_token;
+                $created_at = time();
+
+                Settings::instance()->setSettingsOption('account', 'portal_token', $portal_token);
+                Settings::instance()->setSettingsOption('account', 'portal_token_created_at', $created_at);
+
+                Settings::instance()->setSettingsOption(
+                    'account',
+                    'portal_token_status',
+                    self::TOKEN_STATUS_NEW
+                );
+                return true;
+            }
+        }
 
         /**
          * Function to handle authorize callback.
@@ -254,6 +285,13 @@ if (!class_exists('Activate')) {
 
                 if (! $this->fetchAccessToken($code)) {
                     return false;
+                }
+
+                $portal = Settings::instance()->getSettingsOption('account', 'portal');
+                if ($portal) {
+                    if (! $this->fetchWeblinkAccessToken($portal)) {
+                        return false;
+                    }
                 }
 
                 return true;
@@ -304,6 +342,21 @@ if (!class_exists('Activate')) {
             $response = self::$activationObj->handleAuthorizeCallback(array('code' => $code));
 
             return $this->saveAccessToken($response);
+        }
+
+        /**
+        * Function to get a Weblink Access token.
+        */
+        protected function fetchWeblinkAccessToken($portal)
+        {
+            self::setParams('weblink');
+            $params = self::$params;
+            $params['portal'] = $portal;
+
+            self::$activationObj->setParams($params);
+            $response = self::$activationObj->getWeblinkPortalToken();
+
+            return $this->savePortalToken($response);
         }
 
         /**
