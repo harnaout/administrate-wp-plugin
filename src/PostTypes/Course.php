@@ -133,6 +133,10 @@ if (!class_exists('Course')) {
                 'type' => 'edges',
                 'fields' => array(
                     'amount',
+                    'priceLevel' => array(
+                        'id',
+                        'name'
+                    ),
                     'financialUnit' => array(
                         'name',
                         '... on Currency' => array('symbol')
@@ -812,7 +816,9 @@ if (!class_exists('Course')) {
                             $publicPrices = $node[$tmsKey]['edges'];
                             $pricesAmounts = array();
                             foreach ($publicPrices as $prices) {
-                                $pricesAmounts[] = $prices['node']['amount'];
+                                if ('Normal' === $prices['node']['priceLevel']['name']) {
+                                    $pricesAmounts[] = $prices['node']['amount'];
+                                }
                             }
                             $tmsValue = implode('|', $pricesAmounts);
                         }
@@ -822,10 +828,12 @@ if (!class_exists('Course')) {
                             $publicPrices = $node['publicPrices']['edges'];
                             $pricesCurencies = array();
                             foreach ($publicPrices as $prices) {
-                                if (isset($prices['node']['financialUnit']['name']) &&
-                                    isset($prices['node']['financialUnit']['symbol'])) {
-                                    $pricesCurencies[] = $prices['node']['financialUnit']['name'] .
-                                    "|" . $prices['node']['financialUnit']['symbol'];
+                                if ('Normal' === $prices['node']['priceLevel']['name']) {
+                                    if (isset($prices['node']['financialUnit']['name']) &&
+                                        isset($prices['node']['financialUnit']['symbol'])) {
+                                        $pricesCurencies[] = $prices['node']['financialUnit']['name'] .
+                                        "|" . $prices['node']['financialUnit']['symbol'];
+                                    }
                                 }
                             }
                             $tmsValue = implode('|', $pricesCurencies);
