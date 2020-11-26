@@ -240,6 +240,7 @@ if (!class_exists('Settings')) {
 
             Settings::createAccountSection($settings_index);
             Settings::seperatorSection($settings_index, 'account');
+            Settings::createAccountWeblinkSection($settings_index);
         }
 
         // --------------------------------------------------------------------
@@ -339,7 +340,7 @@ if (!class_exists('Settings')) {
 
             add_settings_section(
                 'admwpp_account_section',
-                '',
+                "<span class='admwpp-section-title'>" . __('Connect WP With Core APIs', ADMWPP_TEXT_DOMAIN) . "</span>",
                 array($this, 'accountSettingsSection'),
                 "admwpp_" . $settings_key . "_settings"
             );
@@ -386,6 +387,31 @@ if (!class_exists('Settings')) {
                 )
             );
         }
+
+        protected function createAccountWeblinkSection($settings_key)
+        {
+            add_settings_section(
+                'admwpp_account_weblink_section',
+                "<span class='admwpp-section-title'>" . __('Connect WP With Weblink APIs', ADMWPP_TEXT_DOMAIN) . "</span>",
+                array(),
+                "admwpp_" . $settings_key . "_settings"
+            );
+
+            add_settings_field(
+                'admwpp-portal',
+                __('Administrate Portal:', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldInput'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_account_weblink_section',
+                array(
+                    'field'        => 'portal',
+                    'settings_key' => $settings_key,
+                    'placeholder'  => 'Portal',
+                    'info'         => '<i>' . __('Portal Url to connect to', ADMWPP_TEXT_DOMAIN) . '</i>',
+                )
+            );
+        }
+
         /** END ACCOUNT SECTION */
 
         /** LANGUAGE SECTION */
