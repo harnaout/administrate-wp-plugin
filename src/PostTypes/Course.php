@@ -816,8 +816,14 @@ if (!class_exists('Course')) {
                             $publicPrices = $node[$tmsKey]['edges'];
                             $pricesAmounts = array();
                             foreach ($publicPrices as $prices) {
-                                if ('Normal' === $prices['node']['priceLevel']['name']) {
-                                    $pricesAmounts[] = $prices['node']['amount'];
+                                if ('Normal' === $prices['node']['priceLevel']['name'] ||
+                                    TMS_CUSTOM_PRICE_LEVEL_NAME === $prices['node']['priceLevel']['name']) {
+                                    $currencySymbol = '';
+                                    if (isset($prices['node']['financialUnit']) &&
+                                        isset($prices['node']['financialUnit']['symbol'])) {
+                                            $currencySymbol = $prices['node']['financialUnit']['symbol'] . " ";
+                                    }
+                                    $pricesAmounts[] = $currencySymbol . $prices['node']['amount'];
                                 }
                             }
                             $tmsValue = implode('|', $pricesAmounts);
@@ -828,7 +834,8 @@ if (!class_exists('Course')) {
                             $publicPrices = $node['publicPrices']['edges'];
                             $pricesCurencies = array();
                             foreach ($publicPrices as $prices) {
-                                if ('Normal' === $prices['node']['priceLevel']['name']) {
+                                if ('Normal' === $prices['node']['priceLevel']['name'] ||
+                                    TMS_CUSTOM_PRICE_LEVEL_NAME === $prices['node']['priceLevel']['name']) {
                                     if (isset($prices['node']['financialUnit']['name']) &&
                                         isset($prices['node']['financialUnit']['symbol'])) {
                                         $pricesCurencies[] = $prices['node']['financialUnit']['name'] .
