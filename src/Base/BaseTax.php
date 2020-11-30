@@ -24,6 +24,7 @@ abstract class BaseTax
     static $public = true;
     static $show_ui = true;
     static $show_in_nav_menus = true;
+    static $show_in_rest = true;
     static $default_terms = array();
 
     function __construct()
@@ -55,6 +56,7 @@ abstract class BaseTax
         $show_ui = $class::$show_ui;
         $default_terms = $class::$default_terms;
         $show_in_nav_menus = $class::$show_in_nav_menus;
+        $show_in_rest = $class::$show_in_rest;
 
         $labels = array(
             'name' => _x($name, 'Taxonomy General Name', ADMWPP_TEXT_DOMAIN),
@@ -87,6 +89,7 @@ abstract class BaseTax
             'show_tagcloud' => true,
             'show_in_menu' => true,
             'show_in_nav_menus' => $show_in_nav_menus,
+            'show_in_rest' => $show_in_rest,
             'show_admin_column' => true,
             'query_var' => $system_name,
             'rewrite' => $rewrite,
