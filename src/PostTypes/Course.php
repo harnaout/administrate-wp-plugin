@@ -913,6 +913,14 @@ if (!class_exists('Course')) {
                 $results['image'] = self::setImage($postId, $imageTmsId);
             }
 
+            if ($postArgs['meta_input'][TMS_STICKY_POST_KEY] === 'true') {
+                // Add post to sticky posts
+                stick_post($postId);
+            } else {
+                // Remove from sticky posts
+                unstick_post($postId);
+            }
+
             // Set course language if WPML exists
             if (is_plugin_active(ADMWPP_WPML_PATH) && !empty($postArgs['meta_input'][TMS_LANGUAGE_KEY])) {
                 $langCode = strtolower($postArgs['meta_input'][TMS_LANGUAGE_KEY]);
