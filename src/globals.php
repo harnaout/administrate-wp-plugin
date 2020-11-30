@@ -41,9 +41,9 @@ $ADMWPP_APP_ENVIRONMENT = array(
 // --------------------------------------------------------------------
   global $ADMWPP_EXCLUDED_POST_TYPES;
   $ADMWPP_EXCLUDED_POST_TYPES = array(
-  'attachment',
-  'revision',
-  'nav_menu_item',
+    'attachment',
+    'revision',
+    'nav_menu_item',
   );
 
 // --------------------------------------------------------------------
@@ -51,19 +51,20 @@ $ADMWPP_APP_ENVIRONMENT = array(
 // --------------------------------------------------------------------
   global $ADMWPP_LANG;
   $ADMWPP_LANG = array(
-  'en_US'  => 'English',
-  'fr_FR'  => 'French',
+    'en_US'  => 'English',
+    'fr_FR'  => 'French',
   );
 
   define('TMS_SHORT_DESCRIPTION_KEY', 'admwpp_tms_short_descripton');
   define('TMS_LANGUAGE_KEY', 'admwpp_tms_language');
+  define('TMS_CUSTOM_PRICE_LEVEL_NAME', '*KP - 10 kinderen');
 
   global $TMS_COURSE_CONTENT;
   $TMS_COURSE_CONTENT = array(
-  'admwpp_tms_general_info',
-  'admwpp_tms_usps_info',
-  'admwpp_tms_price_info',
-  'admwpp_tms_practical_info',
+    'admwpp_tms_general_info',
+    'admwpp_tms_usps_info',
+    'admwpp_tms_price_info',
+    'admwpp_tms_practical_info',
   );
 
   global $TMS_CUSTOM_FILEDS;
