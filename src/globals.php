@@ -139,4 +139,9 @@ $TMS_CUSTOM_FILEDS = array(
       'label' => 'Practical Info',
       'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOmNvdXJzZS10ZXh0NQ==',
   ),
+  'admwpp_tms_show_in_catalog' => array(
+      'type' => 'text',
+      'label' => 'Show in catalog',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE2NA==',
+  ),
 );
