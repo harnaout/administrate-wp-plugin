@@ -34,41 +34,41 @@ $ADMWPP_APP_ENVIRONMENT = array(
       'apiUri' => 'https://weblink-api.stagingadministratehq.com/graphql',
     )
   )
-  );
+);
 
 // --------------------------------------------------------------------
 // Excluded Post types From check-boxes list on settings page
 // --------------------------------------------------------------------
-  global $ADMWPP_EXCLUDED_POST_TYPES;
-  $ADMWPP_EXCLUDED_POST_TYPES = array(
-    'attachment',
-    'revision',
-    'nav_menu_item',
-  );
+global $ADMWPP_EXCLUDED_POST_TYPES;
+$ADMWPP_EXCLUDED_POST_TYPES = array(
+  'attachment',
+  'revision',
+  'nav_menu_item',
+);
 
 // --------------------------------------------------------------------
 // Define Global variables for General Settings page
 // --------------------------------------------------------------------
-  global $ADMWPP_LANG;
-  $ADMWPP_LANG = array(
-    'en_US'  => 'English',
-    'fr_FR'  => 'French',
-  );
+global $ADMWPP_LANG;
+$ADMWPP_LANG = array(
+  'en_US'  => 'English',
+  'fr_FR'  => 'French',
+);
 
-  define('TMS_SHORT_DESCRIPTION_KEY', 'admwpp_tms_short_descripton');
-  define('TMS_LANGUAGE_KEY', 'admwpp_tms_language');
-  define('TMS_CUSTOM_PRICE_LEVEL_NAME', '*KP - 10 kinderen');
+define('TMS_SHORT_DESCRIPTION_KEY', 'admwpp_tms_short_descripton');
+define('TMS_LANGUAGE_KEY', 'admwpp_tms_language');
+define('TMS_CUSTOM_PRICE_LEVEL_NAME', '*KP - 10 kinderen');
 
-  global $TMS_COURSE_CONTENT;
-  $TMS_COURSE_CONTENT = array(
-    'admwpp_tms_general_info',
-    'admwpp_tms_usps_info',
-    'admwpp_tms_price_info',
-    'admwpp_tms_practical_info',
-  );
+global $TMS_COURSE_CONTENT;
+$TMS_COURSE_CONTENT = array(
+  'admwpp_tms_general_info',
+  'admwpp_tms_usps_info',
+  'admwpp_tms_price_info',
+  'admwpp_tms_practical_info',
+);
 
-  global $TMS_CUSTOM_FILEDS;
-  $TMS_CUSTOM_FILEDS = array(
+global $TMS_CUSTOM_FILEDS;
+$TMS_CUSTOM_FILEDS = array(
   'admwpp_tms_part_of_day' => array(
       'type' => 'text',
       'label' => 'Part of the Day',
@@ -139,4 +139,4 @@ $ADMWPP_APP_ENVIRONMENT = array(
       'label' => 'Practical Info',
       'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOmNvdXJzZS10ZXh0NQ==',
   ),
-  );
+);
