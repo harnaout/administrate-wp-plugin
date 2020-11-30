@@ -25,6 +25,7 @@ if (! class_exists('LearningCategory')) {
         static $system_slug     = 'course/learning-category';
         static $public          = false;
         static $show_in_nav_menus = false;
+        static $show_in_rest = true;
 
         static $instance;
 
