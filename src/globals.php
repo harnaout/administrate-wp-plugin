@@ -2,7 +2,7 @@
 // --------------------------------------------------------------------
 // Define Global variables For Search
 // --------------------------------------------------------------------
-define('ADMWPP_SEARCH_PER_PAGE', 12);
+define('ADMWPP_SEARCH_PER_PAGE', 10);
 
 // --------------------------------------------------------------------
 // Define Global variables add a selection Block
@@ -21,7 +21,7 @@ $ADMWPP_APP_ENVIRONMENT = array(
     'apiUri' => 'https://api.administrateapp.com/graphql',
     'weblink' => array(
       'oauthServer' => 'https://portal-auth.administratehq.com',
-      'apiUri' => 'https://weblink-api.administratehq.com/graphql',
+      'apiUri' => 'https://weblink-api.administratehq.com/graphql/',
     )
   ),
   'staging' => array(
@@ -31,7 +31,7 @@ $ADMWPP_APP_ENVIRONMENT = array(
     'apiUri' => 'https://api.stagingadministratehq.com/graphql',
     'weblink' => array(
       'oauthServer' => 'https://portal-auth.stagingadministratehq.com',
-      'apiUri' => 'https://weblink-api.stagingadministratehq.com/graphql',
+      'apiUri' => 'https://weblink-api.stagingadministratehq.com/graphql/',
     )
   )
 );
@@ -99,7 +99,7 @@ $TMS_CUSTOM_FILEDS = array(
   'admwpp_tms_ticket_info' => array(
       'type' => 'text',
       'label' => 'Ticket Info',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE2MA==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE2OQ==',
   ),
   'admwpp_tms_seat_type' => array(
       'type' => 'text',
@@ -109,7 +109,7 @@ $TMS_CUSTOM_FILEDS = array(
   'admwpp_tms_label' => array(
       'type' => 'text',
       'label' => 'Label',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjEyOA==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE2NQ==',
   ),
   'admwpp_tms_subtitle' => array(
       'type' => 'text',

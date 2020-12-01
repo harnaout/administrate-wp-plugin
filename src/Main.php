@@ -1,7 +1,8 @@
 <?php
 namespace ADM\WPPlugin;
 
-use ADM\WPPlugin\PostTypes as PostTypes;
+use ADM\WPPlugin\Api;
+use ADM\WPPlugin\PostTypes;
 
 /**
  * Construct the main plugin class "Main"
@@ -25,6 +26,8 @@ if (!class_exists('Main')) {
 
         //PostTypes
         protected $course;
+        //Search
+        protected $search;
 
         /**
          * Initializes plugin variables and sets up WordPress hooks/actions
@@ -76,6 +79,9 @@ if (!class_exists('Main')) {
 
                 // Add Custom Post Types
                 $this->course = PostTypes\Course::instance();
+
+                // Add Search
+                $this->search = Api\Search::instance();
 
                 // Add all filters
                 $this->addFilters();
@@ -137,7 +143,7 @@ if (!class_exists('Main')) {
 
             add_action('admin_init', array($this, 'adminInit'));
 
-            add_action('wp_enqueue_scripts', array($this, 'frontScripts'));
+            //add_action('wp_enqueue_scripts', array($this, 'frontScripts'));
 
             add_action('admin_enqueue_scripts', array($this, 'adminScripts'));
 
@@ -398,7 +404,7 @@ if (!class_exists('Main')) {
             wp_localize_script('adminstrate', 'admwpp_locale', get_locale());
 
             wp_localize_script('adminstrate', 'admwpp_base_url', ADMWPP_URL);
-            wp_localize_script('adminstrate', 'admwpp_oute_url', ADMWPP_URL_ROUTES);
+            wp_localize_script('adminstrate', 'admwpp_route_url', ADMWPP_URL_ROUTES);
         }
 
         /**

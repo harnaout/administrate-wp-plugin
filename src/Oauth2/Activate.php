@@ -122,8 +122,15 @@ if (!class_exists('Activate')) {
          * @return $authorize_token, array, the authorization Token Array.
          *
          * */
-        public function getAuthorizeToken()
+        public function getAuthorizeToken($weblink = false)
         {
+            if ($weblink) {
+                $accessToken = Settings::instance()->getSettingsOption('account', 'portal_token');
+
+                //TODO: $expiryStatus = $this->accessTokenExpired();
+                return $accessToken;
+            }
+
             $accessToken = Settings::instance()->getSettingsOption('account', 'access_token');
             $tokenType   = Settings::instance()->getSettingsOption('account', 'token_type');
 
@@ -349,7 +356,7 @@ if (!class_exists('Activate')) {
         */
         protected function fetchWeblinkAccessToken($portal)
         {
-            self::setParams('weblink');
+            self::setParams(true);
             $params = self::$params;
             $params['portal'] = $portal;
 
