@@ -57,7 +57,9 @@ $ADMWPP_LANG = array(
 
 define('TMS_SHORT_DESCRIPTION_KEY', 'admwpp_tms_short_descripton');
 define('TMS_LANGUAGE_KEY', 'admwpp_tms_language');
+define('TMS_STICKY_POST_KEY', 'admwpp_tms_sticky_in_catalog');
 define('TMS_CUSTOM_PRICE_LEVEL_NAME', '*KP - 10 kinderen');
+
 
 global $TMS_COURSE_CONTENT;
 $TMS_COURSE_CONTENT = array(
@@ -143,5 +145,10 @@ $TMS_CUSTOM_FILEDS = array(
       'type' => 'text',
       'label' => 'Show in catalog',
       'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE2NA==',
+  ),
+  'admwpp_tms_sticky_in_catalog' => array(
+      'type' => 'text',
+      'label' => 'Sticky in catalog',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE2Mw==',
   ),
 );
