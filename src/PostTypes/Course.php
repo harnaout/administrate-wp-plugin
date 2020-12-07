@@ -47,51 +47,61 @@ if (!class_exists('Course')) {
                 'type' => 'text',
                 'label' => 'Type',
                 'tmsKey' => '',
+                'showOnFront' => false,
             ),
             'admwpp_tms_id' => array(
                 'type' => 'text',
                 'label' => 'ID',
                 'tmsKey' => 'id',
+                'showOnFront' => false,
             ),
             'admwpp_tms_legacy_id' => array(
                 'type' => 'text',
                 'label' => 'LegacyID',
                 'tmsKey' => 'legacyId',
+                'showOnFront' => false,
             ),
             'admwpp_tms_code' => array(
                 'type' => 'text',
                 'label' => 'Code',
                 'tmsKey' => 'code',
+                'showOnFront' => true,
             ),
             'admwpp_tms_image_id' => array(
                 'type' => 'text',
                 'label' => 'Image ID',
                 'tmsKey' => 'image',
+                'showOnFront' => false,
             ),
             'admwpp_tms_gallery' => array(
                 'type' => 'text',
                 'label' => 'Image Gallery',
                 'tmsKey' => 'imageGallery',
+                'showOnFront' => true,
             ),
             'admwpp_tms_life_cycle_state' => array(
                 'type' => 'text',
                 'label' => 'lifecycleState',
                 'tmsKey' => 'lifecycleState',
+                'showOnFront' => false,
             ),
             'admwpp_tms_learning_categories' => array(
                 'type' => 'text',
                 'label' => 'learningCategories',
                 'tmsKey' => 'learningCategories',
+                'showOnFront' => false,
             ),
             'admwpp_tms_price' => array(
                 'type' => 'text',
-                'label' => 'Price (Normal)',
+                'label' => 'Price',
                 'tmsKey' => 'publicPrices',
+                'showOnFront' => true,
             ),
             'admwpp_tms_currency' => array(
                 'type' => 'text',
                 'label' => 'Currency',
                 'tmsKey' => 'financialUnit',
+                'showOnFront' => false,
             ),
         );
 
@@ -218,6 +228,14 @@ if (!class_exists('Course')) {
                 10,
                 1
             );
+
+            // Custom Content
+            add_filter(
+                'the_content',
+                array($this, 'customContent'),
+                10,
+                1
+            );
         }
 
         public static function getSlug()
@@ -229,6 +247,26 @@ if (!class_exists('Course')) {
         public static function getTitle($id)
         {
             return get_the_title($id);
+        }
+
+        public static function customContent($content)
+        {
+            global $post_type;
+            if ($post_type !== self::getSlug() && !is_single()) :
+                return $content;
+            endif;
+            
+            ob_start();
+            include(ADMWPP_TEMPLATES_DIR . 'course/categories.php');
+            $content = ob_get_contents() . $content;
+            ob_end_clean();
+
+            ob_start();
+            include(ADMWPP_TEMPLATES_DIR . 'course/information.php');
+            $content .= ob_get_contents();
+            ob_end_clean();
+            
+            return $content;
         }
 
         /**

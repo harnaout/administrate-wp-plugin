@@ -19,6 +19,18 @@ gulp.task('sass-min', () => {
    .pipe(gulp.dest('./assets/css/'));
 });
 
+gulp.task('admwpp-sass-min', () => {
+    return gulp.src('./assets/sass/admwpp.scss')
+    .pipe(sass({
+        errorLogToConsole: true,
+        outputStyle: 'compressed'
+    }).on('error', console.error.bind(console)))
+    .pipe(rename({
+         suffix: '.min'
+     }))
+    .pipe(gulp.dest('./assets/css/'));
+ });
+
 gulp.task('sass', () => {
     return gulp.src('./assets/sass/admin.scss')
     .pipe(sass({
@@ -27,8 +39,16 @@ gulp.task('sass', () => {
     .pipe(gulp.dest('./assets/css/'));
  });
 
+ gulp.task('admwpp-sass', () => {
+    return gulp.src('./assets/sass/admwpp.scss')
+    .pipe(sass({
+        errorLogToConsole: true
+    }).on('error', console.error.bind(console)))
+    .pipe(gulp.dest('./assets/css/'));
+ });
+
 gulp.task('sass:watch', () => {
-    gulp.watch('./assets/sass/**/*.scss', gulp.series('sass', 'sass-min'));
+    gulp.watch('./assets/sass/**/*.scss', gulp.series('sass', 'sass-min', 'admwpp-sass', 'admwpp-sass-min'));
 });
 
 gulp.task('js:watch', () => {

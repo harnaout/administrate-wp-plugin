@@ -23,8 +23,8 @@ if (! class_exists('LearningCategory')) {
         static $name_plural     = 'Learning Categories';
         static $system_name     = 'learning-category';
         static $system_slug     = 'course/learning-category';
-        static $public          = false;
-        static $show_in_nav_menus = false;
+        static $public          = true;
+        static $show_in_nav_menus = true;
         static $show_in_rest = true;
 
         static $instance;
