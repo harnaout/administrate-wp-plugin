@@ -847,7 +847,9 @@ if (!class_exists('Course')) {
                         }
                         break;
                     default:
-                        $tmsValue = $node[$tmsKey];
+                        if (isset($node[$tmsKey])) {
+                            $tmsValue = $node[$tmsKey];
+                        }
                         break;
                 }
                 $postMetas[$key] = $tmsValue;
@@ -864,7 +866,11 @@ if (!class_exists('Course')) {
             if (!empty($TMS_CUSTOM_FILEDS) && $customFieldValues) {
                 foreach ($TMS_CUSTOM_FILEDS as $key => $value) {
                     $tmsKey = $value['tmsKey'];
-                    $postMetas[$key] = $customFields[$tmsKey];
+                    if (isset($customFields[$tmsKey])) {
+                        $postMetas[$key] = $customFields[$tmsKey];
+                    } else {
+                        $postMetas[$key] = '';
+                    }
                 }
             }
 
