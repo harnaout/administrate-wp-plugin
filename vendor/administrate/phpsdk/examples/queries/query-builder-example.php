@@ -4,8 +4,8 @@ header('Content-Type: application/json');
 require_once '../config.php';
 require_once '../../vendor/autoload.php';
 
-use Administrate\PhpSdk\GraphQL\QueryBuilder as QueryBuilder;
-use Administrate\PhpSdk\GraphQL\Client;
+use Administrate\PhpSdk\GraphQl\QueryBuilder as QueryBuilder;
+use Administrate\PhpSdk\GraphQl\Client;
 
 $fields = array(
     'id',
@@ -36,7 +36,7 @@ foreach ($fields as $fieldKey) {
         }
         $node->selectField($subFieldsQuery);
     } else {
-       $node->selectField($fieldKey);
+        $node->selectField($fieldKey);
     }
 }
 

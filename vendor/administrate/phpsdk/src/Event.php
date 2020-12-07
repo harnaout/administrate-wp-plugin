@@ -3,7 +3,7 @@
 namespace Administrate\PhpSdk;
 
 use Administrate\PhpSdk\GraphQl\QueryBuilder as QueryBuilder;
-use Administrate\PhpSdk\GraphQL\Client;
+use Administrate\PhpSdk\GraphQl\Client;
 
 /**
  * Event
@@ -321,7 +321,7 @@ class Event
      *            'name'
      *      )
      *      'coreApi' => false, //boolean to specify if call is a weblink or a core API call.
-     *      'courseCode' => '&gjlVS...HJBgsyst'    
+     *      'courseCode' => '&gjlVS...HJBgsyst'
      * @return based on returnType
      */
     public function loadByCourseCode($args)
@@ -346,7 +346,7 @@ class Event
             $nodeOrder = 'EventFieldGraphOrder';
             $nodeFilters = 'EventFieldGraphFilter';
         }
-        
+
         if (isset($args['courseCode']) && $args['courseCode']) {
             $defaultArgs['courseCode'] = $args['courseCode'];
         }
