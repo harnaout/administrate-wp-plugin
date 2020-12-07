@@ -1,17 +1,17 @@
 [
     {
         "name": "administrate/phpsdk",
-        "version": "1.4.4",
-        "version_normalized": "1.4.4.0",
+        "version": "1.4.5",
+        "version_normalized": "1.4.5.0",
         "source": {
             "type": "git",
             "url": "https://github.com/Administrate/administrate-php-sdk.git",
-            "reference": "d3783e275ea9c2a677a0051a0fef5d329584f8ff"
+            "reference": "358e549d5f2d6d0b458bbe87e8d9f72118e4d2c2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/Administrate/administrate-php-sdk/zipball/d3783e275ea9c2a677a0051a0fef5d329584f8ff",
-            "reference": "d3783e275ea9c2a677a0051a0fef5d329584f8ff",
+            "url": "https://api.github.com/repos/Administrate/administrate-php-sdk/zipball/358e549d5f2d6d0b458bbe87e8d9f72118e4d2c2",
+            "reference": "358e549d5f2d6d0b458bbe87e8d9f72118e4d2c2",
             "shasum": ""
         },
         "require": {
@@ -20,7 +20,7 @@
         "require-dev": {
             "phpunit/phpunit": "^9"
         },
-        "time": "2020-12-07T13:29:29+00:00",
+        "time": "2020-12-07T15:12:15+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {

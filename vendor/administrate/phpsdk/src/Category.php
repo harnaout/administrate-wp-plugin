@@ -3,7 +3,7 @@
 namespace Administrate\PhpSdk;
 
 use Administrate\PhpSdk\GraphQl\QueryBuilder as QueryBuilder;
-use Administrate\PhpSdk\GraphQL\Client;
+use Administrate\PhpSdk\GraphQl\Client;
 use GraphQL\RawObject;
 
 /**
