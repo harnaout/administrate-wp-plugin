@@ -217,12 +217,12 @@ if (!class_exists('Main')) {
         {
             $content;
             ob_start();
-            include(ADMWPP_TEMPLATES_DIR . 'flash_message.phtml');
+            include(ADMWPP_TEMPLATES_DIR . 'flash-message.phtml');
             $content = ob_get_contents();
             ob_end_clean();
 
             ob_start();
-            include(ADMWPP_TEMPLATES_DIR . 'confirm_dialog.phtml');
+            include(ADMWPP_TEMPLATES_DIR . 'confirm-dialog.phtml');
             $content .= ob_get_contents();
             ob_end_clean();
 
