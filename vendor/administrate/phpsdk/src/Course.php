@@ -3,7 +3,7 @@
 namespace Administrate\PhpSdk;
 
 use Administrate\PhpSdk\GraphQl\QueryBuilder as QueryBuilder;
-use Administrate\PhpSdk\GraphQL\Client;
+use Administrate\PhpSdk\GraphQl\Client;
 
 /**
  * Course
@@ -262,7 +262,7 @@ class Course
 
         $builder = (new QueryBuilder($courses))
         ->setVariable('order', $coursesOrders, false)
-        ->setArgument('order', '$order')
+         ->setArgument('order', '$order')
         ->setArgument('first', $first)
         ->setArgument('offset', $offset)
         ->setVariable('filters', "[$coursesFilters]", true)

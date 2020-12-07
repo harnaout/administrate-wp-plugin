@@ -1,0 +1,6 @@
+{
+    "name": "administrate/php-sdk",
+    "require": {
+        "gmostafa/php-graphql-client": "^1.4"
+    }
+}

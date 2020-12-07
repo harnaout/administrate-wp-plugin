@@ -3,7 +3,7 @@
 namespace Administrate\PhpSdk;
 
 use Administrate\PhpSdk\GraphQl\QueryBuilder as QueryBuilder;
-use Administrate\PhpSdk\GraphQL\Client;
+use Administrate\PhpSdk\GraphQl\Client;
 use GraphQL\RawObject;
 
 /**
@@ -68,7 +68,7 @@ class LearningPath
      * Method to Get a single Learning Path  from ID.
      *
      * @param  string $id learning path ID
-     * @param  array $args associative array to pass return type and fields and sorting and paging 
+     * @param  array $args associative array to pass return type and fields and sorting and paging
      *
      * Example $args:
      * $args = array(
