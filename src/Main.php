@@ -341,11 +341,11 @@ if (!class_exists('Main')) {
         {
             // Check environment
             if (ADMWPP_DEVELOPMENT) {
-                $admwpp_css = ADMWPP_URL . 'assets/css/administrate.compiled.css';
-                $admwpp_js  = ADMWPP_URL . 'assets/js/administrate.compiled.js';
+                $admwpp_css = ADMWPP_URL . 'assets/css/admwpp.css';
+                $admwpp_js  = ADMWPP_URL . 'assets/js/admwpp.js';
             } else {
-                $admwpp_css = ADMWPP_URL . 'assets/css/administrate.min.css';
-                $admwpp_js  = ADMWPP_URL . 'assets/js/administrate.min.js';
+                $admwpp_css = ADMWPP_URL . 'assets/css/admwpp.min.css';
+                $admwpp_js  = ADMWPP_URL . 'assets/js/admwpp.min.js';
             }
 
             // ------------------------------------------------------
