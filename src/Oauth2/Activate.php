@@ -127,7 +127,23 @@ if (!class_exists('Activate')) {
             if ($weblink) {
                 $accessToken = Settings::instance()->getSettingsOption('account', 'portal_token');
 
-                //TODO: $expiryStatus = $this->accessTokenExpired();
+                $expiryStatus = $this->accessTokenExpired($weblink);
+
+                if ($expiryStatus === self::TOKEN_EXPIRY_STATUS_GRACE_PERIOD) {
+                    $tokentatus = Settings::instance()->getSettingsOption('account', 'portal_token_status');
+                    if ($tokentatus === self::TOKEN_STATUS_RENEWING) {
+                        return $accessToken;
+                    }
+                } elseif ($expiryStatus === self::TOKEN_EXPIRY_STATUS_VALID) {
+                    return $accessToken;
+                }
+
+                if (!$this->renewAuthorizeToken($weblink)) {
+                    return $accessToken;
+                }
+
+                $accessToken = Settings::instance()->getSettingsOption('account', 'portal_token');
+
                 return $accessToken;
             }
 
@@ -164,8 +180,21 @@ if (!class_exists('Activate')) {
          * Function To save new authorization token
          * It fetches the necessary app id and secret from the saved options.
          * */
-        public function renewAuthorizeToken()
+        public function renewAuthorizeToken($weblink = false)
         {
+            if ($weblink) {
+                Settings::instance()->setSettingsOption(
+                    'account',
+                    'posrtal_token_status',
+                    self::TOKEN_STATUS_RENEWING
+                );
+
+                $portal = Settings::instance()->getSettingsOption('account', 'portal');
+                if ($portal) {
+                    return $this->fetchWeblinkAccessToken($portal);
+                }
+            }
+
             Settings::instance()->setSettingsOption(
                 'account',
                 'token_status',
@@ -212,7 +241,7 @@ if (!class_exists('Activate')) {
                 $expires_in = $body->expires_in;
                 $scope = $body->scope;
                 $refresh_token = $body->refresh_token;
-                $created_at = time();
+                $created_at = current_time('timestamp');
 
                 Settings::instance()->setSettingsOption('account', 'access_token', $access_token);
                 Settings::instance()->setSettingsOption('account', 'token_type', $token_type);
@@ -257,10 +286,12 @@ if (!class_exists('Activate')) {
                 $body = $response['body'];
 
                 $portal_token = $body->portal_token;
-                $created_at = time();
+                $created_at = current_time('timestamp');
+                $expires_in = $created_at + (60*60);
 
                 Settings::instance()->setSettingsOption('account', 'portal_token', $portal_token);
                 Settings::instance()->setSettingsOption('account', 'portal_token_created_at', $created_at);
+                Settings::instance()->setSettingsOption('account', 'portal_token_expires_in', $expires_in);
 
                 Settings::instance()->setSettingsOption(
                     'account',
@@ -296,7 +327,7 @@ if (!class_exists('Activate')) {
 
                 $portal = Settings::instance()->getSettingsOption('account', 'portal');
                 if ($portal) {
-                    if (! $this->fetchWeblinkAccessToken($portal)) {
+                    if (!$this->fetchWeblinkAccessToken($portal)) {
                         return false;
                     }
                 }
@@ -310,21 +341,26 @@ if (!class_exists('Activate')) {
         /**
         * Function To Check if the existing access token has expired.
         */
-        public function accessTokenExpired()
+        public function accessTokenExpired($weblink = false)
         {
+            if ($weblink) {
+                $expires_in = (int) Settings::instance()->getSettingsOption('account', 'portal_token_expires_in');
+                $created_at = (int) Settings::instance()->getSettingsOption('account', 'portal_token_created_at');
+            }
+
             $expires_in = (int) Settings::instance()->getSettingsOption('account', 'expires_in');
             $created_at = (int) Settings::instance()->getSettingsOption('account', 'created_at');
 
             $grace_period   = (int) ($created_at + ($expires_in * self::TOKEN_GRACE_PERIOD));
             $expires_on     = $created_at + $expires_in;
 
-            $current_time = new \DateTime();
+            $current_time = current_time('timestamp');
 
-            if ($expires_on <= $current_time->getTimestamp()) {
+            if ($expires_on <= $current_time) {
                 return self::TOKEN_EXPIRY_STATUS_EXPIRED;
             }
 
-            if ($grace_period <= $current_time->getTimestamp()) {
+            if ($grace_period <= $current_time) {
                 return self::TOKEN_EXPIRY_STATUS_GRACE_PERIOD;
             }
 
