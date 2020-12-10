@@ -143,7 +143,7 @@ if (!class_exists('Main')) {
 
             add_action('admin_init', array($this, 'adminInit'));
 
-            //add_action('wp_enqueue_scripts', array($this, 'frontScripts'));
+            add_action('wp_enqueue_scripts', array($this, 'frontScripts'));
 
             add_action('admin_enqueue_scripts', array($this, 'adminScripts'));
 
@@ -365,10 +365,17 @@ if (!class_exists('Main')) {
             );
 
             wp_enqueue_style(
-                'font-awesome',
+                'admwpp-font-awesome',
                 '//netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css',
                 array(),
                 ADMWPP_VERSION
+            );
+
+            wp_enqueue_style(
+                'admwpp-selectric-css',
+                ADMWPP_URL . 'assets/css/plugins/selectric.min.css',
+                array(),
+                '1.13.0'
             );
 
             wp_enqueue_style(
@@ -390,12 +397,21 @@ if (!class_exists('Main')) {
                 true
             );
 
+            wp_register_script(
+                'admwpp-selectric-js',
+                ADMWPP_URL . 'assets/js/plugins/selectric.min.js',
+                '',
+                '1.13.0',
+                true
+            );
+
             wp_enqueue_script(
                 array(
                 'jquery',
                 'jquery-ui-core',
                 'jquery-ui-dialog',
                 'jquery-effects-core',
+                'admwpp-selectric-js',
                 'adminstrate',
                 )
             );

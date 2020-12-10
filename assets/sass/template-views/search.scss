@@ -1,0 +1,157 @@
+.adwmpp-search-wrapper {
+    width: 100%;
+    max-width: 320px;
+    position: relative;
+    margin-bottom: 15px;
+    .adwmpp-search-input {
+        border: 1px solid $borderColor;
+        font-size: 16px;
+        padding: 8px 12px;
+        line-height: 22px;
+        color: $black;
+        width: 100%;
+        &:focus {
+            border-color: $borderColor;
+            outline: none;
+            outline-offset: 0;
+        }
+    }
+    .adwmpp-search-button {
+        background: transparent;
+        color: $borderColor;
+        padding: 8px 10px 9px;
+        position: absolute;
+        right: 0;
+    }
+}
+.adwmpp-mobile-filter-button-wrapper {
+    display: none;
+}
+.adwmpp-filters {
+    .adwmpp-top-head {
+        margin-bottom: 15px;
+    }
+    .fa-filter {
+        font-size: 16px;
+    }
+    .adwmpp-btn {
+        font-size: 16px;
+        font-weight: 500;
+        padding: 10px 15px;
+    }
+    .adwmpp-search-btn {
+        color: $white;
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+    .adwmpp-input-wrapper {
+        label {
+            font-weight: 500;
+        }
+    }
+    .adwmpp-dropdown-body {
+        margin-bottom: 15px;
+    }
+    .selectric-wrapper {
+        max-width: 320px;
+    }
+    .admwpp-category-listing {
+        padding: 0;
+        list-style: none;
+    }
+}
+.entry .entry-content {
+    .adwmpp-filters,
+    .admwpp-search-results {
+        max-width: 100%;
+    }
+}
+.admwpp-courses-listing {
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+    .admwpp-cousre {
+        width: 33.333333%;
+        padding: 0 15px;
+        margin-bottom: 30px;
+        .inner-cont {
+            -webkit-box-shadow: 0 2px 30px 0 rgba(160, 164, 171, 0.15);
+            -moz-box-shadow: 0 2px 30px 0 rgba(160, 164, 171, 0.15);
+            box-shadow: 0 2px 30px 0 rgba(160, 164, 171, 0.15);
+            border-radius: 10px;
+            background-color: $white;
+            overflow: hidden;
+            min-height: 100%;
+        }
+        img {
+            width: 100%;
+            height: auto;
+            vertical-align: middle;
+        }
+    }
+    .admwpp-image {
+        a {
+            display: block;
+        }
+    }
+    .admwpp-info {
+        padding: 15px;
+    }
+    .admwpp-course-title {
+        font-size: 21px;
+        margin: 0 0 8px 0;
+        a {
+            color: $black;
+        }
+    }
+    .admwpp-desc {
+        font-size: 15px;
+        line-height: 19px;
+        margin-bottom: 8px;
+        li {
+            line-height: 19px;
+        }
+    }
+    .admwpp-desc > * {
+        list-style: none;
+        font-size: 15px;
+        line-height: 19px;
+        padding: 0;
+        margin: 0;
+    }
+    .admwpp-category {
+        font-size: 15px;
+        line-height: 19px;
+        font-weight: 700;
+    }
+    .admwpp-price {
+        font-size: 18px;
+        line-height: 22px;
+    }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 991px) {
+    .admwpp-courses-listing {
+        .admwpp-cousre {
+            width: 50%;
+        }
+    }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .adwmpp-mobile-filter-button-wrapper {
+        display: block;
+    }
+    .admwpp-courses-listing {
+        .admwpp-cousre {
+            width: 100%;
+        }
+    }
+}

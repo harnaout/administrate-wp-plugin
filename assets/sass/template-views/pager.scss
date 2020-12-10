@@ -1,0 +1,17 @@
+.admwpp-pager {
+    text-align: center;
+    a,
+    span {
+        margin: 0 10px;
+        display: inline-block;
+        color: $black;
+    }
+    a {
+        &:hover,
+        &:visited,
+        &:focus {
+            color: $black;
+            text-decoration: underline;
+        }
+    }
+}

@@ -98,3 +98,25 @@
   transition:         $property $duration $timingfunction $delay;
   -webkit-backface-visibility: hidden;
 }
+
+// Flex
+@mixin flex($direction: $direction, $wrap: $wrap, $align_items: $align_items, $align_content: $align_content, $justify_content: $justify_content) {
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: $direction;
+  -ms-flex-direction: $direction;
+  flex-direction: $direction;
+  -webkit-flex-wrap: $wrap;
+  -ms-flex-wrap: $wrap;
+  flex-wrap: $wrap;
+  -webkit-align-items: $align_items;
+  -ms-flex-align: $align_items;
+  align-items: $align_items;
+  -webkit-align-content: $align_content;
+  -ms-flex-line-pack: $align_content;
+  align-content: $align_content;
+  -webkit-justify-content: $justify_content;
+  -ms-flex-pack: $justify_content;
+  justify-content: $justify_content;
+}
