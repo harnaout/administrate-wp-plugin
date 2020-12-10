@@ -128,7 +128,13 @@ if (!class_exists('Search')) {
             //TODO: add pager template with types (simple / full)
             //simple: current page number out of the total and prev/next= buttons
             //full: full pager with prev/next first/last buttons and page numbers
+
+            ob_start();
             include $template;
+            $html = ob_get_contents();
+            ob_end_clean();
+
+            return $html;
         }
 
         public static function search($params)
