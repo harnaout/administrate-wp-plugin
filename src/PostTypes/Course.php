@@ -12,7 +12,7 @@ use Administrate\PhpSdk\Course as SDKCourse;
 use Administrate\PhpSdk\GraphQL\Client as SDKClient;
 
 /**
- * Construct the "Design" post type
+ * Construct the "Course" post type
  * */
 if (!class_exists('Course')) {
 
@@ -162,6 +162,18 @@ if (!class_exists('Course')) {
             ),
         );
 
+        static $courseSearchFields = array(
+            'id',
+            'code',
+            'name',
+            'description',
+            'category',
+            'imageUrl',
+            'priceRange' => array(
+                'normalPrice' => array('amount')
+            )
+        );
+
         function __construct()
         {
             if (file_exists('../../../../../wp-load.php')) {
@@ -179,7 +191,7 @@ if (!class_exists('Course')) {
          * Return an instance of the current class if it exists
          * Construct a new one otherwise
          *
-         * @return BWEvents object
+         * @return Course object
          * */
         public static function instance()
         {
@@ -255,7 +267,7 @@ if (!class_exists('Course')) {
             if ($post_type !== self::getSlug() && !is_single()) :
                 return $content;
             endif;
-            
+
             ob_start();
             include(ADMWPP_TEMPLATES_DIR . 'course/categories.php');
             $content = ob_get_contents() . $content;
@@ -265,16 +277,16 @@ if (!class_exists('Course')) {
             include(ADMWPP_TEMPLATES_DIR . 'course/information.php');
             $content .= ob_get_contents();
             ob_end_clean();
-            
+
             return $content;
         }
 
         /**
          * Function to return the Design HTML template path.
          *
-         * @params  $layout, string, layout type.
+         * @params  $template, string, template name.
          *
-         * @return string, layout template path.
+         * @return string, template path.
          *
          */
         public static function getTemplatePath($template)
@@ -345,7 +357,6 @@ if (!class_exists('Course')) {
             );
         }
 
-
         /**
          * [addShortcodes description]
          */
@@ -356,7 +367,6 @@ if (!class_exists('Course')) {
         public function Init()
         {
             $this->createPostType();
-            $this->addAcfFields();
 
             Taxonomies\LearningCategory::registerTerms();
         }
@@ -457,10 +467,6 @@ if (!class_exists('Course')) {
             // Add an nonce field so we can check for it later.
             wp_nonce_field(ADMWPP_PLUGIN_NAME, $nonce);
             include(ADMWPP_ADMIN_TEMPLATES_DIR . self::getSlug() .'/metas-metabox.php');
-        }
-
-        protected function addAcfFields()
-        {
         }
 
         /**
