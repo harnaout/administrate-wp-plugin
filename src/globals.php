@@ -69,6 +69,35 @@ $TMS_COURSE_CONTENT = array(
   'admwpp_tms_practical_info',
 );
 
+global $TMS_LP_CUSTOM_FILEDS;
+$TMS_LP_CUSTOM_FILEDS = array(
+  'admwpp_tms_language' => array(
+      'type' => 'text',
+      'label' => 'Language',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE3NQ==',
+  ),
+  'admwpp_tms_general_info' => array(
+      'type' => 'textarea',
+      'label' => 'General Info',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE3NA==',
+  ),
+  'admwpp_tms_usps_info' => array(
+      'type' => 'textarea',
+      'label' => 'USPs Info',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE3Mw==',
+  ),
+  'admwpp_tms_price_info' => array(
+      'type' => 'textarea',
+      'label' => 'Price Info',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE3Mg==',
+  ),
+  'admwpp_tms_practical_info' => array(
+      'type' => 'textarea',
+      'label' => 'Practical Info',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE3MQ==',
+  ),
+);
+
 global $TMS_CUSTOM_FILEDS;
 $TMS_CUSTOM_FILEDS = array(
   'admwpp_tms_part_of_day' => array(

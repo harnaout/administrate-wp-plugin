@@ -9,6 +9,7 @@ use ADM\WPPlugin\Taxonomies;
 use ADM\WPPlugin\Webhooks;
 
 use Administrate\PhpSdk\Course as SDKCourse;
+use Administrate\PhpSdk\LearningPath as SDKLearningPath;
 use Administrate\PhpSdk\GraphQL\Client as SDKClient;
 
 /**
@@ -140,6 +141,55 @@ if (!class_exists('Course')) {
                 ),
             ),
             'publicPrices' => array(
+                'type' => 'edges',
+                'fields' => array(
+                    'amount',
+                    'priceLevel' => array(
+                        'id',
+                        'name'
+                    ),
+                    'financialUnit' => array(
+                        'name',
+                        '... on Currency' => array('symbol')
+                    ),
+                    'region' => array(
+                        'code',
+                    ),
+                ),
+            ),
+            'customFieldValues' => array(
+                'definitionKey',
+                'value'
+            ),
+        );
+
+        static $learningPathFields = array(
+            'id',
+            'legacyId',
+            'lifecycleState',
+            'code',
+            'name',
+            'description',
+            'image' => array(
+                'id',
+                'name'
+            ),
+            'learningCategories' => array(
+                'type' => 'edges',
+                'fields' => array(
+                    'id',
+                    'legacyId',
+                    'name',
+                    'description',
+                    'parentCategory' => array(
+                        'id',
+                        'legacyId',
+                        'name',
+                        'description'
+                    ),
+                ),
+            ),
+            'prices' => array(
                 'type' => 'edges',
                 'fields' => array(
                     'amount',
@@ -581,12 +631,16 @@ if (!class_exists('Course')) {
 
         public static function adminColumnsHead($defaults)
         {
+            $defaults['type'] = 'Type';
             $defaults['image'] = 'Image';
             return $defaults;
         }
 
         public static function adminColumnsContent($columnName, $postId)
         {
+            if ($columnName == 'type') {
+                echo get_post_meta($postId, 'admwpp_tms_type', true);
+            }
             if ($columnName == 'image') {
                 $postFeaturedImageUrl = get_the_post_thumbnail_url($postId, 'thumbnail');
                 if ($postFeaturedImageUrl) {
@@ -798,22 +852,75 @@ if (!class_exists('Course')) {
             return $SDKCourse->loadAll($args);
         }
 
-        public static function nodeToPost($node)
+        public static function getLearningPathes($params)
+        {
+            $activate = Oauth2\Activate::instance();
+            $apiParams = $activate::$params;
+
+            $accessToken = $activate->getAuthorizeToken()['token'];
+            $appId = Settings::instance()->getSettingsOption('account', 'app_id');
+            $instance = Settings::instance()->getSettingsOption('account', 'instance');
+
+            $apiParams['accessToken'] = $accessToken;
+            $apiParams['clientId'] = $appId;
+            $apiParams['instance'] = $instance;
+
+            $SDKLearningPath = new SDKLearningPath($apiParams);
+
+            $args = array(
+                'filters' => array(
+                    array(
+                        'field' => 'lifecycleState',
+                        'operation' => 'eq',
+                        'value' => 'active',
+                    ),
+                    // array(
+                    //     'field' => 'id',
+                    //     'operation' => 'eq',
+                    //     'value' => 'TGVhcm5pbmdQYXRoOjk=',
+                    // )
+                ),
+                'fields' => self::$learningPathFields,
+                'paging' => array(
+                    'page' => (int) $params['page'],
+                    'perPage' => (int) $params['per_page']
+                ),
+                'sorting' => array(
+                    'field' => 'id',
+                    'direction' => 'asc'
+                ),
+                'returnType' => 'array', //array, obj, json
+                'coreApi' => true,
+            );
+
+            return $SDKLearningPath->loadAll($args);
+        }
+
+        public static function nodeToPost($node, $type)
         {
             $results = array(
                 'imported' => 0,
                 'exists' => 0
             );
 
+            if (isset($node['title'])) {
+                $title = $node['title'];
+            }
+            if (isset($node['name'])) {
+                $title = $node['name'];
+            }
+
             $postArgs = array(
                 'post_type' => self::$slug,
-                'post_title' => $node['title'],
-                'post_name' => sanitize_title($node['title']),
+                'post_title' => $title,
+                'post_name' => sanitize_title($title),
                 'post_content' => '',
                 'post_status' => 'pending',
             );
 
-            if ($node['lifecycleState'] === 'published') {
+            // "published" is used for Courses
+            // "active" is used for LPs
+            if ($node['lifecycleState'] === 'published' || $node['lifecycleState'] === 'active') {
                 $postArgs['post_status'] = 'publish';
             }
 
@@ -906,9 +1013,18 @@ if (!class_exists('Course')) {
                 $customFields[$field['definitionKey']] = $field['value'];
             }
 
-            global $TMS_CUSTOM_FILEDS;
-            if (!empty($TMS_CUSTOM_FILEDS) && $customFieldValues) {
-                foreach ($TMS_CUSTOM_FILEDS as $key => $value) {
+            // Set Course Type
+            $postMetas['admwpp_tms_type'] = $type;
+            if ('LP' === $type) {
+                global $TMS_LP_CUSTOM_FILEDS;
+                $customFiledsMapping = $TMS_LP_CUSTOM_FILEDS;
+            } else {
+                global $TMS_CUSTOM_FILEDS;
+                $customFiledsMapping = $TMS_CUSTOM_FILEDS;
+            }
+
+            if (!empty($customFiledsMapping) && $customFieldValues) {
+                foreach ($customFiledsMapping as $key => $value) {
                     $tmsKey = $value['tmsKey'];
                     if (isset($customFields[$tmsKey])) {
                         $postMetas[$key] = $customFields[$tmsKey];
@@ -921,7 +1037,9 @@ if (!class_exists('Course')) {
             if ($postMetas) {
                 $postArgs['meta_input'] = $postMetas;
 
-                $postArgs['post_excerpt'] = strip_tags($postMetas[TMS_SHORT_DESCRIPTION_KEY]);
+                if (isset($postMetas[TMS_SHORT_DESCRIPTION_KEY])) {
+                    $postArgs['post_excerpt'] = strip_tags($postMetas[TMS_SHORT_DESCRIPTION_KEY]);
+                }
 
                 // Post content is a contact of several custom fields from the TMS
                 global $TMS_COURSE_CONTENT;
@@ -963,12 +1081,14 @@ if (!class_exists('Course')) {
                 $results['image'] = self::setImage($postId, $imageTmsId);
             }
 
-            if ($postArgs['meta_input'][TMS_STICKY_POST_KEY] === 'true') {
-                // Add post to sticky posts
-                stick_post($postId);
-            } else {
-                // Remove from sticky posts
-                unstick_post($postId);
+            if (isset($postArgs['meta_input'][TMS_STICKY_POST_KEY])) {
+                if ($postArgs['meta_input'][TMS_STICKY_POST_KEY] === 'true') {
+                    // Add post to sticky posts
+                    stick_post($postId);
+                } else {
+                    // Remove from sticky posts
+                    unstick_post($postId);
+                }
             }
 
             // Set course language if WPML exists
