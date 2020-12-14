@@ -105,7 +105,7 @@ class SettingsController extends Base\ActionController
         foreach ($courseTemplates as $node) {
             $node = $node['node'];
 
-            $import = Course::nodeToPost($node);
+            $import = Course::nodeToPost($node, 'COURSE');
 
             $results['imported'] += $import['imported'];
             $results['exists'] += $import['exists'];
@@ -124,6 +124,59 @@ class SettingsController extends Base\ActionController
 
         if (($results['imported'] + $results['exists']) == $results['totalRecords']) {
             self::setFlash(__('Successfully Imported Courses.', ADMWPP_TEXT_DOMAIN));
+        }
+
+        echo json_encode($results);
+        die();
+    }
+
+    public static function importLearningPathes()
+    {
+        $params = self::$params;
+
+        $allLearningPathes = Course::getLearningPathes($params);
+
+        $lpTemplates = $allLearningPathes['learningPaths'];
+        $pageInfo = $lpTemplates['pageInfo'];
+        $courseTemplates = $lpTemplates['edges'];
+
+        $results = array(
+            'totalRecords' => $pageInfo['totalRecords'],
+            'hasNextPage' => $pageInfo['hasNextPage'],
+            'hasPreviousPage' => $pageInfo['hasPreviousPage'],
+            'message' => '',
+            'imported' => (int) $params['imported'],
+            'exists' => (int) $params['exists'],
+        );
+
+        if (empty($lpTemplates)) {
+            $results['message'] = 'No Learning Paths found...';
+            echo json_encode($results);
+            die();
+        }
+
+        foreach ($courseTemplates as $node) {
+            $node = $node['node'];
+
+            $import = Course::nodeToPost($node, 'LP');
+
+            $results['imported'] += $import['imported'];
+            $results['exists'] += $import['exists'];
+
+            $results[$node['id']] = $import;
+        }
+
+        $results['message'] = 'Total: ' . $results['totalRecords'];
+        $results['message'] .= '<br/>Imported: ' . $results['imported'];
+        $results['message'] .= '<br/>Exists: ' . $results['exists'];
+
+        if ($results['hasNextPage'] == true) {
+            $next = (int) $params['page'] + 1;
+            $results['message'] .= '<br/>Next Page: ' . $next;
+        }
+
+        if (($results['imported'] + $results['exists']) == $results['totalRecords']) {
+            self::setFlash(__('Successfully Imported Learning Paths.', ADMWPP_TEXT_DOMAIN));
         }
 
         echo json_encode($results);

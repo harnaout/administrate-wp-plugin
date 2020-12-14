@@ -487,12 +487,12 @@ if (!class_exists('Settings')) {
                 "admwpp_" . $settings_key . "_settings"
             );
 
-            // add_settings_section(
-            //     'admwpp_advanced_synch_lerning_path_action',
-            //     "<span class='admwpp-section-title'>" . __('Learning Path Synchronization', ADMWPP_TEXT_DOMAIN) . "</span>",
-            //     array($this, 'synchLearnignPathSection'),
-            //     "admwpp_" . $settings_key . "_settings"
-            // );
+            add_settings_section(
+                'admwpp_advanced_synch_lerning_path_action',
+                "<span class='admwpp-section-title'>" . __('Learning Path Synchronization', ADMWPP_TEXT_DOMAIN) . "</span>",
+                array($this, 'synchLearnignPathSection'),
+                "admwpp_" . $settings_key . "_settings"
+            );
         }
 
         protected function createAdvancedSynchCategoriesSection($settings_key)
