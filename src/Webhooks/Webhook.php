@@ -54,23 +54,40 @@ if (! class_exists('Webhook')) {
                     if (!isset($settings['courses_webhook_id'])
                         || empty($settings['courses_webhook_id'])
                     ) {
-                        self::createSynchWebhook($settings['courses_webhook_type_id']);
+                        self::createSynchWebhook($settings['courses_webhook_type_id'], 'course');
                     }
                 }
-                // if (isset($settings['events_webhook_type_id'])
-                //     && !empty($settings['events_webhook_type_id'])
-                // ) {
-                //     $coursesWebhookId = $settings['events_webhook_type_id'];
-                //     // TODO: Create events Webhook
-                // }
+                if (isset($settings['lp_webhook_type_id'])
+                    && !empty($settings['lp_webhook_type_id'])
+                ) {
+                    //Check if saved already before creating a webhook
+                    if (!isset($settings['lp_webhook_id'])
+                        || empty($settings['lp_webhook_id'])
+                    ) {
+                        self::createSynchWebhook($settings['lp_webhook_type_id'], 'LP');
+                    }
+                }
             }
         }
 
-        public static function createSynchWebhook($webhookTypeId)
+        public static function createSynchWebhook($webhookTypeId, $type = 'course')
         {
             $callbakUrl = ADMWPP_SITE_URL . "/wp-json/admwpp/webhook/callback";
 
-            $node = SDKQueryBuilder::buildNode(Course::$courseFields);
+            if ('LP' === $type) {
+                $queryName = 'learningpath';
+                $queryObjects = 'learningPaths';
+                $webhookName = "Wordpress Trigger learning Paths Template Updated";
+                $node = SDKQueryBuilder::buildNode(Course::$learningPathFields);
+                $webhookIdOptionsKey = 'lp_webhook_id';
+            } else {
+                $queryName = 'courses';
+                $queryObjects = 'courseTemplates';
+                $webhookName = "Wordpress Trigger Course Template Updated";
+                $node = SDKQueryBuilder::buildNode(Course::$courseFields);
+                $webhookIdOptionsKey = 'courses_webhook_id';
+            }
+
             $edges = (new SDKQueryBuilder('edges'))->selectField($node);
 
             $edgesQuery = $edges->getQuery();
@@ -78,10 +95,10 @@ if (! class_exists('Webhook')) {
             $edgesQuery = str_replace(array("\n", "\r"), ' ', $edgesQuery);
             $edgesQuery = trim($edgesQuery);
 
-            $query = 'query courses ($objectid: String!) {courseTemplates (filters: [{field: id, operation: eq, value: $objectid}]) ' . $edgesQuery . ' }';
+            $query = 'query ' . $queryName . ' ($objectid: String!) {' . $queryObjects . ' (filters: [{field: id, operation: eq, value: $objectid}]) ' . $edgesQuery . ' }';
 
             $variables = array(
-                'name' => "Wordpress Trigger Course Template Updated",
+                'name' => $webhookName,
                 'webhookTypeId' => $webhookTypeId,
                 'callbakUrl' => $callbakUrl,
                 'query' => $query,
@@ -126,7 +143,7 @@ if (! class_exists('Webhook')) {
             $webhookId = '';
             if (isset($webhook['webhooks']['create']['webhook'])) {
                 $webhookId = $webhook['webhooks']['create']['webhook']['id'];
-                Settings::instance()->setSettingsOption('advanced', 'courses_webhook_id', $webhookId);
+                Settings::instance()->setSettingsOption('advanced', $webhookIdOptionsKey, $webhookId);
             } else {
                 if (isset($webhook['webhooks']['create']['errors'])) {
                     $message = __('Webhooks Creation Failed: ', ADMWPP_TEXT_DOMAIN);
@@ -170,7 +187,7 @@ if (! class_exists('Webhook')) {
 
                 if (isset($webhook['webhooks']['update'])) {
                     $webhookId = $webhook['webhooks']['update']['webhook']['id'];
-                    Settings::instance()->setSettingsOption('advanced', 'courses_webhook_id', $webhookId);
+                    Settings::instance()->setSettingsOption('advanced', $webhookIdOptionsKey, $webhookId);
 
                     $flash = Main::instance()->getFlash();
                     $flash->setMessage(array(
