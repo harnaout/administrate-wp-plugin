@@ -933,6 +933,10 @@ if (!class_exists('Course')) {
 
                 $tmsValue = '';
 
+                if ('LP' === $type && $tmsKey === 'publicPrices') {
+                    $tmsKey = 'prices';
+                }
+
                 switch ($tmsKey) {
                     case 'image':
                         if (isset($node[$tmsKey])) {
@@ -963,6 +967,7 @@ if (!class_exists('Course')) {
                         }
                         break;
                     case 'publicPrices':
+                    case 'prices': // Add 21% VAT for CGA
                         if (isset($node[$tmsKey])) {
                             $publicPrices = $node[$tmsKey]['edges'];
                             $pricesAmounts = array();
