@@ -100,7 +100,7 @@ if (!class_exists('Search')) {
             if (is_admin()) {
                 return '';
             }
-            
+
             extract(
                 shortcode_atts(
                     array(
@@ -141,7 +141,7 @@ if (!class_exists('Search')) {
             $categoryFilterTemplate = self::getTemplatePath('category-filter');
             $courseTemplate = self::getTemplatePath('course');
             $pagerTemplate = self::getTemplatePath('pager');
-            
+
             //TODO: add pager template with types (simple / full)
             //simple: current page number out of the total and prev/next= buttons
             //full: full pager with prev/next first/last buttons and page numbers
