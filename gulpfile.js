@@ -56,7 +56,8 @@ gulp.task('js:watch', () => {
         './assets/js/common/*',
         './assets/js/admin/*',
         './assets/js/admin.js',
-    ], gulp.series('js-admin-min'));
+        './assets/js/admwpp.js',
+    ], gulp.series('js-admin-min', 'js-admwpp-min'));
 });
 
 gulp.task('watch', gulp.parallel('sass:watch', 'js:watch'), function(done)
@@ -86,3 +87,17 @@ gulp.task('js-admin-min', () => {
 }))
     .pipe(gulp.dest('./assets/js/'))
 });
+
+gulp.task('js-admwpp-min', () => {
+    return gulp.src([
+          './assets/js/admwpp.js',
+      ])
+    .pipe(concat('admwpp.js'))
+    .pipe(minify({
+      ext:{
+          src:'-debug.js',
+          min:'.min.js'
+      }
+  }))
+      .pipe(gulp.dest('./assets/js/'))
+  });

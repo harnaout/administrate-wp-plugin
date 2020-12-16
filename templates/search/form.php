@@ -7,18 +7,18 @@
  * @author Omaya Noureddine <orn@administrate.co>
  */
 ?>
-<div class="mobile-filter-button-wrapper">
-    <div class="mobile-filter-button">
+<div class="adwmpp-mobile-filter-button-wrapper">
+    <div class="adwmpp-mobile-filter-button">
         <i class="fas fa-filter"></i>
-        <span><?php _e('Filter resultaten', 'cga'); ?></span>
+        <span><?php _e('Filter resultaten', ADMWPP_TEXT_DOMAIN); ?></span>
     </div>
 </div>
-<div class="filters search-cats-filters">
+<div class="adwmpp-filters adwmpp-search-cats-filters">
     <div class="inner">
-        <div class="top-head">
+        <div class="adwmpp-top-head">
             <div class="left-wrapper">
                 <i class="fas fa-filter"></i>
-                <span><?php _e('Filter resultaten', 'cga'); ?></span>
+                <span><?php _e('Filter resultaten', ADMWPP_TEXT_DOMAIN); ?></span>
             </div>
             <div class="right-wrapper">
                 <div class="close-wrapper">
@@ -28,10 +28,10 @@
                 </div>
             </div>
         </div>
-        <form class="filters-form" id="adwmpp-search-form" method="GET">
-            <div class="input-wrapper search-wrapper">
-                <input class="search-input" type="text" name='query' value='<?php echo $query; ?>' placeholder="<?php _e('Search...', 'cga'); ?>" />
-                <button type="submit" class="search-button">
+        <form class="adwmpp-filters-form" id="adwmpp-search-form" method="GET">
+            <div class="input-wrapper adwmpp-search-wrapper">
+                <input class="adwmpp-search-input" type="text" name='query' value='<?php echo $query; ?>' placeholder="<?php _e('Search...', ADMWPP_TEXT_DOMAIN); ?>" />
+                <button type="submit" class="adwmpp-search-button">
                     <i class="fa fa-search"></i>
                 </button>
             </div>
@@ -39,16 +39,18 @@
         </form>
     </div>
 </div>
-<div class="search-results">
+<div class="admwpp-search-results">
     <?php
     if ($searchResults) {
-        if (!empty($searchResults['courses'])) {
-            $courses = $searchResults['courses'];
-            foreach ($courses as $key => $course) {
-                $course = $course['node'];
-                include($courseTemplate);
-            }
-        }
-    }
-    ?>
+        if (!empty($searchResults['courses'])) :
+            $courses = $searchResults['courses']; ?>
+            <div class="admwpp-courses-listing">
+                <?php foreach ($courses as $key => $course) :
+                    $course = $course['node'];
+                    include($courseTemplate);
+                endforeach ?>
+            </div>
+        <?php endif;
+        include($pagerTemplate);
+    } ?>
 </div>

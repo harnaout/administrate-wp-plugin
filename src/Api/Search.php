@@ -91,11 +91,27 @@ if (!class_exists('Search')) {
         {
             $vars[] = 'query';
             $vars[] = 'lcat';
+            $vars[] = 'per_page';
             return $vars;
         }
 
-        public static function searchForm()
+        public static function searchForm($args)
         {
+            if (is_admin()) {
+                return '';
+            }
+            
+            extract(
+                shortcode_atts(
+                    array(
+                        'filter_type' => 'select',
+                        'pager' => 'simple',
+                        'template' => 'grid'
+                    ),
+                    $args
+                )
+            );
+
             $categories = get_terms(array(
                 'taxonomy' => 'learning-category',
                 'hide_empty' => true,
@@ -103,9 +119,9 @@ if (!class_exists('Search')) {
             ));
 
             $query = get_query_var('query');
-            $lcat = get_query_var('lcat') ? get_query_var('lcat') : array();
-            $page = get_query_var('page') ? (int) get_query_var('page') : 1;
-            $per_page = get_query_var('per_page') ? (int) get_query_var('per_page') : ADMWPP_SEARCH_PER_PAGE;
+            $lcat = get_query_var('lcat');
+            $page = get_query_var('paged') ? (int) get_query_var('paged') : 1;
+            $per_page = (int) get_query_var('per_page', ADMWPP_SEARCH_PER_PAGE);
 
             $params = array(
                 'page' => $page,
@@ -124,7 +140,8 @@ if (!class_exists('Search')) {
             $template = self::getTemplatePath('form');
             $categoryFilterTemplate = self::getTemplatePath('category-filter');
             $courseTemplate = self::getTemplatePath('course');
-
+            $pagerTemplate = self::getTemplatePath('pager');
+            
             //TODO: add pager template with types (simple / full)
             //simple: current page number out of the total and prev/next= buttons
             //full: full pager with prev/next first/last buttons and page numbers
@@ -149,12 +166,15 @@ if (!class_exists('Search')) {
 
             $SDKCourse = new SDKCourse($apiParams);
 
+            $page = (int) $params['page'];
+            $perPage = (int) $params['per_page'];
+
             $args = array(
                 'filters' => array(),
                 'fields' => self::$searchFields,
                 'paging' => array(
-                    'page' => (int) $params['page'],
-                    'perPage' => (int) $params['per_page']
+                    'page' => $page,
+                    'perPage' => $perPage,
                 ),
                 'sorting' => array(
                     'field' => 'name',
@@ -179,8 +199,9 @@ if (!class_exists('Search')) {
                 );
             }
 
-            $allCourses = $SDKCourse->loadAll($args);
+            $args = apply_filters('admwpp_search_args', $args);
 
+            $allCourses = $SDKCourse->loadAll($args);
             $courses = $allCourses['courses'];
 
             $pageInfo = $courses['pageInfo'];
@@ -188,6 +209,8 @@ if (!class_exists('Search')) {
 
             $results = array(
                 'totalRecords' => $pageInfo['totalRecords'],
+                'totalNumPages' => ceil($pageInfo['totalRecords'] / $perPage),
+                'currentPage' => $page,
                 'hasNextPage' => $pageInfo['hasNextPage'],
                 'hasPreviousPage' => $pageInfo['hasPreviousPage'],
                 'courses' => $courses,
