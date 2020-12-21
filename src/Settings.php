@@ -257,10 +257,10 @@ if (!class_exists('Settings')) {
 
             // Setting Default options values.
             $settings = get_option($settings_key);
-
             $settings_index = 'general';
 
-            if (empty($settings)) {
+            if (!isset($settings) && empty($settings)) {
+                $settings['styles'] = 0;
                 // $locale = get_locale();
 
                 // if (file_exists(ADMWPP_DIR . '/languages/' . $locale . '.mo')) {
@@ -274,6 +274,7 @@ if (!class_exists('Settings')) {
             update_option($settings_key, $settings);
 
             //Settings::createLanguageSection($settings_index);
+            Settings::createStylingSection($settings_index);
             Settings::seperatorSection($settings_index, 'language');
         }
 
@@ -443,6 +444,33 @@ if (!class_exists('Settings')) {
             );
         }
         /** END LANGUAGE SECTION */
+
+        /** STYLING SECTION */
+        protected function createStylingSection($settings_key)
+        {
+
+            add_settings_section(
+                'admwpp_styling_settings',
+                "<span class='admwpp-section-title'>" . __('Styling', ADMWPP_TEXT_DOMAIN) . "</span>",
+                array($this, 'stylingSettingsSection'),
+                "admwpp_" . $settings_key . "_settings"
+            );
+
+            add_settings_field(
+                'admwpp_styles_settings',
+                __('Styles', ADMWPP_TEXT_DOMAIN) . ':',
+                array($this, 'settingsFieldInputBoolean'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_styling_settings',
+                array(
+                    'field'        => 'styles',
+                    'settings_key' => $settings_key,
+                    'info'         => 'Selecting this checkbox will disable selectric JS library and plugin styles.
+                    <br />Plugin is using selectric library v1.13.0.',
+                )
+            );
+        }
+        /** END STYLING SECTION */
 
         /** ADVANCED Synch SECTION */
         protected function createAdvancedSynchCoursesSection($settings_key)
@@ -640,6 +668,14 @@ if (!class_exists('Settings')) {
            // Think of this as help text for the section.
             echo "<div class='settings-section-info'>";
             echo __("Set the language of your website below.", ADMWPP_TEXT_DOMAIN);
+            echo "</div>";
+        }
+
+        public function stylingSettingsSection()
+        {
+           // Think of this as help text for the section.
+            echo "<div class='settings-section-info'>";
+            echo __("Disable plugins third party libraries (CSS/JS).", ADMWPP_TEXT_DOMAIN);
             echo "</div>";
         }
 

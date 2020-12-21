@@ -4,8 +4,10 @@
 (function ($) {
     $(document).ready(function () {
 
-       // Selectric
-       $('.admwpp-custom-select').selectric();
+      // Selectric
+      if(jQuery().selectric) {
+         $('.admwpp-custom-select').selectric();
+      }
 
     });
   }(jQuery));
