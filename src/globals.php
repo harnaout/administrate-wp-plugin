@@ -3,6 +3,7 @@
 // Define Global variables For Search
 // --------------------------------------------------------------------
 define('ADMWPP_SEARCH_PER_PAGE', 10);
+define('ADMWPP_SEARCH_DATE_FORMAT', 'mm/dd/yy');
 
 // --------------------------------------------------------------------
 // Define Global variables add a selection Block

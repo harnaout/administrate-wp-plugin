@@ -349,7 +349,7 @@ if (!class_exists('Main')) {
             // Check environment
             if (ADMWPP_DEVELOPMENT) {
                 $admwpp_css = ADMWPP_URL . 'assets/css/admwpp.css';
-                $admwpp_js  = ADMWPP_URL . 'assets/js/admwpp.js';
+                $admwpp_js  = ADMWPP_URL . 'assets/js/admwpp-debug.js';
             } else {
                 $admwpp_css = ADMWPP_URL . 'assets/css/admwpp.min.css';
                 $admwpp_js  = ADMWPP_URL . 'assets/js/admwpp.min.js';
@@ -359,7 +359,7 @@ if (!class_exists('Main')) {
             // Register the css
             // ------------------------------------------------------
             wp_register_style(
-                'adminstrate',
+                'administrate',
                 $admwpp_css,
                 '',
                 ADMWPP_VERSION
@@ -387,7 +387,7 @@ if (!class_exists('Main')) {
             if (!$stylesSettings) :
                 $stylesArray[] = 'admwpp-font-awesome';
                 $stylesArray[] = 'admwpp-selectric';
-                $stylesArray[] = 'adminstrate';
+                $stylesArray[] = 'administrate';
             endif;
             
             wp_enqueue_style($stylesArray);
@@ -396,7 +396,7 @@ if (!class_exists('Main')) {
             // Register the js
             // ------------------------------------------------------
             wp_register_script(
-                'adminstrate',
+                'administrate',
                 $admwpp_js,
                 '',
                 ADMWPP_VERSION,
@@ -404,7 +404,7 @@ if (!class_exists('Main')) {
             );
 
             wp_register_script(
-                'admwpp-selectric-js',
+                'admwpp-selectric',
                 ADMWPP_URL . 'assets/js/plugins/selectric.min.js',
                 '',
                 '1.13.0',
@@ -416,20 +416,29 @@ if (!class_exists('Main')) {
                 'jquery-ui-core',
                 'jquery-ui-dialog',
                 'jquery-effects-core',
-                'adminstrate',
+                'jquery-ui-datepicker',
+                'administrate',
             );
 
             if (!$stylesSettings) :
-                $scriptArray[] = 'admwpp-selectric-js';
+                $scriptArray[] = 'admwpp-selectric';
             endif;
             
             wp_enqueue_script($scriptArray);
 
-            wp_localize_script('adminstrate', 'admwpp_language', admwppPrimaryLanguage());
-            wp_localize_script('adminstrate', 'admwpp_locale', get_locale());
+            $admwppLocalize = array(
+                'language' => admwppPrimaryLanguage(),
+                'locale' => get_locale(),
+                'baseUrl' => ADMWPP_URL,
+                'routeUrl' => ADMWPP_URL_ROUTES,
+                'search' => array(
+                    'dateFormat' => ADMWPP_SEARCH_DATE_FORMAT,
+                    'perPage' => ADMWPP_SEARCH_PER_PAGE
+                )
+            );
 
-            wp_localize_script('adminstrate', 'admwpp_base_url', ADMWPP_URL);
-            wp_localize_script('adminstrate', 'admwpp_route_url', ADMWPP_URL_ROUTES);
+            wp_localize_script('administrate', 'admwpp', $admwppLocalize);
+
         }
 
         /**
