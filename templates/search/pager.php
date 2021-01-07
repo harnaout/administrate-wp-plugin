@@ -16,23 +16,23 @@ $currentPageNumber = $searchResults['currentPage'];
 $totalPageNumber = $searchResults['totalNumPages'];
 
 $httpBuildQuery = http_build_query($queryVars);
-$currentUrl = home_url( $wp->request ) . '/?' . $httpBuildQuery;
+$currentUrl = home_url( $wp->request ) . '?' . $httpBuildQuery;
 
 $queryVars['paged'] = 1;
 $httpBuildQuery = http_build_query($queryVars);
-$firstPageUrl = home_url( $wp->request ) . '/?' . $httpBuildQuery;
+$firstPageUrl = home_url( $wp->request ) . '?' . $httpBuildQuery;
 
 $queryVars['paged'] = $totalPageNumber;
 $httpBuildQuery = http_build_query($queryVars);
-$lastPageUrl = home_url( $wp->request ) . '/?' . $httpBuildQuery;
+$lastPageUrl = home_url( $wp->request ) . '?' . $httpBuildQuery;
 
 $queryVars['paged'] = $currentPageNumber - 1;
 $httpBuildQuery = http_build_query($queryVars);
-$prevPageUrl = home_url( $wp->request ) . '/?' . $httpBuildQuery;
+$prevPageUrl = home_url( $wp->request ) . '?' . $httpBuildQuery;
 
 $queryVars['paged'] = $currentPageNumber + 1;
 $httpBuildQuery = http_build_query($queryVars);
-$nextPageUrl = home_url( $wp->request ) . '/?' . $httpBuildQuery;
+$nextPageUrl = home_url( $wp->request ) . '?' . $httpBuildQuery;
 
 $prevPage = '';
 $nextPage = '';
