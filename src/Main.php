@@ -345,6 +345,7 @@ if (!class_exists('Main')) {
          */
         public static function frontScripts()
         {
+            $stylesSettings = (int) Settings::instance()->getSettingsOption('general', 'styles');
             // Check environment
             if (ADMWPP_DEVELOPMENT) {
                 $admwpp_css = ADMWPP_URL . 'assets/css/admwpp.css';
@@ -364,27 +365,32 @@ if (!class_exists('Main')) {
                 ADMWPP_VERSION
             );
 
-            wp_enqueue_style(
+            wp_register_style(
                 'admwpp-font-awesome',
                 '//netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css',
                 array(),
                 ADMWPP_VERSION
             );
 
-            wp_enqueue_style(
-                'admwpp-selectric-css',
+            wp_register_style(
+                'admwpp-selectric',
                 ADMWPP_URL . 'assets/css/plugins/selectric.min.css',
                 array(),
                 '1.13.0'
             );
 
-            wp_enqueue_style(
-                array(
+            $stylesArray = array(
                 'thickbox',
                 'wp-jquery-ui-dialog',
-                'adminstrate',
-                )
             );
+            
+            if (!$stylesSettings) :
+                $stylesArray[] = 'admwpp-font-awesome';
+                $stylesArray[] = 'admwpp-selectric';
+                $stylesArray[] = 'adminstrate';
+            endif;
+            
+            wp_enqueue_style($stylesArray);
 
             // ------------------------------------------------------
             // Register the js
@@ -405,16 +411,19 @@ if (!class_exists('Main')) {
                 true
             );
 
-            wp_enqueue_script(
-                array(
+            $scriptArray = array(
                 'jquery',
                 'jquery-ui-core',
                 'jquery-ui-dialog',
                 'jquery-effects-core',
-                'admwpp-selectric-js',
                 'adminstrate',
-                )
             );
+
+            if (!$stylesSettings) :
+                $scriptArray[] = 'admwpp-selectric-js';
+            endif;
+            
+            wp_enqueue_script($scriptArray);
 
             wp_localize_script('adminstrate', 'admwpp_language', admwppPrimaryLanguage());
             wp_localize_script('adminstrate', 'admwpp_locale', get_locale());
