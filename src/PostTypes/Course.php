@@ -104,6 +104,12 @@ if (!class_exists('Course')) {
                 'tmsKey' => 'financialUnit',
                 'showOnFront' => false,
             ),
+            'admwpp_tms_accounts_associations' => array(
+                'type' => 'text',
+                'label' => 'Account Associations',
+                'tmsKey' => 'accountAssociations',
+                'showOnFront' => false,
+            ),
         );
 
         static $inlineMetas = array();
@@ -161,6 +167,13 @@ if (!class_exists('Course')) {
                 'definitionKey',
                 'value'
             ),
+            'accountAssociations' => array(
+                'type' => 'edges',
+                'fields' => array(
+                    'account' => array('id', 'name'),
+                    'associationType' => array('id', 'name'),
+                )
+            ),
         );
 
         static $learningPathFields = array(
@@ -209,6 +222,13 @@ if (!class_exists('Course')) {
             'customFieldValues' => array(
                 'definitionKey',
                 'value'
+            ),
+            'accountAssociations' => array(
+                'type' => 'edges',
+                'fields' => array(
+                    'account' => array('id', 'name'),
+                    'associationType' => array('id', 'name'),
+                )
             ),
         );
 
@@ -493,7 +513,7 @@ if (!class_exists('Course')) {
             if (self::getSlug() == $postType) {
                 add_meta_box(
                     'admwpp-metas',
-                    __('Course Metas', ADMWPP_TEXT_DOMAIN),
+                    __('Course / Learning Path Metas', ADMWPP_TEXT_DOMAIN),
                     array($this, 'metasMetabox'),
                     $postType,
                     'normal',
@@ -1000,6 +1020,17 @@ if (!class_exists('Course')) {
                                 }
                             }
                             $tmsValue = implode('|', $pricesCurencies);
+                        }
+                        break;
+                    case 'accountAssociations':
+                        if (isset($node[$tmsKey])) {
+                            $accountAssociations = $node[$tmsKey]['edges'];
+                            $accountIds = array();
+                            foreach ($accountAssociations as $account) {
+                                $account = $account['node']['account'];
+                                $accountIds[] = $account['id'];
+                            }
+                            $tmsValue = implode('|', $accountIds);
                         }
                         break;
                     default:
