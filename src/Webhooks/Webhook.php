@@ -6,7 +6,7 @@ use ADM\WPPlugin\Settings;
 use ADM\WPPlugin\Oauth2;
 use ADM\WPPlugin\PostTypes\Course;
 
-use Administrate\PhpSdk\GraphQL\Client as SDKClient;
+use Administrate\PhpSdk\GraphQl\Client as SDKClient;
 use Administrate\PhpSdk\GraphQl\QueryBuilder as SDKQueryBuilder;
 
 if (! class_exists('Webhook')) {
