@@ -28,6 +28,7 @@ if (!class_exists('Settings')) {
         private $account_settings_key   = 'admwpp_account_settings';
         private $general_settings_key   = 'admwpp_general_settings';
         private $advanced_settings_key  = 'admwpp_advanced_settings';
+        private $search_settings_key    = 'admwpp_search_settings';
         private $uninstall_settings_key = 'admwpp_uninstall_settings';
 
         private $plugin_options_key     = 'admwpp-settings';
@@ -136,6 +137,7 @@ if (!class_exists('Settings')) {
                 'account'   => (array) get_option($this->account_settings_key),
                 'general'   => (array) get_option($this->general_settings_key),
                 'advanced'   => (array) get_option($this->advanced_settings_key),
+                'search'   => (array) get_option($this->search_settings_key),
                 'uninstall' => (array) get_option($this->uninstall_settings_key),
             );
         }
@@ -207,6 +209,7 @@ if (!class_exists('Settings')) {
             if (Main::active()) {
                 Settings::createGeneralTab();
                 Settings::createAdvancedTab();
+                Settings::createSearchTab();
                 Settings::createUninstallTab();
 
                 $this->createSubmenus();
@@ -304,6 +307,31 @@ if (!class_exists('Settings')) {
             Settings::createAdvancedSynchCategoriesSection($settings_index);
             Settings::seperatorSection($settings_index, 'categories');
             Settings::createAdvancedWebhookSection($settings_index);
+        }
+
+        // --------------------------------------------------------------------
+        // Search Tab Creation
+        // --------------------------------------------------------------------
+        protected function createSearchTab()
+        {
+            $settings_key = $this->search_settings_key;
+            $this->plugin_settings_tabs[$settings_key] = 'Search';
+            register_setting($settings_key, $settings_key);
+
+            // Setting Default options values.
+            $settings = get_option($settings_key);
+
+            $settings_index = 'search';
+
+            if (empty($settings)) {
+                //Setup defaults
+            }
+
+            $this->settings[$settings_index] = $settings;
+            update_option($settings_key, $settings);
+
+            Settings::createSearchSection($settings_index);
+
         }
 
         // --------------------------------------------------------------------
@@ -412,8 +440,47 @@ if (!class_exists('Settings')) {
                 )
             );
         }
-
         /** END ACCOUNT SECTION */
+
+        /** Search SECTION */
+        protected function createSearchSection($settings_key)
+        {
+            add_settings_section(
+                'admwpp_search_section',
+                "<span class='admwpp-section-title'>" . __('Search Filters', ADMWPP_TEXT_DOMAIN) . "</span>",
+                array(),
+                "admwpp_" . $settings_key . "_settings"
+            );
+
+            add_settings_field(
+                'admwpp_date_filter_section',
+                __('Date Filters', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldInputBoolean'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_search_section',
+                array(
+                    'field'        => 'date_filters',
+                    'settings_key' => $settings_key,
+                    'placeholder'  => 'Date Filters',
+                    'info'         => '<p>' . __('This will Disable / Enable Date Filters in the search page', ADMWPP_TEXT_DOMAIN) . '</p>',
+                )
+            );
+            add_settings_field(
+                'admwpp_locations_filters_section',
+                __('Locations Filters', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldInputBoolean'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_search_section',
+                array(
+                    'field'        => 'locations_filters',
+                    'settings_key' => $settings_key,
+                    'placeholder'  => 'Locations Filters',
+                    'info'         => '<p>' . __('This will Disable / Enable Locations Filters in the search page', ADMWPP_TEXT_DOMAIN) . '</p>',
+                )
+            );
+        }
+
+        /** END Search SECTION */
 
         /** LANGUAGE SECTION */
         protected function createLanguageSection($settings_key)
@@ -1316,6 +1383,9 @@ if (!class_exists('Settings')) {
                     break;
                 case 'admwpp_advanced_settings':
                     return "<i class='fa fa-cogs'></i>";
+                    break;
+                case 'admwpp_search_settings':
+                    return "<i class='fa fa-search'></i>";
                     break;
                 case 'admwpp_uninstall_settings':
                     return "<i class='fa fa-trash'></i>";

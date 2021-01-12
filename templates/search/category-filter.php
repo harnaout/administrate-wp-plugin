@@ -7,7 +7,7 @@
     <div class="adwmpp-dropdown-wrapper dropdown-wrapper">
         <div class="adwmpp-dropdown-body dropdown-body">
             <?php if (!empty($categories)) :
-                if ($filter_type == 'select') : ?>
+                if ($categories_filter_type == 'select') : ?>
                     <select class="admwpp-select admwpp-custom-select" name="lcat">
                         <?php foreach ($categories as $category) :
                             $admwpp_tms_id = get_term_meta($category->term_id, 'admwpp_tms_id', true);
@@ -58,16 +58,6 @@
                     </ul>
                 <?php endif;
             endif; ?>
-        </div>
-        <div class="adwmpp-dropdown-footer dropdown-footer">
-            <div class="adwmpp-links-wrapper links-wrapper">
-                <button class="adwmpp-filter-btn adwmpp-btn" value="<?php _e('Filter wissen', 'cga'); ?>">
-                    <?php _e('Filter', ADMWPP_TEXT_DOMAIN); ?>
-                </button>
-                <button class="adwmpp-search-btn adwmpp-btn" value="<?php _e('Zoeken', 'cga'); ?>">
-                    <?php _e('Search', ADMWPP_TEXT_DOMAIN); ?>
-                </button>
-            </div>
         </div>
     </div>
 </div>

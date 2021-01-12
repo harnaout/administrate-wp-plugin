@@ -35,7 +35,23 @@
                     <i class="fa fa-search"></i>
                 </button>
             </div>
-            <?php include($categoryFilterTemplate); ?>
+            <?php include($categoryFilterTemplate);
+            if ($dateSettingsOption == 1) {
+                include($dateFilterTemplate);
+            }
+            if ($locationSettingsOption == 1) {
+                include($locationsFilterTemplate);
+            } ?>
+            <div class="adwmpp-dropdown-footer dropdown-footer">
+                <div class="adwmpp-links-wrapper links-wrapper">
+                    <button class="adwmpp-filter-btn adwmpp-btn" value="<?php _e('Filter wissen', 'cga'); ?>">
+                        <?php _e('Filter', ADMWPP_TEXT_DOMAIN); ?>
+                    </button>
+                    <button class="adwmpp-search-btn adwmpp-btn" value="<?php _e('Zoeken', 'cga'); ?>">
+                        <?php _e('Search', ADMWPP_TEXT_DOMAIN); ?>
+                    </button>
+                </div>
+            </div>
         </form>
     </div>
 </div>

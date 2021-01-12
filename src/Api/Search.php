@@ -91,6 +91,9 @@ if (!class_exists('Search')) {
         {
             $vars[] = 'query';
             $vars[] = 'lcat';
+            $vars[] = 'from';
+            $vars[] = 'to';
+            $vars[] = 'loc';
             $vars[] = 'per_page';
             return $vars;
         }
@@ -100,14 +103,21 @@ if (!class_exists('Search')) {
             if (is_admin()) {
                 return '';
             }
+            $attsArray = array(
+                'categories_filter_type' => 'select',
+                'pager' => 'simple',
+                'template' => 'grid'
+            );
+            $dateSettingsOption = (int) Settings::instance()->getSettingsOption('search', 'date_filters');
+            $locationSettingsOption = (int) Settings::instance()->getSettingsOption('search', 'locations_filters');
+            if ($locationSettingsOption == 1) {
+                $attsArray[] = 'locations_filter_type';
+                $attsArray['locations_filter_type'] = 'select';
+            }
 
             extract(
                 shortcode_atts(
-                    array(
-                        'filter_type' => 'select',
-                        'pager' => 'simple',
-                        'template' => 'grid'
-                    ),
+                    $attsArray,
                     $args
                 )
             );
@@ -120,6 +130,9 @@ if (!class_exists('Search')) {
 
             $query = get_query_var('query');
             $lcat = get_query_var('lcat');
+            $fromDate = get_query_var('from');
+            $toDate = get_query_var('to');
+            $loc = get_query_var('loc');
             $page = get_query_var('paged') ? (int) get_query_var('paged') : 1;
             $per_page = (int) get_query_var('per_page', ADMWPP_SEARCH_PER_PAGE);
 
@@ -134,17 +147,24 @@ if (!class_exists('Search')) {
             if ($lcat) {
                 $params['lcat'] = $lcat;
             }
+            if (!empty($fromDate)) {
+                $params['from'] = $fromDate;
+            }
+            if ($toDate) {
+                $params['to'] = $toDate;
+            }
+            if ($loc) {
+                $params['loc'] = $loc;
+            }
 
             $searchResults = self::search($params);
 
             $template = self::getTemplatePath('form');
             $categoryFilterTemplate = self::getTemplatePath('category-filter');
+            $dateFilterTemplate = self::getTemplatePath('date-filter');
+            $locationsFilterTemplate = self::getTemplatePath('locations-filter');
             $courseTemplate = self::getTemplatePath('course');
             $pagerTemplate = self::getTemplatePath('pager');
-
-            //TODO: add pager template with types (simple / full)
-            //simple: current page number out of the total and prev/next= buttons
-            //full: full pager with prev/next first/last buttons and page numbers
 
             ob_start();
             include $template;
@@ -196,6 +216,14 @@ if (!class_exists('Search')) {
                     'field' => 'categoryId',
                     'operation' => 'eq',
                     'value' => $params['lcat'],
+                );
+            }
+
+            if (isset($params['date']) && !empty($params['date'])) {
+                $args['filters'][] = array(
+                    'field' => 'date',
+                    'operation' => 'eq',
+                    'value' => $params['date'],
                 );
             }
 
