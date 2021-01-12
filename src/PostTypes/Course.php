@@ -1111,6 +1111,7 @@ if (!class_exists('Course')) {
             $results['postId'] = $postId;
 
             // Update Post Terms
+            $postTermIds = array();
             if ($postId && $learningCategories) {
                 $postTermIds = self::setTerms($postId, $learningCategories);
                 $results['terms'] = $postTermIds;
@@ -1136,7 +1137,9 @@ if (!class_exists('Course')) {
                 $langCode = strtolower($postArgs['meta_input'][TMS_LANGUAGE_KEY]);
                 if (in_array($langCode, array_keys(icl_get_languages()))) {
                     $results['transId'] = self::setLang($postId, $langCode);
-                    $results['termsTransId'] = self::setTermsLang($postId, $langCode, $postTermIds);
+                    if ($postId && $postTermIds) {
+                        $results['termsTransId'] = self::setTermsLang($postId, $langCode, $postTermIds);
+                    }
                 }
             }
 
