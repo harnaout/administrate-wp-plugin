@@ -9,6 +9,12 @@
             <?php if (!empty($categories)) :
                 if ($categories_filter_type == 'select') : ?>
                     <select class="admwpp-select admwpp-custom-select" name="lcat">
+                        <option class="adwmpp-option-item option-item" value="">
+                            <label>
+                            <i></i>
+                            <span>Select a category</span>
+                            </label>
+                        </option>
                         <?php foreach ($categories as $category) :
                             $admwpp_tms_id = get_term_meta($category->term_id, 'admwpp_tms_id', true);
                             if ($admwpp_tms_id) :

@@ -8,6 +8,12 @@
         <div class="adwmpp-dropdown-body dropdown-body">
             <?php if ($locations_filter_type == 'select') : ?>
                 <select class="admwpp-select admwpp-custom-select" name="loc">
+                    <option class="adwmpp-option-item option-item" value="">
+                        <label>
+                            <i></i>
+                            <span>Select a location</span>
+                        </label>
+                    </option>
                     <option class="adwmpp-option-item option-item" value="first location">
                         <label for="location-id-1">
                             <i></i>

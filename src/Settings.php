@@ -208,8 +208,8 @@ if (!class_exists('Settings')) {
 
             if (Main::active()) {
                 Settings::createGeneralTab();
-                Settings::createAdvancedTab();
                 Settings::createSearchTab();
+                Settings::createAdvancedTab();
                 Settings::createUninstallTab();
 
                 $this->createSubmenus();
