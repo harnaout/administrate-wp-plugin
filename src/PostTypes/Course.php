@@ -10,7 +10,7 @@ use ADM\WPPlugin\Webhooks;
 
 use Administrate\PhpSdk\Course as SDKCourse;
 use Administrate\PhpSdk\LearningPath as SDKLearningPath;
-use Administrate\PhpSdk\GraphQL\Client as SDKClient;
+use Administrate\PhpSdk\GraphQl\Client as SDKClient;
 
 /**
  * Construct the "Course" post type
