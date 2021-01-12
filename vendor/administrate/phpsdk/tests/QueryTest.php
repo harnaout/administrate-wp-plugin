@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use Administrate\PhpSdk\GraphQL\QueryBuilder as QueryBuilder;
-use Administrate\PhpSdk\GraphQL\Client;
+use Administrate\PhpSdk\GraphQl\QueryBuilder as QueryBuilder;
+use Administrate\PhpSdk\GraphQl\Client;
 
 /**
  * QueryTest

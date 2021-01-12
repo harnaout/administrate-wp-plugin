@@ -1,6 +1,6 @@
 <?php
 
-namespace Administrate\PhpSdk\GraphQL;
+namespace Administrate\PhpSdk\GraphQl;
 
 use GraphQL\Client as GqlClient;
 
