@@ -58,7 +58,7 @@ if (!class_exists('Course')) {
             ),
             'admwpp_tms_legacy_id' => array(
                 'type' => 'text',
-                'label' => 'LegacyID',
+                'label' => 'Legacy ID',
                 'tmsKey' => 'legacyId',
                 'showOnFront' => false,
             ),
@@ -82,13 +82,13 @@ if (!class_exists('Course')) {
             ),
             'admwpp_tms_life_cycle_state' => array(
                 'type' => 'text',
-                'label' => 'lifecycleState',
+                'label' => 'Lifecycle State',
                 'tmsKey' => 'lifecycleState',
                 'showOnFront' => false,
             ),
             'admwpp_tms_learning_categories' => array(
                 'type' => 'text',
-                'label' => 'learningCategories',
+                'label' => 'learning Categories IDs',
                 'tmsKey' => 'learningCategories',
                 'showOnFront' => false,
             ),
@@ -106,8 +106,14 @@ if (!class_exists('Course')) {
             ),
             'admwpp_tms_accounts_associations' => array(
                 'type' => 'text',
-                'label' => 'Account Associations',
+                'label' => 'Account Associations IDs',
                 'tmsKey' => 'accountAssociations',
+                'showOnFront' => false,
+            ),
+            'admwpp_tms_locations' => array(
+                'type' => 'text',
+                'label' => 'Locations IDs',
+                'tmsKey' => 'locations',
                 'showOnFront' => false,
             ),
         );
@@ -174,6 +180,15 @@ if (!class_exists('Course')) {
                     'associationType' => array('id', 'name'),
                 )
             ),
+            'events' => array(
+                'type' => 'edges',
+                'fields' => array(
+                    'id',
+                    'title',
+                    'price',
+                    'location' => array('id', 'name')
+                )
+            ),
         );
 
         static $learningPathFields = array(
@@ -228,6 +243,26 @@ if (!class_exists('Course')) {
                 'fields' => array(
                     'account' => array('id', 'name'),
                     'associationType' => array('id', 'name'),
+                )
+            ),
+            'learningObjectives' => array(
+                'type' => 'edges',
+                'fields' => array(
+                    'id',
+                    '__typename',
+                    '... on CourseObjective' => array(
+                        'courseTemplate' => array(
+                            'id',
+                            'events' => array(
+                                'type' => 'edges',
+                                'fields' => array(
+                                    'id',
+                                    'title',
+                                    'location' => array('id', 'name')
+                                )
+                            )
+                        )
+                    )
                 )
             ),
         );
@@ -652,20 +687,24 @@ if (!class_exists('Course')) {
         public static function adminColumnsHead($defaults)
         {
             $defaults['type'] = 'Type';
+            $defaults['code'] = 'Code';
             $defaults['image'] = 'Image';
             return $defaults;
         }
 
         public static function adminColumnsContent($columnName, $postId)
         {
-            if ($columnName == 'type') {
+            if ($columnName === 'type') {
                 echo get_post_meta($postId, 'admwpp_tms_type', true);
             }
-            if ($columnName == 'image') {
+            if ($columnName === 'image') {
                 $postFeaturedImageUrl = get_the_post_thumbnail_url($postId, 'thumbnail');
                 if ($postFeaturedImageUrl) {
                     echo '<img src="' . $postFeaturedImageUrl . '" />';
                 }
+            }
+            if ($columnName === 'code') {
+                echo get_post_meta($postId, 'admwpp_tms_code', true);
             }
         }
 
@@ -1036,6 +1075,47 @@ if (!class_exists('Course')) {
                             }
                             $tmsValue = implode('|', $accountIds);
                         }
+                        break;
+                    case 'locations':
+                        $locationIds = array();
+                        if ('LP' === $type) {
+                            $tmsKey = 'learningObjectives';
+                            if (isset($node[$tmsKey])) {
+                                if (isset($node[$tmsKey]['edges'])) {
+                                    $learningObjectives = $node[$tmsKey]['edges'];
+                                    foreach ($learningObjectives as $objective) {
+                                        if (isset($objective['node']['courseTemplate'])) {
+                                            $courseTemplate = $objective['node']['courseTemplate'];
+                                            if (isset($courseTemplate['events'])) {
+                                                $events = $courseTemplate['events']['edges'];
+                                                foreach ($events as $event) {
+                                                    if (isset($event['node']['location'])) {
+                                                        $location = $event['node']['location'];
+                                                        if (!in_array($location['id'], $locationIds)) {
+                                                            $locationIds[] = $location['id'];
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            $tmsKey = 'events';
+                            if (isset($node[$tmsKey])) {
+                                $events = $node[$tmsKey]['edges'];
+                                foreach ($events as $event) {
+                                    if (isset($event['node']['location'])) {
+                                        $location = $event['node']['location'];
+                                        if (!in_array($location['id'], $locationIds)) {
+                                            $locationIds[] = $location['id'];
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        $tmsValue = implode('|', $locationIds);
                         break;
                     default:
                         if (isset($node[$tmsKey])) {
