@@ -687,20 +687,24 @@ if (!class_exists('Course')) {
         public static function adminColumnsHead($defaults)
         {
             $defaults['type'] = 'Type';
+            $defaults['code'] = 'Code';
             $defaults['image'] = 'Image';
             return $defaults;
         }
 
         public static function adminColumnsContent($columnName, $postId)
         {
-            if ($columnName == 'type') {
+            if ($columnName === 'type') {
                 echo get_post_meta($postId, 'admwpp_tms_type', true);
             }
-            if ($columnName == 'image') {
+            if ($columnName === 'image') {
                 $postFeaturedImageUrl = get_the_post_thumbnail_url($postId, 'thumbnail');
                 if ($postFeaturedImageUrl) {
                     echo '<img src="' . $postFeaturedImageUrl . '" />';
                 }
+            }
+            if ($columnName === 'code') {
+                echo get_post_meta($postId, 'admwpp_tms_code', true);
             }
         }
 
