@@ -992,10 +992,6 @@ if (!class_exists('Course')) {
 
                 $tmsValue = '';
 
-                if ('LP' === $type && $tmsKey === 'publicPrices') {
-                    $tmsKey = 'prices';
-                }
-
                 switch ($tmsKey) {
                     case 'image':
                         if (isset($node[$tmsKey])) {
@@ -1026,7 +1022,9 @@ if (!class_exists('Course')) {
                         }
                         break;
                     case 'publicPrices':
-                    case 'prices': // Add 21% VAT for CGA
+                        if ('LP' === $type) {
+                            $tmsKey = 'prices';
+                        }
                         if (isset($node[$tmsKey])) {
                             $publicPrices = $node[$tmsKey]['edges'];
                             $pricesAmounts = array();
@@ -1047,8 +1045,12 @@ if (!class_exists('Course')) {
                         }
                         break;
                     case 'financialUnit':
-                        if (isset($node['publicPrices'])) {
-                            $publicPrices = $node['publicPrices']['edges'];
+                        $tmsKey = 'publicPrices';
+                        if ('LP' === $type) {
+                            $tmsKey = 'prices';
+                        }
+                        if (isset($node[$tmsKey])) {
+                            $publicPrices = $node[$tmsKey]['edges'];
                             $pricesCurencies = array();
                             foreach ($publicPrices as $prices) {
                                 if (isset($prices['node']['priceLevel'])) {
