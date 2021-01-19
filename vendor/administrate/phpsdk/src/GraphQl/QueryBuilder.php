@@ -42,7 +42,17 @@ class QueryBuilder extends GqlQueryBuilder
         $subInnerNode = (new QueryBuilder('' . $subFieldKey . ''));
         foreach ($subFielfieldVal as $fieldKey => $fieldVal) {
             if (is_array($fieldVal)) {
-                $subInnerNode->selectField(self::buildSubNode($fieldKey, $fieldVal));
+                if (isset($fieldVal['type']) && $fieldVal['type'] == 'edges') {
+                    $fields = $fieldVal['fields'];
+                    $subNode = (new QueryBuilder('' . $fieldKey . ''));
+                    $edgesNode = (new QueryBuilder('edges'));
+                    $innerNode = self::buildNode($fields);
+                    $edgesNode->selectField($innerNode);
+                    $subNode->selectField($edgesNode);
+                    $subInnerNode->selectField($subNode);
+                } else {
+                    $subInnerNode->selectField(self::buildSubNode($fieldKey, $fieldVal));
+                }
             } else {
                 $subInnerNode->selectField($fieldVal);
             }
