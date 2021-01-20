@@ -346,13 +346,16 @@ if (!class_exists('Course')) {
                 1
             );
 
-            // Custom Content
-            add_filter(
-                'the_content',
-                array($this, 'customContent'),
-                10,
-                1
-            );
+            $courseContentSettings = (int) Settings::instance()->getSettingsOption('general', 'course_content');
+            if (!$courseContentSettings) {
+                // Custom Content
+                add_filter(
+                    'the_content',
+                    array($this, 'customContent'),
+                    10,
+                    1
+                );
+            }
         }
 
         public static function getSlug()
@@ -1231,3 +1234,4 @@ if (!class_exists('Course')) {
 
 // END class Minions
 }
+

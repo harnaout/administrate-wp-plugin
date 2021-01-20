@@ -264,6 +264,7 @@ if (!class_exists('Settings')) {
 
             if (!isset($settings) && empty($settings)) {
                 $settings['styles'] = 0;
+                $settings['course_ontent'] = 0;
                 // $locale = get_locale();
 
                 // if (file_exists(ADMWPP_DIR . '/languages/' . $locale . '.mo')) {
@@ -278,7 +279,8 @@ if (!class_exists('Settings')) {
 
             //Settings::createLanguageSection($settings_index);
             Settings::createStylingSection($settings_index);
-            Settings::seperatorSection($settings_index, 'language');
+            Settings::seperatorSection($settings_index, 'styling');
+            Settings::createCourseCustomContentSection($settings_index);
         }
 
         // --------------------------------------------------------------------
@@ -539,6 +541,33 @@ if (!class_exists('Settings')) {
         }
         /** END STYLING SECTION */
 
+        /** COURSE CUSTOM CONTENT SECTION */
+        protected function createCourseCustomContentSection($settings_key)
+        {
+
+            add_settings_section(
+                'admwpp_course_custom_content_settings',
+                "<span class='admwpp-section-title'>" . __('Course Custom Content', ADMWPP_TEXT_DOMAIN) . "</span>",
+                array($this, 'courseCustomContentSettingsSection'),
+                "admwpp_" . $settings_key . "_settings"
+            );
+
+            add_settings_field(
+                'admwpp_course_content_settings',
+                __('Course Content', ADMWPP_TEXT_DOMAIN) . ':',
+                array($this, 'settingsFieldInputBoolean'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_course_custom_content_settings',
+                array(
+                    'field'        => 'course_content',
+                    'settings_key' => $settings_key,
+                    'info'         => 'Selecting this checkbox will disable adding custom information to the course content.
+                    <br /> Import courses & Learning paths again after selecting this checkbox',
+                )
+            );
+        }
+        /** END COURSE CUSTOM CONTENT SECTION */
+
         /** ADVANCED Synch SECTION */
         protected function createAdvancedSynchCoursesSection($settings_key)
         {
@@ -743,6 +772,14 @@ if (!class_exists('Settings')) {
            // Think of this as help text for the section.
             echo "<div class='settings-section-info'>";
             echo __("Disable plugins third party libraries (CSS/JS).", ADMWPP_TEXT_DOMAIN);
+            echo "</div>";
+        }
+
+        public function courseCustomContentSettingsSection()
+        {
+            // Think of this as help text for the section.
+            echo "<div class='settings-section-info'>";
+            echo __("Disable adding custom information to the course content.", ADMWPP_TEXT_DOMAIN);
             echo "</div>";
         }
 
