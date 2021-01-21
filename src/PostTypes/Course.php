@@ -1218,6 +1218,7 @@ if (!class_exists('Course')) {
             }
 
             // Set course language if WPML exists
+            include_once(ABSPATH . 'wp-admin/includes/plugin.php');
             if (is_plugin_active(ADMWPP_WPML_PATH) && !empty($postArgs['meta_input'][TMS_LANGUAGE_KEY])) {
                 $langCode = strtolower($postArgs['meta_input'][TMS_LANGUAGE_KEY]);
                 if (in_array($langCode, array_keys(icl_get_languages()))) {
