@@ -606,6 +606,19 @@ if (!class_exists('Settings')) {
                 )
             );
 
+            add_settings_field(
+                'admwpp_synch_term_lang',
+                __('Synch Learning Categories Language', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldInputBoolean'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_advanced_synch_courses_section',
+                array(
+                    'field'        => 'synch_term_lang',
+                    'settings_key' => $settings_key,
+                    'info'         => __('This will enable the translation of the Learning category attached to Course / LearnignPath being synced <br/><strong>(this feature uses WPML)</strong>', ADMWPP_TEXT_DOMAIN),
+                )
+            );
+
             add_settings_section(
                 'admwpp_advanced_synch_courses_action',
                 "<span class='admwpp-section-title'>" . __('Courses Synchronization', ADMWPP_TEXT_DOMAIN) . "</span>",
