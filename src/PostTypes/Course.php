@@ -1223,7 +1223,9 @@ if (!class_exists('Course')) {
                 $langCode = strtolower($postArgs['meta_input'][TMS_LANGUAGE_KEY]);
                 if (in_array($langCode, array_keys(icl_get_languages()))) {
                     $results['transId'] = self::setLang($postId, $langCode);
-                    if ($postId && $postTermIds) {
+                    // Check for settings Flag before translating Terms
+                    $synchTermLang = (int) Settings::instance()->getSettingsOption('advanced', 'synch_term_lang');
+                    if ($postId && $postTermIds && $synchTermLang) {
                         $results['termsTransId'] = self::setTermsLang($postId, $langCode, $postTermIds);
                     }
                 }
