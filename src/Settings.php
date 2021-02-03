@@ -298,7 +298,9 @@ if (!class_exists('Settings')) {
             $settings_index = 'advanced';
 
             if (empty($settings)) {
-                //Setup defaults
+                $settings['synch_title'] = 0;
+                $settings['synch_description'] = 0;
+                $settings['synch_term_lang'] = 0;
             }
 
             $this->settings[$settings_index] = $settings;
@@ -601,6 +603,19 @@ if (!class_exists('Settings')) {
                     'field'        => 'synch_description',
                     'settings_key' => $settings_key,
                     'info'         => __('This will Disable / Enable Synching the Description of course templates once it gets updated using webhooks', ADMWPP_TEXT_DOMAIN),
+                )
+            );
+
+            add_settings_field(
+                'admwpp_synch_term_lang',
+                __('Synch Learning Categories Language', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldInputBoolean'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_advanced_synch_courses_section',
+                array(
+                    'field'        => 'synch_term_lang',
+                    'settings_key' => $settings_key,
+                    'info'         => __('This will enable the translation of the Learning category attached to Course / LearnignPath being synced <br/><strong>(this feature uses WPML)</strong>', ADMWPP_TEXT_DOMAIN),
                 )
             );
 
@@ -1102,7 +1117,8 @@ if (!class_exists('Settings')) {
             // Check if the value is true or false
             $checked = ($value == "1") ? "checked" : "";
 
-            // echo a proper input type="text"
+            // echo a proper input type="checkbox"
+            echo "<input type='hidden' name='".$settings_key."[$field_key]' value='0' autocomplete='off'/>";
             echo "<input type='checkbox' name='".$settings_key."[$field_key]' id='admwpp_$field_key' value='1' autocomplete='off' $checked/>";
 
             if ($info) {
