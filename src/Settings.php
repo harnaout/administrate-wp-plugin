@@ -298,7 +298,9 @@ if (!class_exists('Settings')) {
             $settings_index = 'advanced';
 
             if (empty($settings)) {
-                //Setup defaults
+                $settings['synch_title'] = 0;
+                $settings['synch_description'] = 0;
+                $settings['synch_term_lang'] = 0;
             }
 
             $this->settings[$settings_index] = $settings;
