@@ -231,7 +231,6 @@ if (! class_exists('LearningCategory')) {
                     $parentTermId = $parentTerm['termId'];
                 }
                 $termArgs['parent'] = $parentTermId;
-                $termArgs['slug'] .= "-" . sanitize_title($parentName);
             }
 
             $termId = self::checkifExists($tmsId);

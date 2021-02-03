@@ -75,62 +75,67 @@ $TMS_LP_CUSTOM_FILEDS = array(
   'admwpp_tms_language' => array(
       'type' => 'text',
       'label' => 'Language',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE4Mg==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjEzMA==',
   ),
   'admwpp_tms_general_info' => array(
       'type' => 'textarea',
       'label' => 'General Info',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE3NA==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjEyMQ==',
   ),
   'admwpp_tms_usps_info' => array(
       'type' => 'textarea',
       'label' => 'USPs Info',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE3Mw==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjEyMg==',
   ),
   'admwpp_tms_price_info' => array(
       'type' => 'textarea',
       'label' => 'Price Info',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE3Mg==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjEyMw==',
   ),
   'admwpp_tms_practical_info' => array(
       'type' => 'textarea',
       'label' => 'Practical Info',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE3MQ==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjEyNA==',
   ),
   'admwpp_tms_ticket_info' => array(
       'type' => 'text',
       'label' => 'Ticket Info',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE4Nw==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjEzNQ==',
   ),
   'admwpp_tms_seat_type' => array(
       'type' => 'text',
       'label' => 'Seat Type',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE4NQ==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjEzMw==',
   ),
   'admwpp_tms_subtitle' => array(
       'type' => 'text',
       'label' => 'Subtitle',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE4Ng==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjEzNA==',
   ),
   'admwpp_tms_show_in_catalog' => array(
       'type' => 'text',
       'label' => 'Show in catalog',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE3OA==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjEyNg==',
   ),
   'admwpp_tms_sticky_in_catalog' => array(
       'type' => 'text',
       'label' => 'Sticky in catalog',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE3OQ==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjEyNw==',
   ),
   'admwpp_tms_product_type' => array(
       'type' => 'text',
       'label' => 'Product Type',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE4NA==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjEzMg==',
   ),
   'admwpp_tms_target_group' => array(
       'type' => 'text',
       'label' => 'Target Group',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE4Mw==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjEzMQ==',
+  ),
+  'admwpp_tms_label' => array(
+      'type' => 'text',
+      'label' => 'Label',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjEyNQ==',
   ),
 );
 
@@ -139,47 +144,42 @@ $TMS_CUSTOM_FILEDS = array(
   'admwpp_tms_part_of_day' => array(
       'type' => 'text',
       'label' => 'Part of the Day',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjcz',
-  ),
-  'admwpp_tms_months' => array(
-      'type' => 'text',
-      'label' => 'On Months',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjc1',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjk3',
   ),
   'admwpp_tms_language' => array(
       'type' => 'text',
       'label' => 'Language',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjExNw==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjg3',
   ),
   'admwpp_tms_target_group' => array(
       'type' => 'text',
       'label' => 'Target Group',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjExOA==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjg4',
   ),
   'admwpp_tms_product_type' => array(
       'type' => 'text',
       'label' => 'Product Type',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjExOQ==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjg5',
   ),
   'admwpp_tms_ticket_info' => array(
       'type' => 'text',
       'label' => 'Ticket Info',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE2OQ==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjky',
   ),
   'admwpp_tms_seat_type' => array(
       'type' => 'text',
       'label' => 'Seat Type',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE2MQ==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjkw',
   ),
   'admwpp_tms_label' => array(
       'type' => 'text',
       'label' => 'Label',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE2NQ==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjgy',
   ),
   'admwpp_tms_subtitle' => array(
       'type' => 'text',
       'label' => 'Subtitle',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjEyNg==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjkx',
   ),
   'admwpp_tms_short_descripton' => array(
       'type' => 'textarea',
@@ -209,11 +209,11 @@ $TMS_CUSTOM_FILEDS = array(
   'admwpp_tms_show_in_catalog' => array(
       'type' => 'text',
       'label' => 'Show in catalog',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE2NA==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjgz',
   ),
   'admwpp_tms_sticky_in_catalog' => array(
       'type' => 'text',
       'label' => 'Sticky in catalog',
-      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjE2Mw==',
+      'tmsKey' => 'Q3VzdG9tRmllbGREZWZpbml0aW9uOjg0',
   ),
 );
