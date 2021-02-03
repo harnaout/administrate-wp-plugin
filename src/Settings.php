@@ -1117,7 +1117,8 @@ if (!class_exists('Settings')) {
             // Check if the value is true or false
             $checked = ($value == "1") ? "checked" : "";
 
-            // echo a proper input type="text"
+            // echo a proper input type="checkbox"
+            echo "<input type='hidden' name='".$settings_key."[$field_key]' value='0' autocomplete='off'/>";
             echo "<input type='checkbox' name='".$settings_key."[$field_key]' id='admwpp_$field_key' value='1' autocomplete='off' $checked/>";
 
             if ($info) {
