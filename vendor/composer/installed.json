@@ -2,17 +2,17 @@
     "packages": [
         {
             "name": "administrate/phpsdk",
-            "version": "1.5.0",
-            "version_normalized": "1.5.0.0",
+            "version": "1.6.0",
+            "version_normalized": "1.6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Administrate/administrate-php-sdk.git",
-                "reference": "1d3c03a393e8bd4973adfe8448cf312d96b50f7c"
+                "reference": "3f72ecb9f01be96ddbf7075b5058998c23462e0d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Administrate/administrate-php-sdk/zipball/1d3c03a393e8bd4973adfe8448cf312d96b50f7c",
-                "reference": "1d3c03a393e8bd4973adfe8448cf312d96b50f7c",
+                "url": "https://api.github.com/repos/Administrate/administrate-php-sdk/zipball/3f72ecb9f01be96ddbf7075b5058998c23462e0d",
+                "reference": "3f72ecb9f01be96ddbf7075b5058998c23462e0d",
                 "shasum": ""
             },
             "require": {
@@ -21,7 +21,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9"
             },
-            "time": "2021-01-19T08:35:45+00:00",
+            "time": "2021-02-09T13:38:17+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -47,29 +47,29 @@
             ],
             "description": "A GraphQL client written in PHP which provides very simple, yet powerful, query generator classes that make the process of interacting with a GraphQL server a very simple one.",
             "support": {
-                "source": "https://github.com/Administrate/administrate-php-sdk/tree/1.5.0"
+                "source": "https://github.com/Administrate/administrate-php-sdk/tree/1.6.0"
             },
             "install-path": "../administrate/phpsdk"
         },
         {
             "name": "gmostafa/php-graphql-client",
-            "version": "v1.8",
-            "version_normalized": "1.8.0.0",
+            "version": "v1.9.2",
+            "version_normalized": "1.9.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mghoneimy/php-graphql-client.git",
-                "reference": "707f2f44fe8f0e9283024a32f8618b5cb23b99ac"
+                "reference": "53fb7984110cb1a3d0a2b494077fa36bc3886e16"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mghoneimy/php-graphql-client/zipball/707f2f44fe8f0e9283024a32f8618b5cb23b99ac",
-                "reference": "707f2f44fe8f0e9283024a32f8618b5cb23b99ac",
+                "url": "https://api.github.com/repos/mghoneimy/php-graphql-client/zipball/53fb7984110cb1a3d0a2b494077fa36bc3886e16",
+                "reference": "53fb7984110cb1a3d0a2b494077fa36bc3886e16",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "guzzlehttp/guzzle": "^6.3|^7.0.1",
-                "php": "^7.1",
+                "php": "^7.1 || ^8.0",
                 "psr/http-client": "^1.0",
                 "psr/http-message": "^1.0"
             },
@@ -80,7 +80,7 @@
             "suggest": {
                 "gmostafa/php-graphql-oqm": "To have object-to-query mapping support"
             },
-            "time": "2020-10-29T00:04:35+00:00",
+            "time": "2021-02-08T01:17:45+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -108,6 +108,10 @@
                 "query",
                 "query-builder"
             ],
+            "support": {
+                "issues": "https://github.com/mghoneimy/php-graphql-client/issues",
+                "source": "https://github.com/mghoneimy/php-graphql-client/tree/v1.9.2"
+            },
             "install-path": "../gmostafa/php-graphql-client"
         },
         {
