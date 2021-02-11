@@ -1167,9 +1167,13 @@ if (!class_exists('Course')) {
                 }
 
                 // Post content is a contact of several custom fields from the TMS
-                global $TMS_COURSE_CONTENT;
+                // Use admwpp_course_content_meta_keys filter in active theme or plugins
+                // to set the course meta keys to be synched to the content
+                $tmsCourseContentMetaKeys = array();
+                $tmsCourseContentMetaKeys = apply_filters( 'admwpp_course_content_meta_keys', $tmsCourseContentMetaKeys);
+                
                 $content = '';
-                foreach ($TMS_COURSE_CONTENT as $fieldKey) {
+                foreach ($tmsCourseContentMetaKeys as $fieldKey) {
                     $content .= $postMetas[$fieldKey];
                     $content .= "<br/>";
                 }

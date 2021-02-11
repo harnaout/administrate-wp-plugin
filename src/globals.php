@@ -61,15 +61,6 @@ define('TMS_LANGUAGE_KEY', 'admwpp_tms_language');
 define('TMS_STICKY_POST_KEY', 'admwpp_tms_sticky_in_catalog');
 define('TMS_CUSTOM_PRICE_LEVEL_NAME', '*KP - 10 kinderen');
 
-
-global $TMS_COURSE_CONTENT;
-$TMS_COURSE_CONTENT = array(
-  'admwpp_tms_general_info',
-  'admwpp_tms_usps_info',
-  'admwpp_tms_price_info',
-  'admwpp_tms_practical_info',
-);
-
 global $TMS_LP_CUSTOM_FILEDS;
 $TMS_LP_CUSTOM_FILEDS = array(
   'admwpp_tms_language' => array(
