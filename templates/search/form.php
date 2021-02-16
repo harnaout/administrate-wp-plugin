@@ -62,7 +62,6 @@
             $courses = $searchResults['courses']; ?>
             <div class="admwpp-courses-listing">
                 <?php foreach ($courses as $key => $course) :
-                    $course = $course['node'];
                     include($courseTemplate);
                 endforeach ?>
             </div>

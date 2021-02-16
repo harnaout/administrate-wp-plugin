@@ -4,8 +4,9 @@ namespace ADM\WPPlugin\Api;
 use ADM\WPPlugin as ADMWPP;
 use ADM\WPPlugin\Oauth2;
 use ADM\WPPlugin\Settings;
+use ADM\WPPlugin\PostTypes\Course;
 
-use Administrate\PhpSdk\Course as SDKCourse;
+use Administrate\PhpSdk\Catalogue as SDKCatalogue;
 
 /**
  * Construct the "Course" post type
@@ -17,16 +18,40 @@ if (!class_exists('Search')) {
         protected static $instance;
 
         static $searchFields = array(
-            'id',
-            'code',
-            'name',
-            'teaserDescription',
-            'description',
-            'category',
-            'imageUrl',
-            'priceRange' => array(
-                'normalPrice' => array('amount')
-            )
+            '__typename',
+            '... on Course' => array(
+                'id',
+                'code',
+                'name',
+                'description',
+                'category',
+                'imageUrl',
+                'priceRange' => array(
+                    'normalPrice' => array(
+                        'amount',
+                        'financialUnit' => array('symbol')
+                    )
+                ),
+                'customFieldValues' => array(
+                    'definitionKey',
+                    'value'
+                )
+            ),
+            '... on LearningPath' => array(
+                'id',
+                'name',
+                'description',
+                'lifecycleState',
+                'category',
+                'price' => array(
+                    'amount',
+                    "financialUnit" => array('symbol')
+                ),
+                'customFieldValues' => array(
+                    'definitionKey',
+                    'value'
+                )
+            ),
         );
 
         function __construct()
@@ -184,7 +209,7 @@ if (!class_exists('Search')) {
             $apiParams['portalToken'] = $portalToken;
             $apiParams['portal'] = Settings::instance()->getSettingsOption('account', 'portal');
 
-            $SDKCourse = new SDKCourse($apiParams);
+            $SDKCatalogue = new SDKCatalogue($apiParams);
 
             $page = (int) $params['page'];
             $perPage = (int) $params['per_page'];
@@ -229,22 +254,72 @@ if (!class_exists('Search')) {
 
             $args = apply_filters('admwpp_search_args', $args);
 
-            $allCourses = $SDKCourse->loadAll($args);
-            $courses = $allCourses['courses'];
+            $allCatalogue = $SDKCatalogue->loadAll($args);
+            $catalogue = $allCatalogue['catalogue'];
 
-            $pageInfo = $courses['pageInfo'];
-            $courses = $courses['edges'];
-
+            $pageInfo = $catalogue['pageInfo'];
+            $catalogue = $catalogue['edges'];
+            $catalogue = self::formatCatalogueOutput($catalogue);
+            
             $results = array(
                 'totalRecords' => $pageInfo['totalRecords'],
                 'totalNumPages' => ceil($pageInfo['totalRecords'] / $perPage),
                 'currentPage' => $page,
                 'hasNextPage' => $pageInfo['hasNextPage'],
                 'hasPreviousPage' => $pageInfo['hasPreviousPage'],
-                'courses' => $courses,
+                'courses' => $catalogue,
             );
 
             return $results;
+        }
+        
+        /**
+         * Function to format catalogue output
+         * 
+         * @param  array    $catalogue array of courses & learnings paths
+         * 
+         * @return array    array of formatted course output
+         */
+        public static function formatCatalogueOutput($catalogue) {
+            $catalogueOutput = array();
+            foreach($catalogue as $course) {
+                $course = $course['node'];
+                $coursePostId = Course::checkifExists($course['id']);
+                $price = '';
+                $symbol = '';
+                $imageUrl = '';
+
+                if (isset($course['priceRange']['normalPrice'])) {
+                    $price = $course['priceRange']['normalPrice']['amount'];
+                    if (isset($course['priceRange']['normalPrice']['financialUnit'])) {
+                        $symbol = $course['priceRange']['normalPrice']['financialUnit']['symbol'];
+                    }
+                }
+                if (isset($course['price']['amount'])) {
+                    $price = $course['price']['amount'];
+                    if (isset($course['price']['financialUnit'])) {
+                        $symbol = $course['price']['financialUnit']['symbol'];
+                    }
+                }
+                if (isset($course['imageUrl'])) {
+                    $imageUrl = $course['imageUrl'];
+                }
+
+                $catalogueOutput[$course['id']] = array(
+                    'postId' => $coursePostId,
+                    'type' => $course['__typename'],
+                    'name' => $course['name'],
+                    'description' => $course['description'],
+                    'imageUrl' => $imageUrl,
+                    'category' => $course['category'],
+                    'formattedPrice' => $symbol . ' ' . $price,
+                    'price' => $price,
+                    'symbol' => $symbol,
+                    'customFieldValues' => $course['customFieldValues']
+                );
+            }
+
+            return $catalogueOutput;
         }
 
 

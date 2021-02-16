@@ -267,18 +267,6 @@ if (!class_exists('Course')) {
             ),
         );
 
-        static $courseSearchFields = array(
-            'id',
-            'code',
-            'name',
-            'description',
-            'category',
-            'imageUrl',
-            'priceRange' => array(
-                'normalPrice' => array('amount')
-            )
-        );
-
         function __construct()
         {
             if (file_exists('../../../../../wp-load.php')) {
