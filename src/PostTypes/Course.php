@@ -677,6 +677,11 @@ if (!class_exists('Course')) {
 
         public static function adminColumnsHead($defaults)
         {
+            global $post_type;
+            if ($post_type !== self::getSlug()) :
+                return $defaults;
+            endif;
+
             $defaults['type'] = 'Type';
             $defaults['code'] = 'Code';
             $defaults['image'] = 'Image';
@@ -1158,8 +1163,8 @@ if (!class_exists('Course')) {
                 // Use admwpp_course_content_meta_keys filter in active theme or plugins
                 // to set the course meta keys to be synched to the content
                 $tmsCourseContentMetaKeys = array();
-                $tmsCourseContentMetaKeys = apply_filters( 'admwpp_course_content_meta_keys', $tmsCourseContentMetaKeys);
-                
+                $tmsCourseContentMetaKeys = apply_filters('admwpp_course_content_meta_keys', $tmsCourseContentMetaKeys);
+
                 $content = '';
                 foreach ($tmsCourseContentMetaKeys as $fieldKey) {
                     $content .= $postMetas[$fieldKey];
@@ -1229,4 +1234,3 @@ if (!class_exists('Course')) {
 
 // END class Minions
 }
-
