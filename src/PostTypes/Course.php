@@ -677,6 +677,11 @@ if (!class_exists('Course')) {
 
         public static function adminColumnsHead($defaults)
         {
+            global $post_type;
+            if ($post_type !== self::getSlug()) :
+                return $defaults;
+            endif;
+
             $defaults['type'] = 'Type';
             $defaults['code'] = 'Code';
             $defaults['image'] = 'Image';
