@@ -4,9 +4,11 @@ global $post;
 //$course = new ADM\WPPlugin\PostTypes\Course();
 $course = $metabox['args']['class'];
 $metas = $course::$metas;
-global $TMS_CUSTOM_FILEDS;
-if (!empty($TMS_CUSTOM_FILEDS)) {
-    $metas = array_merge($metas, $TMS_CUSTOM_FILEDS);
+
+$type = get_post_meta($post->ID, 'admwpp_tms_type', true);
+$tmsCustomFiledsMapping = $course::getTmsCustomFiledsMapping($type);
+if (!empty($tmsCustomFiledsMapping)) {
+    $metas = array_merge($metas, $tmsCustomFiledsMapping);
 }
 ?>
 <div class="admwpp-form-wrapper admwpp-metabox">
