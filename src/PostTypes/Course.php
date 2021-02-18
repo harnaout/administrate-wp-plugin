@@ -863,6 +863,37 @@ if (!class_exists('Course')) {
             }
         }
 
+        /**
+         * Exposes the capabilty to ovveride the selection of TMS custom fields
+         * to map to the course post metas.
+         * @param  string $type Course Type (COURSE or LP)
+         * @return array
+         *
+         * Example override:
+         * $TMS_CUSTOM_FILEDS = array(
+         *    'admwpp_tms_language' => array(
+         *         'type' => 'text',
+         *         'label' => 'Language',
+         *         'tmsKey' => 'Q3Vz...jEzMA==',
+         *     ),
+         *     'admwpp_tms_general_info' => array(
+         *         'type' => 'textarea',
+         *         'label' => 'General Info',
+         *         'tmsKey' => 'Q3Vz...jEyMQ==',
+         *     ),
+         * );
+         */
+        public static function getTmsCustomFiledsMapping($type)
+        {
+            $tmsCustomFiledsMapping = array(); // TODO: populate this array from settings
+            $tmsCustomFiledsMapping = apply_filters(
+                'admwpp_tms_custom_fileds_maping',
+                $tmsCustomFiledsMapping,
+                $type
+            );
+            return $tmsCustomFiledsMapping;
+        }
+
         public static function getCourses($params)
         {
             $activate = Oauth2\Activate::instance();
@@ -1133,16 +1164,10 @@ if (!class_exists('Course')) {
 
             // Set Course Type
             $postMetas['admwpp_tms_type'] = $type;
-            if ('LP' === $type) {
-                global $TMS_LP_CUSTOM_FILEDS;
-                $customFiledsMapping = $TMS_LP_CUSTOM_FILEDS;
-            } else {
-                global $TMS_CUSTOM_FILEDS;
-                $customFiledsMapping = $TMS_CUSTOM_FILEDS;
-            }
+            $tmsCustomFiledsMapping = self::getTmsCustomFiledsMapping($type);
 
-            if (!empty($customFiledsMapping) && $customFieldValues) {
-                foreach ($customFiledsMapping as $key => $value) {
+            if (!empty($tmsCustomFiledsMapping) && $customFieldValues) {
+                foreach ($tmsCustomFiledsMapping as $key => $value) {
                     $tmsKey = $value['tmsKey'];
                     if (isset($customFields[$tmsKey])) {
                         $postMetas[$key] = $customFields[$tmsKey];
@@ -1162,7 +1187,7 @@ if (!class_exists('Course')) {
                 // Post content is a contact of several custom fields from the TMS
                 // Use admwpp_course_content_meta_keys filter in active theme or plugins
                 // to set the course meta keys to be synched to the content
-                $tmsCourseContentMetaKeys = array();
+                $tmsCourseContentMetaKeys = array(); // TODO: populate this array from settings
                 $tmsCourseContentMetaKeys = apply_filters('admwpp_course_content_meta_keys', $tmsCourseContentMetaKeys);
 
                 $content = '';
