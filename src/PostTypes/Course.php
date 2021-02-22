@@ -104,6 +104,12 @@ if (!class_exists('Course')) {
                 'tmsKey' => 'financialUnit',
                 'showOnFront' => false,
             ),
+            'admwpp_tms_tax' => array(
+                'type' => 'text',
+                'label' => 'Tax',
+                'tmsKey' => 'regionTax',
+                'showOnFront' => false,
+            ),
             'admwpp_tms_accounts_associations' => array(
                 'type' => 'text',
                 'label' => 'Account Associations IDs',
@@ -166,6 +172,7 @@ if (!class_exists('Course')) {
                     ),
                     'region' => array(
                         'code',
+                        'defaultTax' => array('effectiveRate'),
                     ),
                 ),
             ),
@@ -231,6 +238,7 @@ if (!class_exists('Course')) {
                     ),
                     'region' => array(
                         'code',
+                        'defaultTax' => array('effectiveRate'),
                     ),
                 ),
             ),
@@ -1092,6 +1100,27 @@ if (!class_exists('Course')) {
                                 }
                             }
                             $tmsValue = implode('|', $pricesCurencies);
+                        }
+                        break;
+                    case 'regionTax':
+                        $tmsKey = 'publicPrices';
+                        if ('LP' === $type) {
+                            $tmsKey = 'prices';
+                        }
+                        if (isset($node[$tmsKey])) {
+                            $publicPrices = $node[$tmsKey]['edges'];
+                            $taxRates = array();
+                            foreach ($publicPrices as $prices) {
+                                if (isset($prices['node']['region'])) {
+                                    if ('Normal' === $prices['node']['priceLevel']['name'] ||
+                                        TMS_CUSTOM_PRICE_LEVEL_NAME === $prices['node']['priceLevel']['name']) {
+                                        if (isset($prices['node']['region']['defaultTax'])) {
+                                            $taxRates[] = $prices['node']['region']['defaultTax']['effectiveRate'];
+                                        }
+                                    }
+                                }
+                            }
+                            $tmsValue = implode('|', $taxRates);
                         }
                         break;
                     case 'accountAssociations':
