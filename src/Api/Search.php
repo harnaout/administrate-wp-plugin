@@ -216,6 +216,7 @@ if (!class_exists('Search')) {
 
             $args = array(
                 'filters' => array(),
+                'customFieldFilters' => array(),
                 'fields' => self::$searchFields,
                 'paging' => array(
                     'page' => $page,
@@ -272,17 +273,18 @@ if (!class_exists('Search')) {
 
             return $results;
         }
-        
+
         /**
          * Function to format catalogue output
-         * 
+         *
          * @param  array    $catalogue array of courses & learnings paths
-         * 
+         *
          * @return array    array of formatted course output
          */
-        public static function formatCatalogueOutput($catalogue) {
+        public static function formatCatalogueOutput($catalogue)
+        {
             $catalogueOutput = array();
-            foreach($catalogue as $course) {
+            foreach ($catalogue as $course) {
                 $course = $course['node'];
                 $coursePostId = Course::checkifExists($course['id']);
                 $price = '';
