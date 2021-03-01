@@ -28,6 +28,13 @@ $args = array(
         //     "value" => "%".$keyword."%"
         // )
     ),
+    'customFieldFilters' => array(
+        array(
+            "id" => $customFieldId,
+            "operation" => "eq",
+            "value" => $customFieldValue
+        ),
+    ),
     'paging' => array(
         'page' => 1,
         'perPage' => 10
@@ -46,4 +53,3 @@ $args = array(
 $catalogue = $catalogueClass->loadAll($args);
 
 print_r($catalogue);
-

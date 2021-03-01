@@ -13,8 +13,6 @@ use Administrate\PhpSdk\Catalogue;
 
 $catalogueClass = new Catalogue($coreApiActivationParams);
 
-$keyword = "cuisiner ";
-
 $args = array(
     'filters' => array(
         // array(
@@ -25,8 +23,15 @@ $args = array(
         // array(
         //     "field" => "name",
         //     "operation" => "like",
-        //     "value" => "%".$keyword."%"
+        //     "value" => "%".$searchKeyword."%"
         // )
+    ),
+    'customFieldFilters' => array(
+        array(
+            "id" => $customFieldId,
+            "operation" => "eq",
+            "value" => $customFieldValue
+        ),
     ),
     'paging' => array(
         'page' => 1,

@@ -12,83 +12,84 @@ use Administrate\PhpSdk\GraphQl\Client;
  * @author Jad Khater <jck@administrate.co>
  * @author Omaya Noureddine <orn@administrate.co>
  */
- class Catalogue {
+class Catalogue
+{
     public $params;
     private static $paging = array('page' => 1, 'perPage' => 25);
     private static $sorting = array('field' => 'name', 'direction' => 'asc');
 
 
     private static $defaultFields = array(
-        '__typename',
-        '... on Course' => array(
-            'id',
-            'code',
-            'name',
-            'description',
-            'category',
-            'imageUrl'
-        ),
-        '... on LearningPath' => array(
-            'id',
-            'name',
-            'description',
-            'lifecycleState',
-            'category',
-            'price' => array(
-                'amount',
-            ),
-        ),
-        
+       '__typename',
+       '... on Course' => array(
+           'id',
+           'code',
+           'name',
+           'description',
+           'category',
+           'imageUrl'
+       ),
+       '... on LearningPath' => array(
+           'id',
+           'name',
+           'description',
+           'lifecycleState',
+           'category',
+           'price' => array(
+               'amount',
+           ),
+       ),
+
     );
 
     private static $defaultCoreFields = array(
-        '__typename',
-        '... on CourseTemplate' => array(
-            'id',
-            'legacyId',
-            'lifecycleState',
-            'code',
-            'title',
-            'image' => array(
-                'id',
-                'name',
-                'description',
-                'folder' => array('id', 'name')
-            ),
-            'imageGallery' => array(
-                'type' => 'edges',
-                'fields' => array('id', 'name', 'description')
-            ),
-            'learningCategories' => array(
-                'type' => 'edges',
-                'fields' => array('id', 'legacyId', 'name'),
-            ),
-            'publicPrices' => array(
-                'type' => 'edges',
-                'fields' => array(
-                    'id',
-                    'amount',
-                    'priceLevel' => array('id', 'legacyId', 'name'),
-                    'financialUnit' => array('name', '__typename'),
-                    'region' => array(
-                        'id',
-                        'name',
-                        'code',
-                        'company' => array('id', 'name'),
-                    ),
-                ),
-            ),
-        ),
-        '... on LearningPath' => array(
-            'id',
-            'name',
-            'description',
-            'learningObjectives' => array(
-                'pageInfo' => array(
-                    'totalRecords'
-                )
-            ),
-        )
+       '__typename',
+       '... on CourseTemplate' => array(
+           'id',
+           'legacyId',
+           'lifecycleState',
+           'code',
+           'title',
+           'image' => array(
+               'id',
+               'name',
+               'description',
+               'folder' => array('id', 'name')
+           ),
+           'imageGallery' => array(
+               'type' => 'edges',
+               'fields' => array('id', 'name', 'description')
+           ),
+           'learningCategories' => array(
+               'type' => 'edges',
+               'fields' => array('id', 'legacyId', 'name'),
+           ),
+           'publicPrices' => array(
+               'type' => 'edges',
+               'fields' => array(
+                   'id',
+                   'amount',
+                   'priceLevel' => array('id', 'legacyId', 'name'),
+                   'financialUnit' => array('name', '__typename'),
+                   'region' => array(
+                       'id',
+                       'name',
+                       'code',
+                       'company' => array('id', 'name'),
+                   ),
+               ),
+           ),
+       ),
+       '... on LearningPath' => array(
+           'id',
+           'name',
+           'description',
+           'learningObjectives' => array(
+               'pageInfo' => array(
+                   'totalRecords'
+               )
+           ),
+       )
     );
 
     /**
@@ -152,6 +153,7 @@ use Administrate\PhpSdk\GraphQl\Client;
 
         $defaultArgs = array(
             'filters' => array(),
+            'customFieldFilters' => array(),
             'paging' => self::$paging,
             'sorting' => self::$sorting,
             'fields' => self::$defaultFields,
@@ -161,11 +163,13 @@ use Administrate\PhpSdk\GraphQl\Client;
 
         $nodeOrder = 'CatalogueFieldOrder';
         $nodeFilters = 'CatalogueFieldFilter';
+        $nodeCustomFieldFilters = 'CustomFieldFilterInput!';
 
         if (isset($args['coreApi']) && $args['coreApi']) {
             $defaultArgs['fields'] = self::$defaultCoreFields;
             $nodeOrder = 'CatalogueItemFieldGraphOrder';
             $nodeFilters = 'CatalogueItemFieldGraphFilter';
+            $nodeCustomFieldFilters = 'CustomFieldFilter';
         }
 
         $args = Helper::setArgs($defaultArgs, $args);
@@ -190,6 +194,8 @@ use Administrate\PhpSdk\GraphQl\Client;
         ->setArgument('offset', $offset)
         ->setVariable('filters', "[$nodeFilters]", true)
         ->setArgument('filters', '$filters')
+        ->setVariable('customFieldFilters', "[$nodeCustomFieldFilters]", true)
+        ->setArgument('customFieldFilters', '$customFieldFilters')
         ->selectField(
             (new QueryBuilder('pageInfo'))
                 ->selectField('startCursor')
@@ -207,12 +213,11 @@ use Administrate\PhpSdk\GraphQl\Client;
 
         $variablesArray = array(
             'filters' => $filters,
+            'customFieldFilters' => $customFieldFilters,
             'order' => Helper::toObject($sorting),
         );
 
         $result = Client::sendSecureCall($this, $gqlQuery, $variablesArray);
         return Client::toType($returnType, $result);
     }
-    
 }
-
