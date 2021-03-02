@@ -131,7 +131,8 @@ if (!class_exists('Search')) {
             $attsArray = array(
                 'categories_filter_type' => 'select',
                 'pager' => 'simple',
-                'template' => 'grid'
+                'template' => 'grid',
+                'filters' => '' // 'category,date,location,age,seat-type,more'
             );
             $dateSettingsOption = (int) Settings::instance()->getSettingsOption('search', 'date_filters');
             $locationSettingsOption = (int) Settings::instance()->getSettingsOption('search', 'locations_filters');
