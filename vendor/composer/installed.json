@@ -2,17 +2,17 @@
     "packages": [
         {
             "name": "administrate/phpsdk",
-            "version": "1.7.0",
-            "version_normalized": "1.7.0.0",
+            "version": "1.8.0",
+            "version_normalized": "1.8.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Administrate/administrate-php-sdk.git",
-                "reference": "e8bca43c987b23deea119e1edf8b873758baf60f"
+                "reference": "4115da14b5254236479910ec25f0f1c523a769f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Administrate/administrate-php-sdk/zipball/e8bca43c987b23deea119e1edf8b873758baf60f",
-                "reference": "e8bca43c987b23deea119e1edf8b873758baf60f",
+                "url": "https://api.github.com/repos/Administrate/administrate-php-sdk/zipball/4115da14b5254236479910ec25f0f1c523a769f5",
+                "reference": "4115da14b5254236479910ec25f0f1c523a769f5",
                 "shasum": ""
             },
             "require": {
@@ -21,7 +21,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9"
             },
-            "time": "2021-03-01T08:31:50+00:00",
+            "time": "2021-03-04T11:33:10+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -47,7 +47,7 @@
             ],
             "description": "A GraphQL client written in PHP which provides very simple, yet powerful, query generator classes that make the process of interacting with a GraphQL server a very simple one.",
             "support": {
-                "source": "https://github.com/Administrate/administrate-php-sdk/tree/1.7.0"
+                "source": "https://github.com/Administrate/administrate-php-sdk/tree/1.8.0"
             },
             "install-path": "../administrate/phpsdk"
         },

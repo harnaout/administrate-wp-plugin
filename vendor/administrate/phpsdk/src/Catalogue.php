@@ -130,6 +130,13 @@ class Catalogue
      *               'value' => 'Example 1',
      *          ),
      *     ),
+     *     'customFieldFilters' => array(
+     *          array(
+     *               'id' => 'customFieldId',
+     *               'operation' => 'eq',
+     *               'value' => 'customFieldValue',
+     *          ),
+     *     ),
      *     'paging' => array(
      *           'page' => 1,
      *           'perPage' => 2
@@ -154,6 +161,7 @@ class Catalogue
         $defaultArgs = array(
             'filters' => array(),
             'customFieldFilters' => array(),
+            'search' => '',
             'paging' => self::$paging,
             'sorting' => self::$sorting,
             'fields' => self::$defaultFields,
@@ -189,9 +197,10 @@ class Catalogue
 
         $builder = (new QueryBuilder('catalogue'))
         ->setVariable('order', $nodeOrder, false)
-         ->setArgument('order', '$order')
+        ->setArgument('order', '$order')
         ->setArgument('first', $first)
         ->setArgument('offset', $offset)
+        ->setArgument('search', $search)
         ->setVariable('filters', "[$nodeFilters]", true)
         ->setArgument('filters', '$filters')
         ->setVariable('customFieldFilters', "[$nodeCustomFieldFilters]", true)
@@ -212,6 +221,7 @@ class Catalogue
         $gqlQuery = $builder->getQuery();
 
         $variablesArray = array(
+            'search' => $search,
             'filters' => $filters,
             'customFieldFilters' => $customFieldFilters,
             'order' => Helper::toObject($sorting),

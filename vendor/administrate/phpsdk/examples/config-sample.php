@@ -2,14 +2,15 @@
 
 define('BASE_URL', '');
 
-// Used In Examples (can be removed if not used)
-$categoryId = '';
-$learnerId = '';
-$courseId = '';
-$courseCode = '';
-$eventId = '';
-$learningPathId = "";
-
+// USED In Examples (can be removed if not used)
+$categoryId    = "";
+$learnerId     = "";
+$courseId      = "";
+$courseCode    = "";
+$eventId       = "";
+$searchKeyword = "";
+$customFieldId = "";
+$customFieldValue = "";
 
 //Authorzation code
 $authorizationCode = '';

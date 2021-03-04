@@ -26,16 +26,17 @@ $args = array(
         //     "value" => "%".$searchKeyword."%"
         // )
     ),
-    'customFieldFilters' => array(
-        array(
-            "id" => $customFieldId,
-            "operation" => "eq",
-            "value" => $customFieldValue
-        ),
-    ),
+    //'search' => $searchKeyword,
+    // 'customFieldFilters' => array(
+    //     array(
+    //         "id" => $customFieldId,
+    //         "operation" => "eq",
+    //         "value" => $customFieldValue
+    //     ),
+    // ),
     'paging' => array(
         'page' => 1,
-        'perPage' => 2
+        'perPage' => 10
     ),
     'sorting' => array(
         'field' => 'name',

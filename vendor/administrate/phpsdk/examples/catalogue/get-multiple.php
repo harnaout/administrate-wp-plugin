@@ -13,8 +13,6 @@ use Administrate\PhpSdk\Catalogue;
 
 $catalogueClass = new Catalogue($weblinkActivationParams);
 
-$keyword = "Template 3";
-
 $args = array(
     'filters' => array(
         // array(
@@ -25,16 +23,17 @@ $args = array(
         // array(
         //     "field" => "name",
         //     "operation" => "like",
-        //     "value" => "%".$keyword."%"
+        //     "value" => "%".$searchKeyword."%"
         // )
     ),
-    'customFieldFilters' => array(
-        array(
-            "id" => $customFieldId,
-            "operation" => "eq",
-            "value" => $customFieldValue
-        ),
-    ),
+    //'search' => $searchKeyword,
+    // 'customFieldFilters' => array(
+    //     array(
+    //         "id" => $customFieldId,
+    //         "operation" => "eq",
+    //         "value" => $customFieldValue
+    //     ),
+    // ),
     'paging' => array(
         'page' => 1,
         'perPage' => 10
