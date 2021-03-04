@@ -218,6 +218,7 @@ if (!class_exists('Search')) {
             $args = array(
                 'filters' => array(),
                 'customFieldFilters' => array(),
+                'search' => '',
                 'fields' => self::$searchFields,
                 'paging' => array(
                     'page' => $page,
@@ -231,11 +232,7 @@ if (!class_exists('Search')) {
             );
 
             if (isset($params['query']) && !empty($params['query'])) {
-                $args['filters'][] = array(
-                    'field' => 'name',
-                    'operation' => 'like',
-                    'value' => '%' . $params['query'] . '%',
-                );
+                $args['search'] = $params['query'];
             }
 
             if (isset($params['lcat']) && !empty($params['lcat'])) {
@@ -262,7 +259,7 @@ if (!class_exists('Search')) {
             $pageInfo = $catalogue['pageInfo'];
             $catalogue = $catalogue['edges'];
             $catalogue = self::formatCatalogueOutput($catalogue);
-            
+
             $results = array(
                 'totalRecords' => $pageInfo['totalRecords'],
                 'totalNumPages' => ceil($pageInfo['totalRecords'] / $perPage),
