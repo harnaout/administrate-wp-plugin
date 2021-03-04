@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'fef6d985ce2e82b5035d8b5092ec4cf6bc2b1c83',
+    'reference' => '5a36f34aadd2c819b2b39a1069603f330d127daf',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,16 +18,16 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'fef6d985ce2e82b5035d8b5092ec4cf6bc2b1c83',
+      'reference' => '5a36f34aadd2c819b2b39a1069603f330d127daf',
     ),
     'administrate/phpsdk' => 
     array (
-      'pretty_version' => '1.7.0',
-      'version' => '1.7.0.0',
+      'pretty_version' => '1.8.0',
+      'version' => '1.8.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'e8bca43c987b23deea119e1edf8b873758baf60f',
+      'reference' => '4115da14b5254236479910ec25f0f1c523a769f5',
     ),
     'gmostafa/php-graphql-client' => 
     array (
