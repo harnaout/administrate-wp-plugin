@@ -789,16 +789,7 @@ if (!class_exists('Course')) {
             return $transIds;
         }
 
-        public static function setImage($postId, $imageTmsId)
-        {
-
-            // Check if image already synced and use it before uploading another one
-            $imagePostId = self::checkifExists($imageTmsId);
-            if ($imagePostId) {
-                set_post_thumbnail($postId, $imagePostId);
-                return wp_get_attachment_url($imagePostId);
-            }
-
+        public static function getDocumentById($imageTmsId) {
             // Get Image Url
             $gql = '
             query document {
@@ -827,18 +818,101 @@ if (!class_exists('Course')) {
             $client = new SDKClient($apiParams['apiUri'], $authorizationHeaders);
             $results = $client->runRawQuery($gql);
             $document = $results->getData();
+            $documentData = array();
+            if ($document) {
+                $documentData = array(
+                    'url' => $document->downloadDocument->url,
+                    'name' => $document->downloadDocument->document->name,
+                    'description' => $document->downloadDocument->document->description
+                );
+            }
+
+            return $documentData;
+        }
+
+        public static function setImageGallery($postId, $imageGallery) {
+
+            $imagePostIds = array();
+            foreach ($imageGallery as $image) {
+                if (isset($image['node']) && !empty($image['node'])) {
+                    $imageTmsId = $image['node']['id'];
+
+                    // Check if image already synced and use it before uploading another one
+                    $imagePostId = self::checkifExists($imageTmsId);
+                    if ($imagePostId) {
+                        $imagePostIds[] = $imagePostId;
+                        continue;
+                    }
+
+                    $document = self::getDocumentById($imageTmsId);
+                    $imageURL = "";
+                    $imageName = "";
+                    $imageDesc = "";
+                    if (!empty($document)) {
+                        $imageURL  = $document['url'];
+                        $imageName = $document['name'];
+                        $imageDesc = $document['description'];
+                    }
+
+                    include_once(ABSPATH . 'wp-admin/includes/admin.php');
+
+                    if ($imageURL != "") {
+                        $file = array();
+                        $file['name'] = $imageName;
+                        $file['caption'] = $imageDesc;
+                        $file['tmp_name'] = download_url($imageURL);
+                        if (is_wp_error($file['tmp_name'])) {
+                            @unlink($file['tmp_name']);
+                            return $file['tmp_name']->get_error_messages();
+                        } else {
+                            $imageArgs = array(
+                                'post_title' => $imageName,
+                                'post_name' => sanitize_title($imageName),
+                                'post_content' => $imageDesc,
+                                'meta_input' => array(
+                                    'admwpp_tms_id' => $imageTmsId
+                                ),
+                            );
+        
+                            $attachmentId = media_handle_sideload($file, 0, $imageName, $imageArgs);
+        
+                            if (is_wp_error($attachmentId)) {
+                                @unlink($file['tmp_name']);
+                                return $attachmentId->get_error_messages();
+                            } else {
+                                $imagePostIds[] = $attachmentId;
+                            }
+                        }
+                    }
+                }
+            }
+            update_post_meta($postId, 'admwpp_image_gallery', $imagePostIds);
+            return $imagePostIds;
+
+        }
+
+        public static function setImage($postId, $imageTmsId)
+        {
+
+            // Check if image already synced and use it before uploading another one
+            $imagePostId = self::checkifExists($imageTmsId);
+            if ($imagePostId) {
+                set_post_thumbnail($postId, $imagePostId);
+                return wp_get_attachment_url($imagePostId);
+            }
+
+            $document = self::getDocumentById($imageTmsId);
             $imageURL = "";
             $imageName = "";
             $imageDesc = "";
-            if ($document) {
-                $imageURL = $document->downloadDocument->url;
-                $imageName = $document->downloadDocument->document->name;
-                $imageDesc = $document->downloadDocument->document->description;
+            if (!empty($document)) {
+                $imageURL  = $document['url'];
+                $imageName = $document['name'];
+                $imageDesc = $document['description'];
             }
 
             include_once(ABSPATH . 'wp-admin/includes/admin.php');
 
-            $image = "";
             if ($imageURL != "") {
                 $file = array();
                 $file['caption'] = $imageDesc;
@@ -927,7 +1001,7 @@ if (!class_exists('Course')) {
                     // array(
                     //     'field' => 'code',
                     //     'operation' => 'eq',
-                    //     'value' => 'TESTSYNCHWP',
+                    //     'value' => 'WS-0832-NL',
                     // )
                 ),
                 'fields' => self::$courseFields,
@@ -1256,6 +1330,11 @@ if (!class_exists('Course')) {
             // Update Post Image
             if ($postId && $imageTmsId) {
                 $results['image'] = self::setImage($postId, $imageTmsId);
+            }
+
+            // Update Post Image Gallery
+            if ($postId && !empty($imageGallery)) {
+                $results['imageGallery'] = self::setImageGallery($postId, $imageGallery);
             }
 
             if (isset($postArgs['meta_input'][TMS_STICKY_POST_KEY])) {
