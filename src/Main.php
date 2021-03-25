@@ -383,13 +383,13 @@ if (!class_exists('Main')) {
                 'thickbox',
                 'wp-jquery-ui-dialog',
             );
-            
+
             if (!$stylesSettings) :
                 $stylesArray[] = 'admwpp-font-awesome';
                 $stylesArray[] = 'admwpp-selectric';
                 $stylesArray[] = 'administrate';
             endif;
-            
+
             wp_enqueue_style($stylesArray);
 
             // ------------------------------------------------------
@@ -423,7 +423,7 @@ if (!class_exists('Main')) {
             if (!$stylesSettings) :
                 $scriptArray[] = 'admwpp-selectric';
             endif;
-            
+
             wp_enqueue_script($scriptArray);
 
             $admwppLocalize = array(
@@ -438,7 +438,6 @@ if (!class_exists('Main')) {
             );
 
             wp_localize_script('administrate', 'admwpp', $admwppLocalize);
-
         }
 
         /**
@@ -525,11 +524,14 @@ if (!class_exists('Main')) {
             self::addJqueryUi();
             self::addJqueryUiEffects();
 
-            wp_localize_script('administrate-admin', 'admwpp_base_url', ADMWPP_URL);
-            wp_localize_script('administrate-admin', 'admwpp_route_url', ADMWPP_URL_ROUTES);
+            $admwppLocalize = array(
+                'language' => admwppPrimaryLanguage(),
+                'locale' => get_locale(),
+                'baseUrl' => ADMWPP_URL,
+                'routeUrl' => ADMWPP_URL_ROUTES,
+            );
 
-            wp_localize_script('administrate-admin', 'admwpp_language', admwppPrimaryLanguage());
-            wp_localize_script('administrate-admin', 'admwpp_locale', get_locale());
+            wp_localize_script('administrate-admin', 'admwpp', $admwppLocalize);
         }
 
         /**

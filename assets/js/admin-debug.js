@@ -308,7 +308,7 @@
   };
 
   $.ADMBase.defaults = {
-    clippy_swf: admwpp_base_url + 'assets/js/plugins/clippy/clippy.swf',
+    clippy_swf: admwpp.baseUrl + 'assets/js/plugins/clippy/clippy.swf',
     admin_bar: '#wpadminbar',
     required: 'admwpp-required',
     loader: '.admwpp-loader-image',
@@ -419,7 +419,7 @@
 
       $.ajax({
         type: "get",
-        url: admwpp_route_url,
+        url: admwpp.routeUrl,
         data: data,
         dataType: "json",
         contentType: "application/json; charset=utf-8",
@@ -469,7 +469,7 @@
 
       $.ajax({
         type: "get",
-        url: admwpp_route_url,
+        url: admwpp.routeUrl,
         data: data,
         dataType: "json",
         contentType: "application/json; charset=utf-8",
@@ -519,7 +519,7 @@
 
       $.ajax({
         type: "get",
-        url: admwpp_route_url,
+        url: admwpp.routeUrl,
         data: data,
         dataType: "json",
         contentType: "application/json; charset=utf-8",

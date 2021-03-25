@@ -99,7 +99,7 @@
 
       $.ajax({
         type: "get",
-        url: admwpp_route_url,
+        url: admwpp.routeUrl,
         data: data,
         dataType: "json",
         contentType: "application/json; charset=utf-8",
@@ -149,7 +149,7 @@
 
       $.ajax({
         type: "get",
-        url: admwpp_route_url,
+        url: admwpp.routeUrl,
         data: data,
         dataType: "json",
         contentType: "application/json; charset=utf-8",
@@ -199,7 +199,7 @@
 
       $.ajax({
         type: "get",
-        url: admwpp_route_url,
+        url: admwpp.routeUrl,
         data: data,
         dataType: "json",
         contentType: "application/json; charset=utf-8",
