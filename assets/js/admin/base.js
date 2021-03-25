@@ -170,7 +170,7 @@
   };
 
   $.ADMBase.defaults = {
-    clippy_swf: admwpp_base_url + 'assets/js/plugins/clippy/clippy.swf',
+    clippy_swf: admwpp.baseUrl + 'assets/js/plugins/clippy/clippy.swf',
     admin_bar: '#wpadminbar',
     required: 'admwpp-required',
     loader: '.admwpp-loader-image',

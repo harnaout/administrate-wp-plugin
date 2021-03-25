@@ -789,7 +789,8 @@ if (!class_exists('Course')) {
             return $transIds;
         }
 
-        public static function getDocumentById($imageTmsId) {
+        public static function getDocumentById($imageTmsId)
+        {
             // Get Image Url
             $gql = '
             query document {
@@ -830,7 +831,8 @@ if (!class_exists('Course')) {
             return $documentData;
         }
 
-        public static function setImageGallery($postId, $imageGallery) {
+        public static function setImageGallery($postId, $imageGallery)
+        {
 
             $imagePostIds = array();
             foreach ($imageGallery as $image) {
@@ -873,9 +875,9 @@ if (!class_exists('Course')) {
                                     'admwpp_tms_id' => $imageTmsId
                                 ),
                             );
-        
+
                             $attachmentId = media_handle_sideload($file, 0, $imageName, $imageArgs);
-        
+
                             if (is_wp_error($attachmentId)) {
                                 @unlink($file['tmp_name']);
                                 return $attachmentId->get_error_messages();
@@ -888,7 +890,6 @@ if (!class_exists('Course')) {
             }
             update_post_meta($postId, 'admwpp_image_gallery', $imagePostIds);
             return $imagePostIds;
-
         }
 
         public static function setImage($postId, $imageTmsId)
