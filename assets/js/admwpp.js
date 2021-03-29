@@ -1,8 +1,13 @@
 /**
- * Main Administrate Template JS file
+ * Main Administrate JS file
+ *
+ * @depend admwpp/shortcode.js
+ *
  */
 (function ($) {
     $(document).ready(function () {
+
+      var shortcode = new $.ADMShortcode();
 
       // Selectric
       if(jQuery().selectric) {
@@ -24,7 +29,7 @@
          }).on( "change", function() {
             from.datepicker( "option", "maxDate", getDate( this ) );
          });
-   
+
       function getDate( element ) {
          var date;
          try {
@@ -32,7 +37,7 @@
          } catch( error ) {
          date = null;
          }
-   
+
          return date;
       }
 
