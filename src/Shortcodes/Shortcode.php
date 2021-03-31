@@ -130,11 +130,11 @@ if (! class_exists('Shortcode')) {
                         }
                     } else {
                         $cartId = $mutationResponse->cart->id;
-                        $response['cartId'] = $cartId;
                     }
                 }
 
                 if ($cartId) {
+                    $response['cartId'] = $cartId;
                     // Add Gift Voucher to cart
                     $variables = array(
                         'cartId' => $cartId,
