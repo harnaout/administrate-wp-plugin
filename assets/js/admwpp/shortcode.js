@@ -79,7 +79,7 @@
             message.addClass('admwpp-success');
 
             // Set weblink Cart ID
-            if (weblink != undefined) {
+            if (weblink != undefined && response.cartId) {
               weblink.cartId = response.cartId;
               localStorage.setItem('weblink:' + webLinkConfig.portalAddress + ':cartId', response.cartId);
             }
