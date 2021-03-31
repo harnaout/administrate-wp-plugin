@@ -34,7 +34,7 @@ if (! class_exists('Shortcode')) {
          * Return an instance of the current class if it exists
          * Construct a new one otherwise
          *
-         * @return Course object
+         * @return Shortcodes object
          * */
         public static function instance()
         {
@@ -99,53 +99,85 @@ if (! class_exists('Shortcode')) {
                 $authorizationHeaders = SDKClient::setHeaders($apiParams);
                 $client = new SDKClient($apiParams['apiUri'], $authorizationHeaders);
 
-                if (!$cartId) {
-                    //TODO: Create Cart and use the new cart ID
-                }
-
-                // Add Gift Voucher to cart
-                $variables = array(
-                    'cartId' => $cartId,
-                    'productOptionId' => $productOptionId,
-                    'amount' => $amount,
-                );
-
-                $gql = 'mutation addGiftVoucherLineItem($cartId: ID!, $productOptionId: ID!, $amount: Decimal!) {
-                  cart {
-                    addGiftVoucherLineItem(input: {cartId: $cartId, productOptionId: $productOptionId, amount: $amount}) {
-                      errors {
-                        message
-                      }
+                if (!$cartId || 'undefined' === $cartId) {
+                    //Create Cart and use the new cart ID
+                    $gql = 'mutation createCart {
                       cart {
-                        items {
-                          quantity
-                          productOption {
-                            name
+                        createCart(
+                          input: {
+                            currencyCode: "EUR"
+                          }
+                        ) {
+                          errors {
+                            message
+                          }
+                          cart {
+                            id
                           }
                         }
                       }
-                    }
-                  }
-                }';
+                    }';
 
-                $results = $client->runRawQuery($gql, false, $variables);
-                $data = $results->getData();
-                $mutationResponse = $data->cart->addGiftVoucherLineItem;
-
-                if ($mutationResponse->errors) {
-                    $errors = $mutationResponse->errors;
-                    $response['status'] = "error";
-                    $response['message'] = "";
-                    foreach ($errors as $value) {
-                        $response['message'] .= $value->message . "<br/>";
+                    $results = $client->runRawQuery($gql);
+                    $data = $results->getData();
+                    $mutationResponse = $data->cart->createCart;
+                    if ($mutationResponse->errors) {
+                        $errors = $mutationResponse->errors;
+                        $response['status'] = "error";
+                        $response['message'] = "";
+                        foreach ($errors as $value) {
+                            $response['message'] .= $value->message . "<br/>";
+                        }
+                    } else {
+                        $cartId = $mutationResponse->cart->id;
+                        $response['cartId'] = $cartId;
                     }
-                } else {
-                    $response['status'] = "success";
-                    $response['message'] = __('Gift voucher added to the cart.', 'admwpp');
-                    $response['response'] = $mutationResponse;
+                }
+
+                if ($cartId) {
+                    // Add Gift Voucher to cart
+                    $variables = array(
+                        'cartId' => $cartId,
+                        'productOptionId' => $productOptionId,
+                        'amount' => $amount,
+                    );
+
+                    $gql = 'mutation addGiftVoucherLineItem($cartId: ID!, $productOptionId: ID!, $amount: Decimal!) {
+                      cart {
+                        addGiftVoucherLineItem(input: {cartId: $cartId, productOptionId: $productOptionId, amount: $amount}) {
+                          errors {
+                            message
+                          }
+                          cart {
+                            items {
+                              quantity
+                              productOption {
+                                name
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }';
+
+                    $results = $client->runRawQuery($gql, false, $variables);
+                    $data = $results->getData();
+                    $mutationResponse = $data->cart->addGiftVoucherLineItem;
+
+                    if ($mutationResponse->errors) {
+                        $errors = $mutationResponse->errors;
+                        $response['status'] = "error";
+                        $response['message'] = "";
+                        foreach ($errors as $value) {
+                            $response['message'] .= $value->message . "<br/>";
+                        }
+                    } else {
+                        $response['status'] = "success";
+                        $response['message'] = __('Gift voucher added to the cart...', 'admwpp');
+                        $response['response'] = $mutationResponse;
+                    }
                 }
             }
-
             echo json_encode($response);
             die();
         }

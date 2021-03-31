@@ -77,6 +77,17 @@
 
           if ("success" === response.status) {
             message.addClass('admwpp-success');
+
+            // Set weblink Cart ID
+            if (weblink != undefined) {
+              weblink.cartId = response.cartId;
+              localStorage.setItem('weblink:' + webLinkConfig.portalAddress + ':cartId', response.cartId);
+            }
+
+            if ($(".weblink-Basket").length > 0) {
+              location.reload();
+            }
+
           } else {
             message.addClass('admwpp-error');
           }
