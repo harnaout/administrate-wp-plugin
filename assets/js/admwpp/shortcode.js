@@ -85,7 +85,23 @@
             }
 
             if ($(".weblink-Basket").length > 0) {
-              location.reload();
+              if (weblink != undefined) {
+                $(".weblink-Basket").each(function(){
+                  var basketId = $(this).attr('id');
+                  var basketElement = document.getElementById(basketId);
+                  window.WebLink.unmount(basketElement);
+
+                  weblink.mount(
+                    basketElement,
+                    'Basket',
+                    {
+                      "showBasketPopover":true,
+                      "cartUrl":response.cartUrl
+                    }
+                  );
+                });
+              }
+
             }
 
           } else {

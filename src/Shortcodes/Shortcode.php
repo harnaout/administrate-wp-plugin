@@ -87,6 +87,7 @@ if (! class_exists('Shortcode')) {
                 'status' => 'error',
                 'message' => __('Something went Wrong Try again please.', 'admwpp'),
                 'response' => '',
+                'cartUrl' => home_url('/cart/'),
             );
             if (isset($_POST['productOptionId']) && isset($_POST['amount']) && isset($_POST['portalToken'])) {
                 $cartId = $_POST['cartId'];
