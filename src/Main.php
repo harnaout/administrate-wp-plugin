@@ -28,6 +28,8 @@ if (!class_exists('Main')) {
         protected $course;
         //Search
         protected $search;
+        //Shortcodes
+        protected $shortcodes;
 
         /**
          * Initializes plugin variables and sets up WordPress hooks/actions
@@ -82,6 +84,9 @@ if (!class_exists('Main')) {
 
                 // Add Search
                 $this->search = Api\Search::instance();
+
+                // Add Shortcodes
+                $this->shortcodes = Shortcodes\Shortcode::instance();
 
                 // Add all filters
                 $this->addFilters();
@@ -431,9 +436,16 @@ if (!class_exists('Main')) {
                 'locale' => get_locale(),
                 'baseUrl' => ADMWPP_URL,
                 'routeUrl' => ADMWPP_URL_ROUTES,
+                'ajaxUrl' => admin_url('admin-ajax.php'),
                 'search' => array(
                     'dateFormat' => ADMWPP_SEARCH_DATE_FORMAT,
                     'perPage' => ADMWPP_SEARCH_PER_PAGE
+                ),
+                'giftVoucher' => array(
+                    'error' => array(
+                        'emptyAmount' => __('Please fill in the voucher amount', 'admwpp'),
+                        'weblink' => __('Weblink not available', 'admwpp'),
+                    )
                 )
             );
 
@@ -529,6 +541,7 @@ if (!class_exists('Main')) {
                 'locale' => get_locale(),
                 'baseUrl' => ADMWPP_URL,
                 'routeUrl' => ADMWPP_URL_ROUTES,
+                'ajaxUrl' => admin_url('admin-ajax.php'),
             );
 
             wp_localize_script('administrate-admin', 'admwpp', $admwppLocalize);

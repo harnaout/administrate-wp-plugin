@@ -55,6 +55,7 @@ gulp.task('js:watch', () => {
     gulp.watch([
         './assets/js/common/*',
         './assets/js/admin/*',
+        './assets/js/admwpp/*',
         './assets/js/admin.js',
         './assets/js/admwpp.js',
     ], gulp.series('js-admin-min', 'js-admwpp-min'));
@@ -90,6 +91,7 @@ gulp.task('js-admin-min', () => {
 
 gulp.task('js-admwpp-min', () => {
     return gulp.src([
+          './assets/js/admwpp/*',
           './assets/js/admwpp.js',
       ])
     .pipe(concat('admwpp.js'))
