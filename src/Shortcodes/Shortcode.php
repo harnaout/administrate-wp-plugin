@@ -4,6 +4,7 @@ namespace ADM\WPPlugin\Shortcodes;
 use ADM\WPPlugin as ADMWPP;
 use ADM\WPPlugin\Oauth2;
 use ADM\WPPlugin\Settings;
+use ADM\WPPlugin\PostTypes\Course;
 
 use Administrate\PhpSdk\GraphQl\Client as SDKClient;
 
@@ -74,6 +75,7 @@ if (! class_exists('Shortcode')) {
         protected function addShortcodes()
         {
             add_shortcode('admwpp-gift-voucher', array($this, 'addGiftVoucherForm'));
+            add_shortcode('admwpp-my-workshops', array($this, 'myWorkshops'));
         }
 
         /*
@@ -208,6 +210,123 @@ if (! class_exists('Shortcode')) {
             return $html;
         }
 
+        /*
+        * Returns User workshops
+        */
+        public static function myWorkshops($atts)
+        {
+            extract(
+                shortcode_atts(
+                    array(
+                        'email' => '',
+                    ),
+                    $atts
+                )
+            );
+
+            // For now we kept the user email empty as this value should be
+            // filled by a dependent plugin or on the theme level using the
+            // filter: admwpp_user_email_workshops.
+            $email = apply_filters('admwpp_user_email_workshops', $email);
+
+            $workshops = self::getUserWorkshops($email);
+            $template = self::getTemplatePath('my-workshops');
+            ob_start();
+            include $template;
+            $html = ob_get_contents();
+            ob_end_clean();
+
+            return $html;
+        }
+
+        /**
+         * Method to fetch workshops by user email
+         * @param  string $email User Email
+         * @return array         array of workshops
+         */
+        public static function getUserWorkshops($email)
+        {
+            if ($email) {
+                $gql = 'query contacts {
+                  contacts(filters: [{field: emailAddress, operation: eq, value: "' . $email . '"}]) {
+                    edges {
+                      node {
+                        learners {
+                          edges {
+                            node {
+                              id
+                              event {
+                                id
+                                code
+                                title
+                                bookedPlaces
+                                start
+                                reserved
+                                type
+                                location {
+                                  id
+                                  name
+                                }
+                                courseTemplate {
+                                  id
+                                  code
+                                  title
+                                }
+                              }
+                            }
+                          }
+                        }
+                        personalName {
+                          firstName
+                          lastName
+                        }
+                      }
+                    }
+                  }
+                }';
+
+                $activate = Oauth2\Activate::instance();
+                $apiParams = $activate::$params;
+
+                $accessToken = $activate->getAuthorizeToken()['token'];
+                $appId = Settings::instance()->getSettingsOption('account', 'app_id');
+                $instance = Settings::instance()->getSettingsOption('account', 'instance');
+
+                $apiParams['accessToken'] = $accessToken;
+                $apiParams['clientId'] = $appId;
+                $apiParams['instance'] = $instance;
+
+                $authorizationHeaders = SDKClient::setHeaders($apiParams);
+                $client = new SDKClient($apiParams['apiUri'], $authorizationHeaders);
+                $results = $client->runRawQuery($gql);
+                $contacts = $results->getData();
+
+                $workshops = array();
+                if ($contacts->contacts->edges[0]->node->learners) {
+                    $learners = $contacts->contacts->edges[0]->node->learners;
+                    foreach ($learners->edges as $key => $learner) {
+                        $learner = $learner->node;
+                        $workshops[$learner->event->code]['postId'] = Course::checkifExists(
+                            $learner->event->courseTemplate->id
+                        );
+                        $workshops[$learner->event->code]['title'] = $learner->event->courseTemplate->title;
+                        $workshops[$learner->event->code]['events'][$learner->id] = array(
+                            'id' => $learner->event->id,
+                            'title' => $learner->event->title,
+                            'bookedPlaces' => $learner->event->bookedPlaces,
+                            'reserved' => $learner->event->reserved,
+                            'type' => $learner->event->type,
+                            'start' => $learner->event->start,
+                            'location' => $learner->event->location->name,
+                        );
+                    }
+                }
+                return $workshops;
+            }
+
+            return array();
+        }
+
       /**
        * Function to return the Design HTML template path.
        *
@@ -233,5 +352,4 @@ if (! class_exists('Shortcode')) {
             return $pluginTemplatePath . $template;
         }
     }
-
 }
