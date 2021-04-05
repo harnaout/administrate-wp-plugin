@@ -75,6 +75,11 @@ if (!defined('ADMWPP_SITE_URL')) {
     define('ADMWPP_SITE_URL', get_site_url());
 }
 
+// Minutes to consider the portal token expired.
+if (!defined('ADMWPP_PORTAL_TOKEN_EXPIRY_PERIOD')) {
+    define('ADMWPP_PORTAL_TOKEN_EXPIRY_PERIOD', 30);
+}
+
 // Load globals, helpers, Autoloader
 require_once(ADMWPP_DIR . ADMWPP_SRC . 'globals.php');
 require_once(ADMWPP_DIR . ADMWPP_SRC . 'helpers.php');

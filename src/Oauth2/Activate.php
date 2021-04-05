@@ -287,7 +287,7 @@ if (!class_exists('Activate')) {
 
                 $portal_token = $body->portal_token;
                 $created_at = current_time('timestamp');
-                $expires_in = $created_at + (60*60);
+                $expires_in = $created_at + (60 * (int)ADMWPP_PORTAL_TOKEN_EXPIRY_PERIOD);
 
                 Settings::instance()->setSettingsOption('account', 'portal_token', $portal_token);
                 Settings::instance()->setSettingsOption('account', 'portal_token_created_at', $created_at);
