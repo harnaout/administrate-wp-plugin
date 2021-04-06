@@ -120,6 +120,7 @@ if (!class_exists('Search')) {
             $vars[] = 'to';
             $vars[] = 'loc';
             $vars[] = 'per_page';
+            $vars[] = 'dayofweek';
             return $vars;
         }
 
@@ -154,22 +155,23 @@ if (!class_exists('Search')) {
                 'parent' => 0,
             ));
 
-            $query = get_query_var('query');
-            $lcat = get_query_var('lcat');
+            $query = get_query_var('query', '');
+            $lcat = get_query_var('lcat', array());
             $fromDate = get_query_var('from');
             $toDate = get_query_var('to');
-            $loc = get_query_var('loc');
+            $loc = get_query_var('loc', array());
+            $dayofweek = get_query_var('dayofweek', array());
+
             $page = get_query_var('paged') ? (int) get_query_var('paged') : 1;
             $per_page = (int) get_query_var('per_page', ADMWPP_SEARCH_PER_PAGE);
 
             $params = array(
+                'query' => $query,
                 'page' => $page,
                 'per_page' => $per_page,
+                'dayofweek' => $dayofweek,
             );
 
-            if ($query) {
-                $params['query'] = $query;
-            }
             if ($lcat) {
                 $params['lcat'] = $lcat;
             }
@@ -218,7 +220,7 @@ if (!class_exists('Search')) {
             $args = array(
                 'filters' => array(),
                 'customFieldFilters' => array(),
-                'search' => '',
+                'search' => $params['query'],
                 'fields' => self::$searchFields,
                 'paging' => array(
                     'page' => $page,
@@ -231,10 +233,6 @@ if (!class_exists('Search')) {
                 'returnType' => 'array', //array, obj, json
             );
 
-            if (isset($params['query']) && !empty($params['query'])) {
-                $args['search'] = $params['query'];
-            }
-
             if (isset($params['lcat']) && !empty($params['lcat'])) {
                 $args['filters'][] = array(
                     'field' => 'categoryId',
@@ -243,11 +241,11 @@ if (!class_exists('Search')) {
                 );
             }
 
-            if (isset($params['date']) && !empty($params['date'])) {
+            if (isset($params['dayofweek']) && !empty($params['dayofweek'])) {
                 $args['filters'][] = array(
-                    'field' => 'date',
-                    'operation' => 'eq',
-                    'value' => $params['date'],
+                    'field' => 'dayOfWeek',
+                    'operation' => 'in',
+                    'values' => $params['dayofweek'],
                 );
             }
 
