@@ -191,8 +191,12 @@ if (!class_exists('Search')) {
             $categoryFilterTemplate = self::getTemplatePath('category-filter');
             $dateFilterTemplate = self::getTemplatePath('date-filter');
             $locationsFilterTemplate = self::getTemplatePath('locations-filter');
+            $dayOfWeekTemplate = self::getTemplatePath('dayofweek-filter');
             $courseTemplate = self::getTemplatePath('course');
             $pagerTemplate = self::getTemplatePath('pager');
+
+            global $ADMWPP_SEARCH_DAYSOFWEEK;
+            $daysOfWeekFilter = apply_filters('admwpp_days_of_week_filter', $ADMWPP_SEARCH_DAYSOFWEEK);
 
             ob_start();
             include $template;

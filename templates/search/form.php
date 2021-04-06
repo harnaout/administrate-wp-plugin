@@ -41,7 +41,9 @@
             }
             if ($locationSettingsOption == 1) {
                 include($locationsFilterTemplate);
-            } ?>
+            }
+            include($dayOfWeekTemplate);
+            ?>
             <div class="adwmpp-dropdown-footer dropdown-footer">
                 <div class="adwmpp-links-wrapper links-wrapper">
                     <button class="adwmpp-filter-btn adwmpp-btn" value="<?php _e('Filter wissen', 'cga'); ?>">
