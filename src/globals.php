@@ -60,3 +60,17 @@ define('TMS_SHORT_DESCRIPTION_KEY', 'admwpp_tms_short_descripton');
 define('TMS_LANGUAGE_KEY', 'admwpp_tms_language');
 define('TMS_STICKY_POST_KEY', 'admwpp_tms_sticky_in_catalog');
 define('TMS_CUSTOM_PRICE_LEVEL_NAME', '*KP - 10 kinderen');
+
+// --------------------------------------------------------------------
+// Define Global variables for Search Filters page
+// --------------------------------------------------------------------
+global $ADMWPP_SEARCH_DAYSOFWEEK;
+$ADMWPP_SEARCH_DAYSOFWEEK = array(
+  'Mon' => 'Monday',
+  'Tue' => 'Tuesday',
+  'Wed' => 'Wednesday',
+  'Thu' => 'Thursday',
+  'Fri' => 'Friday',
+  'Sat' => 'Saturday',
+  'Sun' => 'Sunday',
+);
