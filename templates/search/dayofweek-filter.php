@@ -4,7 +4,7 @@
         <?php
         foreach ($daysOfWeekFilter as $key => $value) {
             $checked = "";
-            if (in_array('Mon', $dayofweek)) :
+            if (in_array($key, $dayofweek)) :
                 $checked = 'checked="checked"';
             endif;
             ?>
