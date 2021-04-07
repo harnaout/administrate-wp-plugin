@@ -253,6 +253,14 @@ if (!class_exists('Search')) {
                 );
             }
 
+            if (isset($params['loc']) && !empty($params['loc'])) {
+                $args['filters'][] = array(
+                    'field' => 'locationId',
+                    'operation' => 'in',
+                    'values' => $params['loc'],
+                );
+            }
+
             $args = apply_filters('admwpp_search_args', $args);
 
             $allCatalogue = $SDKCatalogue->loadAll($args);
