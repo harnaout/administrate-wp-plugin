@@ -7,6 +7,7 @@ use ADM\WPPlugin\Settings;
 use ADM\WPPlugin\PostTypes\Course;
 
 use Administrate\PhpSdk\Catalogue as SDKCatalogue;
+use Administrate\PhpSdk\GraphQl\Client as SDKClient;
 
 /**
  * Construct the "Course" post type
@@ -149,12 +150,6 @@ if (!class_exists('Search')) {
                 )
             );
 
-            $categories = get_terms(array(
-                'taxonomy' => 'learning-category',
-                'hide_empty' => true,
-                'parent' => 0,
-            ));
-
             $query = get_query_var('query', '');
             $lcat = get_query_var('lcat', array());
             $fromDate = get_query_var('from');
@@ -253,6 +248,14 @@ if (!class_exists('Search')) {
                 );
             }
 
+            if (isset($params['loc']) && !empty($params['loc'])) {
+                $args['filters'][] = array(
+                    'field' => 'locationId',
+                    'operation' => 'in',
+                    'values' => $params['loc'],
+                );
+            }
+
             $args = apply_filters('admwpp_search_args', $args);
 
             $allCatalogue = $SDKCatalogue->loadAll($args);
@@ -322,6 +325,44 @@ if (!class_exists('Search')) {
             }
 
             return $catalogueOutput;
+        }
+
+        public static function getLocationsFilter()
+        {
+
+            $activate = Oauth2\Activate::instance();
+            $activate->setParams(true);
+            $apiParams = $activate::$params;
+
+            $portalToken = $activate->getAuthorizeToken(true);
+            $apiParams['portalToken'] = $portalToken;
+            $apiParams['portal'] = Settings::instance()->getSettingsOption('account', 'portal');
+
+            $authorizationHeaders = SDKClient::setHeaders($apiParams);
+            $client = new SDKClient($apiParams['apiUri'], $authorizationHeaders);
+
+            $gql = 'query locations {
+              locations {
+                edges {
+                  node {
+                    id
+                    name
+                  }
+                }
+              }
+            }';
+
+            $results = $client->runRawQuery($gql);
+            $data = $results->getData();
+
+            if (isset($data->locations->edges)) {
+                $locations = array();
+                foreach ($data->locations->edges as $key => $edge) {
+                    $locations[$edge->node->id] = $edge->node->name;
+                }
+                return $locations;
+            }
+            return array();
         }
 
 

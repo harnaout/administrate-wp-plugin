@@ -1,3 +1,10 @@
+<?php
+$categories = get_terms(array(
+    'taxonomy' => 'learning-category',
+    'hide_empty' => true,
+    'parent' => 0,
+));
+?>
 <div class="adwmpp-filter-wrapper adwmpp-categories-wrapper categories-wrapper adwmpp-dropdown dropdown">
     <div class="adwmpp-input-wrapper">
         <label><i class="adwmpp-cats-icon cats-icon"></i><?php _e('Categories', ADMWPP_TEXT_DOMAIN); ?></label>
@@ -8,7 +15,7 @@
         <div class="adwmpp-dropdown-body dropdown-body">
             <?php if (!empty($categories)) :
                 if ($categories_filter_type == 'select') : ?>
-                    <select class="admwpp-select admwpp-custom-select" name="lcat">
+                    <select class="admwpp-select admwpp-custom-select" name="lcat[]" multiple>
                         <option class="adwmpp-option-item option-item" value="">
                             <label>
                             <i></i>
@@ -19,7 +26,7 @@
                             $admwpp_tms_id = get_term_meta($category->term_id, 'admwpp_tms_id', true);
                             if ($admwpp_tms_id) :
                                 $selected = "";
-                                if ($admwpp_tms_id === $lcat) {
+                                if (in_array($admwpp_tms_id, $lcat)) {
                                     $selected = "selected='selected'";
                                 }
                                 ?>
@@ -41,14 +48,14 @@
                             $admwpp_tms_id = get_term_meta($category->term_id, 'admwpp_tms_id', true);
                             if ($admwpp_tms_id) :
                                 $checked = "";
-                                if ($admwpp_tms_id === $lcat) {
+                                if (in_array($admwpp_tms_id, $lcat)) {
                                     $checked = "checked='checked'";
                                 }
                                 ?>
                                 <li class="adwmpp-checkbox-item checkbox-item">
                                     <input type="radio" class="adwmpp-checkbox-input checkbox-input"
                                     id="learning-cat-<?php echo $category->term_id; ?>"
-                                    name="lcat"
+                                    name="lcat[]"
                                     value="<?php echo $admwpp_tms_id; ?>"
                                     <?php echo $checked; ?>
                                     />
