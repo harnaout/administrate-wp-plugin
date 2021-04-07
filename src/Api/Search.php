@@ -240,8 +240,8 @@ if (!class_exists('Search')) {
             if (isset($params['lcat']) && !empty($params['lcat'])) {
                 $args['filters'][] = array(
                     'field' => 'categoryId',
-                    'operation' => 'eq',
-                    'value' => $params['lcat'],
+                    'operation' => 'in',
+                    'values' => $params['lcat'],
                 );
             }
 
