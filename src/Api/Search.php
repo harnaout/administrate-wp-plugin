@@ -123,6 +123,7 @@ if (!class_exists('Search')) {
             $vars[] = 'per_page';
             $vars[] = 'dayofweek';
             $vars[] = 'timeofday';
+            $vars[] = 'minplaces';
             return $vars;
         }
 
@@ -158,6 +159,7 @@ if (!class_exists('Search')) {
             $loc = get_query_var('loc', array());
             $dayofweek = get_query_var('dayofweek', array());
             $timeofday = get_query_var('timeofday', '');
+            $minplaces = get_query_var('minplaces', '');
 
             $page = get_query_var('paged') ? (int) get_query_var('paged') : 1;
             $per_page = (int) get_query_var('per_page', ADMWPP_SEARCH_PER_PAGE);
@@ -168,6 +170,7 @@ if (!class_exists('Search')) {
                 'per_page' => $per_page,
                 'dayofweek' => $dayofweek,
                 'timeofday' => $timeofday,
+                'minplaces' => $minplaces,
             );
 
             if ($lcat) {
@@ -191,6 +194,7 @@ if (!class_exists('Search')) {
             $locationsFilterTemplate = self::getTemplatePath('locations-filter');
             $dayOfWeekTemplate = self::getTemplatePath('dayofweek-filter');
             $timeOfDayTemplate = self::getTemplatePath('timeofday-filter');
+            $minPlacesTemplate = self::getTemplatePath('minplaces-filter');
             $courseTemplate = self::getTemplatePath('course');
             $pagerTemplate = self::getTemplatePath('pager');
 
@@ -319,6 +323,14 @@ if (!class_exists('Search')) {
                     'field' => 'sessionEndTime',
                     'operation' => 'le',
                     'value' => $sessionEndTime,
+                );
+            }
+
+            if (isset($params['minplaces']) && !empty($params['minplaces'])) {
+                $args['filters'][] = array(
+                    'field' => 'remainingPlaces',
+                    'operation' => 'ge',
+                    'value' => $params['minplaces'],
                 );
             }
 
