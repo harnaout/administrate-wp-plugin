@@ -74,3 +74,15 @@ $ADMWPP_SEARCH_DAYSOFWEEK = array(
   'Sat' => 'Saturday',
   'Sun' => 'Sunday',
 );
+
+// Morning: 12am-12pm
+// Afternoon: 12pm-5pm
+// Evening: 5pm-12pm
+// All day: An event that is >6 hours
+global $ADMWPP_SEARCH_TIMEOFDAY;
+$ADMWPP_SEARCH_TIMEOFDAY = array(
+  'morning' => 'Morning',
+  'afternoon' => 'Afternoon',
+  'evening' => 'Evening',
+  'allday' => 'All day',
+);
