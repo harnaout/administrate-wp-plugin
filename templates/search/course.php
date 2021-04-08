@@ -2,7 +2,7 @@
 $courseId = $course['postId'];
 $type = $course['type'];
 $title = $course['name'];
-$courseDescription = $course['description'];
+$courseDescription = wp_trim_words($course['description'], 25);
 $formattedPrice = $course['formattedPrice'];
 $imageUrl = $course['imageUrl'];
 $category = $course['category'];

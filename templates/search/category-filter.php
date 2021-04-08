@@ -7,20 +7,15 @@ $categories = get_terms(array(
 ?>
 <div class="adwmpp-filter-wrapper adwmpp-categories-wrapper categories-wrapper adwmpp-dropdown dropdown">
     <div class="adwmpp-input-wrapper">
-        <label><i class="adwmpp-cats-icon cats-icon"></i><?php _e('Categories', ADMWPP_TEXT_DOMAIN); ?></label>
-        <span class="adwmpp-chosen-options chosen-options"></span>
-        <i class="adwmpp-toggle-arrow toggle-arrow"></i>
+        <label><?php _e('Categories', 'admwpp'); ?></label>
     </div>
     <div class="adwmpp-dropdown-wrapper dropdown-wrapper">
         <div class="adwmpp-dropdown-body dropdown-body">
             <?php if (!empty($categories)) :
                 if ($categories_filter_type == 'select') : ?>
-                    <select class="admwpp-select admwpp-custom-select" name="lcat[]" multiple>
-                        <option class="adwmpp-option-item option-item" value="">
-                            <label>
-                            <i></i>
-                            <span>Select a category</span>
-                            </label>
+                    <select class="admwpp-select admwpp-custom-select" name="lcat[]" multiple autocomplete="off">
+                        <option class="adwmpp-option-item option-item" value="" disabled="disabled" selected="selected">
+                            <?php _e("Select a category", 'admwpp'); ?>
                         </option>
                         <?php foreach ($categories as $category) :
                             $admwpp_tms_id = get_term_meta($category->term_id, 'admwpp_tms_id', true);
@@ -32,10 +27,7 @@ $categories = get_terms(array(
                                 ?>
                                 <option class="adwmpp-option-item option-item" value="<?php echo $admwpp_tms_id; ?>"
                                 <?php echo $selected; ?>>
-                                    <label for="learning-cat-<?php echo $category->term_id; ?>">
-                                    <i></i>
-                                    <span><?php echo $category->name; ?></span>
-                                    </label>
+                                    <?php echo __($category->name, 'admwpp'); ?>
                                 </option>
                                 <?php
                             endif;
@@ -60,8 +52,7 @@ $categories = get_terms(array(
                                     <?php echo $checked; ?>
                                     />
                                     <label for="learning-cat-<?php echo $category->term_id; ?>">
-                                    <i></i>
-                                    <span><?php echo $category->name; ?></span>
+                                        <?php echo $category->name; ?>
                                     </label>
                                 </li>
                                 <?php

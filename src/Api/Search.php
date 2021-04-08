@@ -122,6 +122,7 @@ if (!class_exists('Search')) {
             $vars[] = 'loc';
             $vars[] = 'per_page';
             $vars[] = 'dayofweek';
+            $vars[] = 'timeofday';
             return $vars;
         }
 
@@ -156,6 +157,7 @@ if (!class_exists('Search')) {
             $toDate = get_query_var('to');
             $loc = get_query_var('loc', array());
             $dayofweek = get_query_var('dayofweek', array());
+            $timeofday = get_query_var('timeofday', '');
 
             $page = get_query_var('paged') ? (int) get_query_var('paged') : 1;
             $per_page = (int) get_query_var('per_page', ADMWPP_SEARCH_PER_PAGE);
@@ -165,6 +167,7 @@ if (!class_exists('Search')) {
                 'page' => $page,
                 'per_page' => $per_page,
                 'dayofweek' => $dayofweek,
+                'timeofday' => $timeofday,
             );
 
             if ($lcat) {
@@ -173,7 +176,7 @@ if (!class_exists('Search')) {
             if (!empty($fromDate)) {
                 $params['from'] = $fromDate;
             }
-            if ($toDate) {
+            if (!empty($toDate)) {
                 $params['to'] = $toDate;
             }
             if ($loc) {
@@ -187,11 +190,15 @@ if (!class_exists('Search')) {
             $dateFilterTemplate = self::getTemplatePath('date-filter');
             $locationsFilterTemplate = self::getTemplatePath('locations-filter');
             $dayOfWeekTemplate = self::getTemplatePath('dayofweek-filter');
+            $timeOfDayTemplate = self::getTemplatePath('timeofday-filter');
             $courseTemplate = self::getTemplatePath('course');
             $pagerTemplate = self::getTemplatePath('pager');
 
             global $ADMWPP_SEARCH_DAYSOFWEEK;
             $daysOfWeekFilter = apply_filters('admwpp_days_of_week_filter', $ADMWPP_SEARCH_DAYSOFWEEK);
+
+            global $ADMWPP_SEARCH_TIMEOFDAY;
+            $timeofdayFilter = apply_filters('admwpp_time_of_day_filter', $ADMWPP_SEARCH_TIMEOFDAY);
 
             ob_start();
             include $template;
@@ -276,6 +283,42 @@ if (!class_exists('Search')) {
                     'field' => 'end',
                     'operation' => 'le',
                     'value' => $to,
+                );
+            }
+
+            if (isset($params['timeofday']) && !empty($params['timeofday'])) {
+                // Morning: 12am-12pm
+                // Afternoon: 12pm-5pm
+                // Evening: 5pm-12pm
+                // All day: An event that is >6 hours
+                switch ($params['timeofday']) {
+                    case 'morning':
+                        $sessionStartTime = "00:00:00";
+                        $sessionEndTime = "11:59:59";
+                        break;
+                    case 'afternoon':
+                        $sessionStartTime = "12:00:00";
+                        $sessionEndTime = "16:59:59";
+                        break;
+                    case 'evening':
+                        $sessionStartTime = "17:00:00";
+                        $sessionEndTime = "23:59:59";
+                        break;
+                    default:
+                        $sessionStartTime = "00:00:00";
+                        $sessionEndTime = "23:59:59";
+                        break;
+                }
+
+                $args['filters'][] = array(
+                    'field' => 'sessionStartTime',
+                    'operation' => 'ge',
+                    'value' => $sessionStartTime,
+                );
+                $args['filters'][] = array(
+                    'field' => 'sessionEndTime',
+                    'operation' => 'le',
+                    'value' => $sessionEndTime,
                 );
             }
 
