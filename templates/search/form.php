@@ -24,6 +24,7 @@
         }
         include($dayOfWeekTemplate);
         include($timeOfDayTemplate);
+        include($minPlacesTemplate);
         ?>
         <div class="adwmpp-dropdown-footer dropdown-footer">
             <div class="adwmpp-links-wrapper links-wrapper">
