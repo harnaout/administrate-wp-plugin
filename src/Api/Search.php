@@ -176,7 +176,7 @@ if (!class_exists('Search')) {
             if (!empty($fromDate)) {
                 $params['from'] = $fromDate;
             }
-            if ($toDate) {
+            if (!empty($toDate)) {
                 $params['to'] = $toDate;
             }
             if ($loc) {
