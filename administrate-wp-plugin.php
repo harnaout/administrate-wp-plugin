@@ -77,7 +77,7 @@ if (!defined('ADMWPP_SITE_URL')) {
 
 // Minutes to consider the portal token expired.
 if (!defined('ADMWPP_PORTAL_TOKEN_EXPIRY_PERIOD')) {
-    define('ADMWPP_PORTAL_TOKEN_EXPIRY_PERIOD', 30);
+    define('ADMWPP_PORTAL_TOKEN_EXPIRY_PERIOD', 60);
 }
 
 // Load globals, helpers, Autoloader

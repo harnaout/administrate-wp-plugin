@@ -287,7 +287,7 @@ if (!class_exists('Activate')) {
 
                 $portal_token = $body->portal_token;
                 $created_at = current_time('timestamp');
-                $expires_in = $created_at + (60 * (int)ADMWPP_PORTAL_TOKEN_EXPIRY_PERIOD);
+                $expires_in = 60 * (int) ADMWPP_PORTAL_TOKEN_EXPIRY_PERIOD;
 
                 Settings::instance()->setSettingsOption('account', 'portal_token', $portal_token);
                 Settings::instance()->setSettingsOption('account', 'portal_token_created_at', $created_at);
@@ -346,10 +346,10 @@ if (!class_exists('Activate')) {
             if ($weblink) {
                 $expires_in = (int) Settings::instance()->getSettingsOption('account', 'portal_token_expires_in');
                 $created_at = (int) Settings::instance()->getSettingsOption('account', 'portal_token_created_at');
+            } else {
+                $expires_in = (int) Settings::instance()->getSettingsOption('account', 'expires_in');
+                $created_at = (int) Settings::instance()->getSettingsOption('account', 'created_at');
             }
-
-            $expires_in = (int) Settings::instance()->getSettingsOption('account', 'expires_in');
-            $created_at = (int) Settings::instance()->getSettingsOption('account', 'created_at');
 
             $grace_period   = (int) ($created_at + ($expires_in * self::TOKEN_GRACE_PERIOD));
             $expires_on     = $created_at + $expires_in;
