@@ -212,7 +212,7 @@ if (! class_exists('LearningCategory')) {
             $tmsId = $node['id'];
             $name = $node['name'];
             $description = $node['description'];
-            $parentCategory = $node['parentCategory'];
+            $parentCategory = @$node['parentCategory'];
 
             $taxonomy = self::$system_name;
 
@@ -227,14 +227,13 @@ if (! class_exists('LearningCategory')) {
                 $parentDescription = $parentCategory['description'];
                 $parentTermId = self::checkifExists($parentTmsId);
                 if (!$parentTermId) {
-                    $parentTerm = $self::nodeToTerm($parentCategory);
+                    $parentTerm = self::nodeToTerm($parentCategory);
                     $parentTermId = $parentTerm['termId'];
                 }
                 $termArgs['parent'] = $parentTermId;
             }
 
             $termId = self::checkifExists($tmsId);
-
             if ($termId) {
                 $results['exists'] = 1;
             } else {
@@ -243,13 +242,21 @@ if (! class_exists('LearningCategory')) {
                     $taxonomy,
                     $termArgs
                 );
-                $termId = $term['term_id'];
-                $results['imported'] = 1;
 
-                $metas = self::$metas;
-                foreach ($metas as $key => $value) {
-                    $tmsKey = $value['tmsKey'];
-                    update_term_meta($termId, $key, $node[$tmsKey]);
+                if (is_wp_error($term)) {
+                    if (isset($term->errors->error_data['term_exists'])) {
+                        $termId = $term->errors->error_data['term_exists'];
+                        $results['exists'] = 1;
+                    }
+                } else {
+                    $termId = $term['term_id'];
+                    $results['imported'] = 1;
+
+                    $metas = self::$metas;
+                    foreach ($metas as $key => $value) {
+                        $tmsKey = $value['tmsKey'];
+                        update_term_meta($termId, $key, $node[$tmsKey]);
+                    }
                 }
             }
 
