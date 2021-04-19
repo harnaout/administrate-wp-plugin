@@ -209,6 +209,10 @@ if (!class_exists('Course')) {
                 'id',
                 'name'
             ),
+            'imageGallery' => array(
+                'type' => 'edges',
+                'fields' => array('id', 'name')
+            ),
             'learningCategories' => array(
                 'type' => 'edges',
                 'fields' => array(
@@ -1096,6 +1100,7 @@ if (!class_exists('Course')) {
             $postMetas = array();
             $metas = self::$metas;
             $learningCategories = array();
+            $imageGallery = array();
             $imageTmsId = '';
             foreach ($metas as $key => $value) {
                 $tmsKey = $value['tmsKey'];
