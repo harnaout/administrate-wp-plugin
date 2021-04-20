@@ -171,6 +171,7 @@ if (!class_exists('Search')) {
                 'dayofweek' => $dayofweek,
                 'timeofday' => $timeofday,
                 'minplaces' => $minplaces,
+                'config' => $args,
             );
 
             if ($lcat) {
@@ -228,6 +229,7 @@ if (!class_exists('Search')) {
             $perPage = (int) $params['per_page'];
 
             $args = array(
+                'config' => $params['config'],
                 'filters' => array(),
                 'customFieldFilters' => array(),
                 'search' => $params['query'],
