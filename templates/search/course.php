@@ -6,6 +6,7 @@ $courseDescription = wp_trim_words($course['description'], 25);
 $formattedPrice = $course['formattedPrice'];
 $imageUrl = $course['imageUrl'];
 $category = $course['category'];
+$summary = $course['summary'];
 ?>
 <div class='admwpp-cousre <?php echo ($template === 'list')?'admwpp-list':''; ?>'>
     <div class="inner-cont">
@@ -19,8 +20,8 @@ $category = $course['category'];
         <div class='admwpp-info'>
             <h3 class="admwpp-course-title"><a href="<?php echo get_the_permalink($courseId); ?>">
             <?php echo $title; ?></a></h3>
-            <?php if ($courseDescription) : ?>
-                <div class='admwpp-desc'><?php echo $courseDescription; ?></div>
+            <?php if ($summary) : ?>
+                <div class='admwpp-desc'><?php echo $summary; ?></div>
             <?php endif;
             if ($category) : ?>
                 <div class='admwpp-category'><?php echo $category; ?></div>
