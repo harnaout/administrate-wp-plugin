@@ -70,3 +70,19 @@ function admwppPrimaryLanguage()
     $languages = explode("_", $locale);
     return $languages[0];
 }
+
+function admwppTrimText($string, $wordsreturned=25)
+{
+    $retval = $string = strip_tags($string);
+
+    $array = explode(" ", $string);
+    if (count($array) <= $wordsreturned)
+    {
+        $retval = $string;
+    } else
+    {
+        array_splice($array, $wordsreturned);
+        $retval = implode(" ", $array) . " ...";
+    }
+    return $retval;
+}

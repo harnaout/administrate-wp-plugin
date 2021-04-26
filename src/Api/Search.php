@@ -25,6 +25,7 @@ if (!class_exists('Search')) {
                 'code',
                 'name',
                 'description',
+                'teaserDescription',
                 'category',
                 'imageUrl',
                 'priceRange' => array(
@@ -390,11 +391,18 @@ if (!class_exists('Search')) {
                     $imageUrl = $course['imageUrl'];
                 }
 
+                $summary = $course['description'];
+                if (isset($course['teaserDescription']) && !empty($course['teaserDescription'])) {
+                    $summary = $course['teaserDescription'];
+                }
+                $summary = admwppTrimText($summary, 25);
+
                 $catalogueOutput[$course['id']] = array(
                     'postId' => $coursePostId,
                     'type' => $course['__typename'],
                     'name' => $course['name'],
                     'description' => $course['description'],
+                    'summary' => $summary,
                     'imageUrl' => $imageUrl,
                     'category' => $course['category'],
                     'formattedPrice' => $symbol . ' ' . $price,
