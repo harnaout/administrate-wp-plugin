@@ -323,7 +323,7 @@ if (!class_exists('Search')) {
                     'value' => $sessionStartTime,
                 );
                 $args['filters'][] = array(
-                    'field' => 'sessionEndTime',
+                    'field' => 'sessionStartTime',
                     'operation' => 'le',
                     'value' => $sessionEndTime,
                 );
