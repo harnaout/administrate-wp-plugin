@@ -45,7 +45,7 @@ abstract class BaseTax
 
         $class = get_called_class();
 
-        $post_type = $class::$post_type;
+        $post_type = apply_filters('override_taxonomy_args', $class::$post_type);
 
         $name = $class::$name;
         $name_plural = $class::$name_plural;
