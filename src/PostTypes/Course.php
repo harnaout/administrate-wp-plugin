@@ -361,7 +361,8 @@ if (!class_exists('Course')) {
         public static function getSlug()
         {
             $class = get_called_class();
-            return $class::$slug;
+            $override = apply_filters('admwpp_override_course_args', ['slug'=> $class::$slug]);
+            return $override['slug'];
         }
 
         public static function getTitle($id)
@@ -487,20 +488,26 @@ if (!class_exists('Course')) {
          */
         protected function createPostType()
         {
+            $override = apply_filters('admwpp_override_course_args', [
+                'slug' => self::$slug,
+                'singular' => self::$singular,
+                'plural' => self::$plural,
+            ]);
+
             $labels   = array(
-                'name'               => self::$plural,
-                'singular_name'      => self::$singular,
+                'name'               => $override['plural'],
+                'singular_name'      => $override['singular'],
                 'add_new'            => 'Add New',
-                'add_new_item'       => 'Add New ' . self::$singular,
-                'edit_item'          => 'Edit ' . self::$singular,
-                'new_item'           => 'New ' . self::$singular,
-                'all_items'          => 'All ' . self::$plural,
-                'view_item'          => 'View ' . self::$singular,
-                'search_items'       => 'Search ' . self::$plural,
-                'not_found'          => 'No ' . self::$plural . ' found',
-                'not_found_in_trash' => 'No ' . self::$plural . ' found in Trash',
+                'add_new_item'       => 'Add New ' . $override['singular'],
+                'edit_item'          => 'Edit ' . $override['singular'],
+                'new_item'           => 'New ' . $override['singular'],
+                'all_items'          => 'All ' . $override['plural'],
+                'view_item'          => 'View ' . $override['singular'],
+                'search_items'       => 'Search ' . $override['plural'],
+                'not_found'          => 'No ' . $override['plural'] . ' found',
+                'not_found_in_trash' => 'No ' . $override['plural'] . ' found in Trash',
                 'parent_item_colon'  => '',
-                'menu_name'          => self::$plural,
+                'menu_name'          => $override['plural'],
             );
 
             $args = array(
@@ -511,7 +518,7 @@ if (!class_exists('Course')) {
                  'show_in_menu'       => true,
                  'query_var'          => false,
                  'rewrite'            => array(
-                     'slug'       => self::$slug,
+                     'slug'       => $override['slug'],
                      'with_front' => true
                  ),
                  'capability_type'    => self::$capabilityType,
@@ -523,7 +530,7 @@ if (!class_exists('Course')) {
                  'menu_icon'          => 'dashicons-shield-alt',
              );
 
-            register_post_type(self::$slug, $args);
+            register_post_type($override['slug'], $args);
         }
 
         /**
@@ -758,8 +765,9 @@ if (!class_exists('Course')) {
 
         public static function setLang($postId, $lang)
         {
+            $override = apply_filters('admwpp_override_course_args', ['slug'=> self::$slug]);
             global $sitepress;
-            $contentType = "post_" . self::$slug;
+            $contentType = "post_" . $override['slug'];
             $transId = $sitepress->get_element_trid($postId, $contentType);
             if ($transId) {
                 return (int) $sitepress->set_element_language_details(
