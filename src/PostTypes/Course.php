@@ -112,7 +112,7 @@ if (!class_exists('Course')) {
             ),
             'admwpp_tms_accounts_associations' => array(
                 'type' => 'text',
-                'label' => 'Account Associations IDs',
+                'label' => 'Account Associations',
                 'tmsKey' => 'accountAssociations',
                 'showOnFront' => false,
             ),
@@ -1012,7 +1012,7 @@ if (!class_exists('Course')) {
                     // array(
                     //     'field' => 'code',
                     //     'operation' => 'eq',
-                    //     'value' => 'WS-0832-NL',
+                    //     'value' => 'WS-0040-NL',
                     // )
                 ),
                 'fields' => self::$courseFields,
@@ -1212,12 +1212,14 @@ if (!class_exists('Course')) {
                     case 'accountAssociations':
                         if (isset($node[$tmsKey])) {
                             $accountAssociations = $node[$tmsKey]['edges'];
-                            $accountIds = array();
-                            foreach ($accountAssociations as $account) {
-                                $account = $account['node']['account'];
-                                $accountIds[] = $account['id'];
+                            $accountArray = array();
+                            foreach ($accountAssociations as $accountAssociation) {
+                                $account = $accountAssociation['node']['account'];
+                                $associationType = $accountAssociation['node']['associationType'];
+                                $accountArray[$account['id']]['name'] = $account['name'];
+                                $accountArray[$account['id']]['type'] = $associationType['name'];
                             }
-                            $tmsValue = implode('|', $accountIds);
+                            $tmsValue = json_encode($accountArray);
                         }
                         break;
                     case 'locations':
