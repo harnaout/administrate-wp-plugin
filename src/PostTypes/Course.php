@@ -361,8 +361,7 @@ if (!class_exists('Course')) {
         public static function getSlug()
         {
             $class = get_called_class();
-            $override = apply_filters('admwpp_override_course_args', ['slug'=> $class::$slug]);
-            return $override['slug'];
+            return $class::$slug;
         }
 
         public static function getTitle($id)
@@ -489,7 +488,7 @@ if (!class_exists('Course')) {
         protected function createPostType()
         {
             $override = apply_filters('admwpp_override_course_args', [
-                'slug' => self::$slug,
+                'rewrite_slug' => self::$slug,
                 'singular' => self::$singular,
                 'plural' => self::$plural,
             ]);
@@ -518,7 +517,7 @@ if (!class_exists('Course')) {
                  'show_in_menu'       => true,
                  'query_var'          => false,
                  'rewrite'            => array(
-                     'slug'       => $override['slug'],
+                     'slug'       => $override['rewrite_slug'],
                      'with_front' => true
                  ),
                  'capability_type'    => self::$capabilityType,
@@ -530,7 +529,7 @@ if (!class_exists('Course')) {
                  'menu_icon'          => 'dashicons-shield-alt',
              );
 
-            register_post_type($override['slug'], $args);
+            register_post_type(Self::$slug, $args);
         }
 
         /**
@@ -765,9 +764,8 @@ if (!class_exists('Course')) {
 
         public static function setLang($postId, $lang)
         {
-            $override = apply_filters('admwpp_override_course_args', ['slug'=> self::$slug]);
             global $sitepress;
-            $contentType = "post_" . $override['slug'];
+            $contentType = "post_" . self::$slug;
             $transId = $sitepress->get_element_trid($postId, $contentType);
             if ($transId) {
                 return (int) $sitepress->set_element_language_details(
