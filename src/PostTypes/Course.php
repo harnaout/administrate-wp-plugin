@@ -487,26 +487,20 @@ if (!class_exists('Course')) {
          */
         protected function createPostType()
         {
-            $override = apply_filters('admwpp_override_course_args', [
-                'rewrite_slug' => self::$slug,
-                'singular' => self::$singular,
-                'plural' => self::$plural,
-            ]);
-
             $labels   = array(
-                'name'               => $override['plural'],
-                'singular_name'      => $override['singular'],
+                'name'               => self::$plural,
+                'singular_name'      => self::$singular,
                 'add_new'            => 'Add New',
-                'add_new_item'       => 'Add New ' . $override['singular'],
-                'edit_item'          => 'Edit ' . $override['singular'],
-                'new_item'           => 'New ' . $override['singular'],
-                'all_items'          => 'All ' . $override['plural'],
-                'view_item'          => 'View ' . $override['singular'],
-                'search_items'       => 'Search ' . $override['plural'],
-                'not_found'          => 'No ' . $override['plural'] . ' found',
-                'not_found_in_trash' => 'No ' . $override['plural'] . ' found in Trash',
+                'add_new_item'       => 'Add New ' . self::$singular,
+                'edit_item'          => 'Edit ' . self::$singular,
+                'new_item'           => 'New ' . self::$singular,
+                'all_items'          => 'All ' . self::$plural,
+                'view_item'          => 'View ' . self::$singular,
+                'search_items'       => 'Search ' . self::$plural,
+                'not_found'          => 'No ' . self::$plural . ' found',
+                'not_found_in_trash' => 'No ' . self::$plural . ' found in Trash',
                 'parent_item_colon'  => '',
-                'menu_name'          => $override['plural'],
+                'menu_name'          => self::$plural,
             );
 
             $args = array(
@@ -517,7 +511,7 @@ if (!class_exists('Course')) {
                  'show_in_menu'       => true,
                  'query_var'          => false,
                  'rewrite'            => array(
-                     'slug'       => $override['rewrite_slug'],
+                     'slug'       => self::$slug,
                      'with_front' => true
                  ),
                  'capability_type'    => self::$capabilityType,
@@ -529,7 +523,9 @@ if (!class_exists('Course')) {
                  'menu_icon'          => 'dashicons-shield-alt',
              );
 
-            register_post_type(Self::$slug, $args);
+            $args = apply_filters('admwpp_course_args', $args);
+            
+            register_post_type(self::$slug, $args);
         }
 
         /**

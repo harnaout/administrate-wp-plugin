@@ -95,6 +95,8 @@ abstract class BaseTax
             'rewrite' => $rewrite,
         );
 
+        $args = apply_filters('admwpp_taxonomy_args', $args, $post_type);
+
         register_taxonomy($system_name, $post_type, $args);
 
         if (isset($default_terms) && !empty($default_terms)) {
