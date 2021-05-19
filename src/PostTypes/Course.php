@@ -736,7 +736,7 @@ if (!class_exists('Course')) {
 
             global $post_type;
             if ($post_type !== self::getSlug()) :
-                return $defaults;
+                return;
             endif;
 
             $selected = filter_input(INPUT_GET, 'type', FILTER_SANITIZE_STRING );
