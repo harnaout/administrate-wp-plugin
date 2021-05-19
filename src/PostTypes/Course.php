@@ -1099,6 +1099,18 @@ if (!class_exists('Course')) {
                 $postArgs['post_status'] = 'publish';
             }
 
+            // Process Custom Fields
+            $customFields = array();
+            $customFieldValues = $node['customFieldValues'];
+            foreach ($customFieldValues as $field) {
+                $customFields[$field['definitionKey']] = $field['value'];
+            }
+
+            $priceLevelNames =  array('Normal'); // TODO: populate this array from settings
+            // Use admwpp_course_price_level_names filter in active theme or plugins
+            // to set the custom price levels to be synched
+            $priceLevelNames = apply_filters('admwpp_course_price_level_names', $priceLevelNames, $type, $customFields);
+
             $postMetas = array();
             $metas = self::$metas;
             $learningCategories = array();
@@ -1142,19 +1154,20 @@ if (!class_exists('Course')) {
                         if ('LP' === $type) {
                             $tmsKey = 'prices';
                         }
+
                         if (isset($node[$tmsKey])) {
                             $publicPrices = $node[$tmsKey]['edges'];
                             $pricesAmounts = array();
                             foreach ($publicPrices as $prices) {
                                 if (isset($prices['node']['priceLevel'])) {
-                                    if ('Normal' === $prices['node']['priceLevel']['name'] ||
-                                        TMS_CUSTOM_PRICE_LEVEL_NAME === $prices['node']['priceLevel']['name']) {
+                                    if (in_array($prices['node']['priceLevel']['name'], $priceLevelNames)) {
                                         $currencySymbol = '';
                                         if (isset($prices['node']['financialUnit']) &&
                                             isset($prices['node']['financialUnit']['symbol'])) {
                                                 $currencySymbol = $prices['node']['financialUnit']['symbol'] . " ";
                                         }
                                         $pricesAmounts[] = $currencySymbol . $prices['node']['amount'];
+                                        break;
                                     }
                                 }
                             }
@@ -1171,13 +1184,13 @@ if (!class_exists('Course')) {
                             $pricesCurencies = array();
                             foreach ($publicPrices as $prices) {
                                 if (isset($prices['node']['priceLevel'])) {
-                                    if ('Normal' === $prices['node']['priceLevel']['name'] ||
-                                        TMS_CUSTOM_PRICE_LEVEL_NAME === $prices['node']['priceLevel']['name']) {
+                                    if (in_array($prices['node']['priceLevel']['name'], $priceLevelNames)) {
                                         if (isset($prices['node']['financialUnit']['name']) &&
                                             isset($prices['node']['financialUnit']['symbol'])) {
                                             $pricesCurencies[] = $prices['node']['financialUnit']['name'] .
                                             "|" . $prices['node']['financialUnit']['symbol'];
                                         }
+                                        break;
                                     }
                                 }
                             }
@@ -1194,11 +1207,11 @@ if (!class_exists('Course')) {
                             $taxRates = array();
                             foreach ($publicPrices as $prices) {
                                 if (isset($prices['node']['region'])) {
-                                    if ('Normal' === $prices['node']['priceLevel']['name'] ||
-                                        TMS_CUSTOM_PRICE_LEVEL_NAME === $prices['node']['priceLevel']['name']) {
+                                    if (in_array($prices['node']['priceLevel']['name'], $priceLevelNames)) {
                                         if (isset($prices['node']['region']['defaultTax'])) {
                                             $taxRates[] = $prices['node']['region']['defaultTax']['effectiveRate'];
                                         }
+                                        break;
                                     }
                                 }
                             }
@@ -1266,13 +1279,6 @@ if (!class_exists('Course')) {
                         break;
                 }
                 $postMetas[$key] = $tmsValue;
-            }
-
-            // Process Custom Fields
-            $customFields = array();
-            $customFieldValues = $node['customFieldValues'];
-            foreach ($customFieldValues as $field) {
-                $customFields[$field['definitionKey']] = $field['value'];
             }
 
             // Set Course Type
