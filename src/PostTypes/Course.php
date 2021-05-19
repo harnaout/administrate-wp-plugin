@@ -346,6 +346,9 @@ if (!class_exists('Course')) {
                 1
             );
 
+            // Admin Custom Filter query hook
+            add_filter('parse_query', array($this, 'typeFilter'));
+
             $courseContentSettings = (int) Settings::instance()->getSettingsOption('general', 'course_content');
             if (!$courseContentSettings) {
                 // Custom Content
@@ -463,6 +466,10 @@ if (!class_exists('Course')) {
                 10,
                 2
             );
+
+            // Admin Custom Filter on Course Types
+            add_action('restrict_manage_posts',  array($this, 'typeDropdown'));
+
         }
 
         /**
@@ -699,6 +706,7 @@ if (!class_exists('Course')) {
             $defaults['type'] = 'Type';
             $defaults['code'] = 'Code';
             $defaults['image'] = 'Image';
+            $defaults['price'] = 'Price';
             return $defaults;
         }
 
@@ -715,6 +723,52 @@ if (!class_exists('Course')) {
             }
             if ($columnName === 'code') {
                 echo get_post_meta($postId, 'admwpp_tms_code', true);
+            }
+            if ($columnName === 'price') {
+                echo get_post_meta($postId, 'admwpp_tms_price', true);
+            }
+        }
+
+        /**
+         * Add a select dropdown filter with meta values.
+         */
+        public static function typeDropdown() {
+
+            global $post_type;
+            if ($post_type !== self::getSlug()) :
+                return $defaults;
+            endif;
+
+            $selected = filter_input(INPUT_GET, 'type', FILTER_SANITIZE_STRING );
+
+            $choices = [
+                'COURSE' => 'Course ',
+                'LP' => 'Learning Path',
+            ];
+
+            echo'<select name="type">';
+                echo '<option value="all" '. (( $selected == 'all' ) ? 'selected="selected"' : "") . '>' . __( 'All Types', 'admwpp' ) . '</option>';
+                foreach( $choices as $key => $value ) {
+                    echo '<option value="' . $key . '" '. (( $selected == $key ) ? 'selected="selected"' : "") . '>' . $value . '</option>';
+                }
+            echo'</select>';
+        }
+
+        /**
+         * Filter the results based on meta data.
+         */
+        public function typeFilter($query) {
+            if ( is_admin() && $query->is_main_query() ) {
+
+                global $post_type;
+                if ($post_type !== self::getSlug()) :
+                    return;
+                endif;
+
+                if (isset($_GET['type']) && $_GET['type'] != 'all') {
+                    $query->query_vars['meta_key'] = 'admwpp_tms_type';
+                    $query->query_vars['meta_value'] = sanitize_text_field($_GET['type']);
+                }
             }
         }
 
