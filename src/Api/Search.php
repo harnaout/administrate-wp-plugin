@@ -137,7 +137,8 @@ if (!class_exists('Search')) {
                 'categories_filter_type' => 'select',
                 'pager' => 'simple',
                 'template' => 'grid',
-                'filters' => '' // 'category,date,location,age,seat-type,more'
+                'filters' => '', // 'category,date,location,age,seat-type,more'
+                'per_page' => ADMWPP_SEARCH_PER_PAGE,
             );
             $dateSettingsOption = (int) Settings::instance()->getSettingsOption('search', 'date_filters');
             $locationSettingsOption = (int) Settings::instance()->getSettingsOption('search', 'locations_filters');
@@ -163,7 +164,7 @@ if (!class_exists('Search')) {
             $minplaces = get_query_var('minplaces', '');
 
             $page = get_query_var('paged') ? (int) get_query_var('paged') : 1;
-            $per_page = (int) get_query_var('per_page', ADMWPP_SEARCH_PER_PAGE);
+            $per_page = (int) get_query_var('per_page', $per_page);
 
             $params = array(
                 'query' => $query,
