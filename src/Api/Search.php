@@ -154,7 +154,7 @@ if (!class_exists('Search')) {
                 )
             );
 
-            $query = get_query_var('query', '');
+            $query = stripcslashes(urldecode(get_query_var('query', '')));
             $lcat = get_query_var('lcat', array());
             $fromDate = get_query_var('from');
             $toDate = get_query_var('to');
