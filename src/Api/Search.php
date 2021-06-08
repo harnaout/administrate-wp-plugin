@@ -45,6 +45,7 @@ if (!class_exists('Search')) {
                 'description',
                 'lifecycleState',
                 'category',
+                'imageUrl',
                 'price' => array(
                     'amount',
                     "financialUnit" => array('symbol')
