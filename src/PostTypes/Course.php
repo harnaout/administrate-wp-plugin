@@ -178,6 +178,7 @@ if (!class_exists('Course')) {
             ),
             'customFieldValues' => array(
                 'definitionKey',
+                'definitionLocator',
                 'value'
             ),
             'accountAssociations' => array(
@@ -248,6 +249,7 @@ if (!class_exists('Course')) {
             ),
             'customFieldValues' => array(
                 'definitionKey',
+                'definitionLocator',
                 'value'
             ),
             'accountAssociations' => array(
@@ -468,8 +470,7 @@ if (!class_exists('Course')) {
             );
 
             // Admin Custom Filter on Course Types
-            add_action('restrict_manage_posts',  array($this, 'typeDropdown'));
-
+            add_action('restrict_manage_posts', array($this, 'typeDropdown'));
         }
 
         /**
@@ -732,14 +733,15 @@ if (!class_exists('Course')) {
         /**
          * Add a select dropdown filter with meta values.
          */
-        public static function typeDropdown() {
+        public static function typeDropdown()
+        {
 
             global $post_type;
             if ($post_type !== self::getSlug()) :
                 return;
             endif;
 
-            $selected = filter_input(INPUT_GET, 'type', FILTER_SANITIZE_STRING );
+            $selected = filter_input(INPUT_GET, 'type', FILTER_SANITIZE_STRING);
 
             $choices = [
                 'COURSE' => 'Course ',
@@ -1157,7 +1159,11 @@ if (!class_exists('Course')) {
             $customFields = array();
             $customFieldValues = $node['customFieldValues'];
             foreach ($customFieldValues as $field) {
-                $customFields[$field['definitionKey']] = $field['value'];
+                $key = $field['definitionKey'];
+                if ($field['definitionLocator']) {
+                    $key = $field['definitionLocator'];
+                }
+                $customFields[$key] = $field['value'];
             }
 
             $priceLevelNames =  array('Normal'); // TODO: populate this array from settings
@@ -1342,6 +1348,9 @@ if (!class_exists('Course')) {
             if (!empty($tmsCustomFiledsMapping) && $customFieldValues) {
                 foreach ($tmsCustomFiledsMapping as $key => $value) {
                     $tmsKey = $value['tmsKey'];
+                    if ($value['definitionLocator']) {
+                        $tmsKey = $value['definitionLocator'];
+                    }
                     if (isset($customFields[$tmsKey])) {
                         $postMetas[$key] = $customFields[$tmsKey];
                     } else {
