@@ -89,9 +89,9 @@ if (! class_exists('Shortcode')) {
                 'response' => '',
             );
             if (isset($_POST['productOptionId']) && isset($_POST['amount']) && isset($_POST['portalToken'])) {
-                $cartId = $_POST['cartId'];
-                $productOptionId = $_POST['productOptionId'];
-                $amount = (float) $_POST['amount'];
+                $cartId = filter_var(trim($_POST['cartId']), FILTER_SANITIZE_STRING);
+                $productOptionId = filter_var(trim($_POST['productOptionId']), FILTER_SANITIZE_STRING);
+                $amount = (float) filter_var(trim($_POST['amount']), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
                 $activate = Oauth2\Activate::instance();
                 $activate->setParams(true);
