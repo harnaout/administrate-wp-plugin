@@ -40,22 +40,20 @@
       var button = $(defaults.giftVoucherFormBtn, parent);
       var message = $(defaults.giftVoucherMessage, parent).html('');
       var value = element.val();
-      button.prop('disabled', false);
+      button.prop('disabled', true);
       if (!$.isNumeric(value)) {
         message.html(admwpp.giftVoucher.error.notNumber).addClass('admwpp-error');
-        button.prop('disabled', true);
         return false;
       }
       if (value <= 0) {
         message.html(admwpp.giftVoucher.error.emptyAmount).addClass('admwpp-error');
-        button.prop('disabled', true);
         return false;
       }
       if (value > admwpp.giftVoucher.maxAmount) {
         message.html(admwpp.giftVoucher.error.maxAmount).addClass('admwpp-error');
-        button.prop('disabled', true);
         return false;
       }
+      button.prop('disabled', false);
       return true;
     },
     addGiftVoucher: function(button){
@@ -70,15 +68,14 @@
       if (parent.hasClass('admwpp-loading')) {
         return;
       }
-      parent.addClass('admwpp-loading');
-      button.prop('disabled', true);
 
       var amount = $("input[name='" + defaults.giftVoucherFormAmount + "']", parent);
-
       if (!self.isValidGiftVoucherInput(amount)) {
-        button.prop('disabled', false);
         return;
       }
+
+      parent.addClass('admwpp-loading');
+      button.prop('disabled', true);
 
       var data = {
         "action" : "addGiftVoucher",
@@ -127,7 +124,7 @@
 
           amount.val('');
           parent.removeClass('admwpp-loading');
-          button.prop('disabled', false);
+          button.prop('disabled', true);
         }
       });
 
