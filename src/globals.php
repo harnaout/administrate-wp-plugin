@@ -61,26 +61,26 @@ define('ADMWPP_PER_PAGE', 20);
 // --------------------------------------------------------------------
 global $ADMWPP_APP_ENVIRONMENT;
 $ADMWPP_APP_ENVIRONMENT = array(
-  'production' => array(
-    'label' => 'Production',
-    'administrate' => 'https://developer.getadministrate.com/',
-    'oauthServer' => 'https://auth.getadministrate.com/oauth',
-    'apiUri' => 'https://api.administrateapp.com/graphql',
-    'weblink' => array(
-      'oauthServer' => 'https://portal-auth.administratehq.com',
-      'apiUri' => 'https://weblink-api.administratehq.com/graphql/',
+    'production' => array(
+        'label' => 'Production',
+        'administrate' => 'https://developer.getadministrate.com/',
+        'oauthServer' => 'https://auth.getadministrate.com/oauth',
+        'apiUri' => 'https://api.administrateapp.com/graphql',
+        'weblink' => array(
+            'oauthServer' => 'https://portal-auth.administratehq.com',
+            'apiUri' => 'https://weblink-api.administratehq.com/graphql/',
+        )
+    ),
+    'staging' => array(
+        'label' => 'Staging',
+        'administrate' => 'https://developer.stagingadministratehq.com/',
+        'oauthServer' => 'https://auth.stagingadministratehq.com/oauth',
+        'apiUri' => 'https://api.stagingadministratehq.com/graphql',
+        'weblink' => array(
+            'oauthServer' => 'https://portal-auth.stagingadministratehq.com',
+            'apiUri' => 'https://weblink-api.stagingadministratehq.com/graphql/',
+        )
     )
-  ),
-  'staging' => array(
-    'label' => 'Staging',
-    'administrate' => 'https://developer.stagingadministratehq.com/',
-    'oauthServer' => 'https://auth.stagingadministratehq.com/oauth',
-    'apiUri' => 'https://api.stagingadministratehq.com/graphql',
-    'weblink' => array(
-      'oauthServer' => 'https://portal-auth.stagingadministratehq.com',
-      'apiUri' => 'https://weblink-api.stagingadministratehq.com/graphql/',
-    )
-  )
 );
 
 // --------------------------------------------------------------------
@@ -88,9 +88,9 @@ $ADMWPP_APP_ENVIRONMENT = array(
 // --------------------------------------------------------------------
 global $ADMWPP_EXCLUDED_POST_TYPES;
 $ADMWPP_EXCLUDED_POST_TYPES = array(
-  'attachment',
-  'revision',
-  'nav_menu_item',
+    'attachment',
+    'revision',
+    'nav_menu_item',
 );
 
 // --------------------------------------------------------------------
@@ -98,8 +98,8 @@ $ADMWPP_EXCLUDED_POST_TYPES = array(
 // --------------------------------------------------------------------
 global $ADMWPP_LANG;
 $ADMWPP_LANG = array(
-  'en_US'  => 'English',
-  'fr_FR'  => 'French',
+    'en_US'  => 'English',
+    'fr_FR'  => 'French',
 );
 
 define('TMS_SHORT_DESCRIPTION_KEY', 'admwpp_tms_short_descripton');
@@ -111,13 +111,13 @@ define('TMS_STICKY_POST_KEY', 'admwpp_tms_sticky_in_catalog');
 // --------------------------------------------------------------------
 global $ADMWPP_SEARCH_DAYSOFWEEK;
 $ADMWPP_SEARCH_DAYSOFWEEK = array(
-  'Mon' => 'Monday',
-  'Tue' => 'Tuesday',
-  'Wed' => 'Wednesday',
-  'Thu' => 'Thursday',
-  'Fri' => 'Friday',
-  'Sat' => 'Saturday',
-  'Sun' => 'Sunday',
+    'Mon' => 'Monday',
+    'Tue' => 'Tuesday',
+    'Wed' => 'Wednesday',
+    'Thu' => 'Thursday',
+    'Fri' => 'Friday',
+    'Sat' => 'Saturday',
+    'Sun' => 'Sunday',
 );
 
 // Morning: 12am-12pm
@@ -126,8 +126,8 @@ $ADMWPP_SEARCH_DAYSOFWEEK = array(
 // All day: An event that is >6 hours
 global $ADMWPP_SEARCH_TIMEOFDAY;
 $ADMWPP_SEARCH_TIMEOFDAY = array(
-  'morning' => 'Morning',
-  'afternoon' => 'Afternoon',
-  'evening' => 'Evening',
-  'allday' => 'All day',
+    'morning' => 'Morning',
+    'afternoon' => 'Afternoon',
+    'evening' => 'Evening',
+    'allday' => 'All day',
 );
