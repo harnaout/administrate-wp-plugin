@@ -10,6 +10,16 @@
     // init logic
     var defaults = $.ADMShortcode.defaults;
 
+    if ($(defaults.giftVoucherFormAmountValidate).length > 0) {
+      $(defaults.giftVoucherFormAmountValidate).on(
+        'change keyup',
+        function(e){
+          var element = $(this);
+          self.isValidGiftVoucherInput(element);
+        }
+      );
+    }
+
     if ($(defaults.giftVoucherFormBtn).length > 0) {
       $(defaults.giftVoucherFormBtn).on(
         'click',
@@ -23,6 +33,31 @@
   };
 
   $.ADMShortcode.prototype = {
+    isValidGiftVoucherInput: function(element){
+      var self = this;
+      var defaults = $.ADMShortcode.defaults;
+      var parent = element.parents(defaults.giftVoucherForm);
+      var button = $(defaults.giftVoucherFormBtn, parent);
+      var message = $(defaults.giftVoucherMessage, parent).html('');
+      var value = element.val();
+      button.prop('disabled', false);
+      if (!$.isNumeric(value)) {
+        message.html(admwpp.giftVoucher.error.notNumber).addClass('admwpp-error');
+        button.prop('disabled', true);
+        return false;
+      }
+      if (value <= 0) {
+        message.html(admwpp.giftVoucher.error.emptyAmount).addClass('admwpp-error');
+        button.prop('disabled', true);
+        return false;
+      }
+      if (value > admwpp.giftVoucher.maxAmount) {
+        message.html(admwpp.giftVoucher.error.maxAmount).addClass('admwpp-error');
+        button.prop('disabled', true);
+        return false;
+      }
+      return true;
+    },
     addGiftVoucher: function(button){
       var self = this;
       var defaults = $.ADMShortcode.defaults;
@@ -40,9 +75,7 @@
 
       var amount = $("input[name='" + defaults.giftVoucherFormAmount + "']", parent);
 
-      if (amount.val() <= 0) {
-        message.html(admwpp.giftVoucher.error.emptyAmount).addClass('admwpp-error');
-        parent.removeClass('admwpp-loading');
+      if (!self.isValidGiftVoucherInput(amount)) {
         button.prop('disabled', false);
         return;
       }
@@ -105,6 +138,7 @@
     giftVoucherForm: '.admwpp-add-gift-voucher-form',
     giftVoucherFormBtn: '.admwpp-add-gift-voucher-btn',
     giftVoucherFormAmount: 'admwpp-gift-voucher-amount',
+    giftVoucherFormAmountValidate: '.admwpp-gift-voucher-amount-validate',
     giftVoucherMessage: '.admwpp-message',
   };
 

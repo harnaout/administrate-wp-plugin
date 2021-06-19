@@ -749,19 +749,19 @@ if (!class_exists('Course')) {
             ];
 
             echo'<select name="type">';
-                echo '<option value="all" '. (( $selected == 'all' ) ? 'selected="selected"' : "") . '>' . __( 'All Types', 'admwpp' ) . '</option>';
-                foreach( $choices as $key => $value ) {
-                    echo '<option value="' . $key . '" '. (( $selected == $key ) ? 'selected="selected"' : "") . '>' . $value . '</option>';
-                }
+                echo '<option value="all" '. (( $selected == 'all' ) ? 'selected="selected"' : "") . '>' . __('All Types', 'admwpp') . '</option>';
+            foreach ($choices as $key => $value) {
+                echo '<option value="' . $key . '" '. (( $selected == $key ) ? 'selected="selected"' : "") . '>' . $value . '</option>';
+            }
             echo'</select>';
         }
 
         /**
          * Filter the results based on meta data.
          */
-        public function typeFilter($query) {
-            if ( is_admin() && $query->is_main_query() ) {
-
+        public function typeFilter($query)
+        {
+            if (is_admin() && $query->is_main_query()) {
                 global $post_type;
                 if ($post_type !== self::getSlug()) :
                     return;
