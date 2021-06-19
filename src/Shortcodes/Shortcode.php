@@ -85,7 +85,7 @@ if (! class_exists('Shortcode')) {
         {
             $response = array(
                 'status' => 'error',
-                'message' => __('Something went Wrong Try again please.', 'admwpp'),
+                'message' => _x('Something went Wrong Try again please.', 'Gift Voucher', 'admwpp'),
                 'response' => '',
             );
             if (isset($_POST['productOptionId']) && isset($_POST['amount']) && isset($_POST['portalToken'])) {
@@ -93,11 +93,23 @@ if (! class_exists('Shortcode')) {
                 $productOptionId = filter_var(trim($_POST['productOptionId']), FILTER_SANITIZE_STRING);
                 $amount = (float) filter_var(trim($_POST['amount']), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
+                if ($amount <= 0) {
+                    $response['message'] = ADMWPP_VOUCHER_EMPTY_AMOUNT_MESSAGE;
+                    echo json_encode($response);
+                    die();
+                }
+
+                if ($amount > ADMWPP_MAX_VOUCHER_AMOUNT) {
+                    $response['message'] = ADMWPP_VOUCHER_MAX_AMOUNT_MESSAGE;
+                    echo json_encode($response);
+                    die();
+                }
+
                 $activate = Oauth2\Activate::instance();
                 $activate->setParams(true);
                 $apiParams = $activate::$params;
-                $apiParams['portalToken'] = $_POST['portalToken'];
-                $apiParams['portal'] = $_POST['portal'];
+                $apiParams['portalToken'] = filter_var(trim($_POST['portalToken']), FILTER_SANITIZE_STRING);
+                $apiParams['portal'] = filter_var(trim($_POST['portal']), FILTER_SANITIZE_STRING);
                 $authorizationHeaders = SDKClient::setHeaders($apiParams);
                 $client = new SDKClient($apiParams['apiUri'], $authorizationHeaders);
 
@@ -107,7 +119,7 @@ if (! class_exists('Shortcode')) {
                       cart {
                         createCart(
                           input: {
-                            currencyCode: "EUR"
+                            currencyCode: "' . ADMWPP_VOUCHER_CURRENCY_CODE .'"
                           }
                         ) {
                           errors {
@@ -175,7 +187,7 @@ if (! class_exists('Shortcode')) {
                         }
                     } else {
                         $response['status'] = "success";
-                        $response['message'] = __('Gift voucher added to the cart...', 'admwpp');
+                        $response['message'] = _x('Gift voucher added to the cart...', 'Gift Voucher', 'admwpp');
                         $response['response'] = $mutationResponse;
                     }
                 }
@@ -193,9 +205,9 @@ if (! class_exists('Shortcode')) {
                 shortcode_atts(
                     array(
                     'options_id' => '',
-                    'currency_symbol' => '€',
-                    'title' => __('Gift voucher', 'admwpp'),
-                    'button_text' => __('Add Voucher', 'admwpp'),
+                    'currency_symbol' => ADMWPP_VOUCHER_CURRENCY,
+                    'title' => _x('Gift voucher', 'Gift Voucher', 'admwpp'),
+                    'button_text' => _x('Add Voucher', 'Gift Voucher', 'admwpp'),
                     ),
                     $atts
                 )

@@ -422,16 +422,17 @@ if (!class_exists('Main')) {
                 'jquery-ui-dialog',
                 'jquery-effects-core',
                 'jquery-ui-datepicker',
-                'administrate',
             );
 
             if (!$stylesSettings) :
                 $scriptArray[] = 'admwpp-selectric';
             endif;
 
+            $scriptArray[] = 'administrate';
+
             wp_enqueue_script($scriptArray);
 
-            $admwppLocalize = array(
+            $admwppConfig = array(
                 'language' => admwppPrimaryLanguage(),
                 'locale' => get_locale(),
                 'baseUrl' => ADMWPP_URL,
@@ -442,14 +443,23 @@ if (!class_exists('Main')) {
                     'perPage' => ADMWPP_SEARCH_PER_PAGE
                 ),
                 'giftVoucher' => array(
+                    'minAmount' => ADMWPP_MIN_VOUCHER_AMOUNT,
+                    'maxAmount' => ADMWPP_MAX_VOUCHER_AMOUNT,
+                    'currencySymbol' => ADMWPP_VOUCHER_CURRENCY,
                     'error' => array(
-                        'emptyAmount' => __('Please fill in the voucher amount', 'admwpp'),
-                        'weblink' => __('Weblink not available', 'admwpp'),
+                        'notNumber' => ADMWPP_NOT_NUMBER_MESSAGE,
+                        'emptyAmount' => ADMWPP_VOUCHER_EMPTY_AMOUNT_MESSAGE,
+                        'maxAmount' => ADMWPP_VOUCHER_MAX_AMOUNT_MESSAGE,
+                        'weblink' => ADMWPP_NO_WEBLINK,
                     )
                 )
             );
 
-            wp_localize_script('administrate', 'admwpp', $admwppLocalize);
+            wp_add_inline_script(
+                'administrate',
+                'var admwpp = ' . json_encode($admwppConfig),
+                'before'
+            );
         }
 
         /**
