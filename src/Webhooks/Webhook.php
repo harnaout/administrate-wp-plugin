@@ -54,7 +54,7 @@ if (! class_exists('Webhook')) {
                     if (!isset($settings['courses_webhook_id'])
                         || empty($settings['courses_webhook_id'])
                     ) {
-                        self::createSynchWebhook($settings['courses_webhook_type_id'], 'course');
+                        self::createSynchWebhook($settings['courses_webhook_type_id']);
                     }
                 }
                 if (isset($settings['lp_webhook_type_id'])
@@ -67,25 +67,52 @@ if (! class_exists('Webhook')) {
                         self::createSynchWebhook($settings['lp_webhook_type_id'], 'LP');
                     }
                 }
+                if (isset($settings['event_webhook_type_id'])
+                    && !empty($settings['event_webhook_type_id'])
+                ) {
+                    //Check if saved already before creating a webhook
+                    if (!isset($settings['event_webhook_id'])
+                        || empty($settings['event_webhook_id'])
+                    ) {
+                        self::createSynchWebhook($settings['event_webhook_type_id'], 'EVENT');
+                    }
+                }
             }
         }
 
-        public static function createSynchWebhook($webhookTypeId, $type = 'course')
+        public static function createSynchWebhook($webhookTypeId, $type = 'COURSE')
         {
             $callbakUrl = ADMWPP_SITE_URL . "/wp-json/admwpp/webhook/callback";
 
-            if ('LP' === $type) {
-                $queryName = 'learningpath';
-                $queryObjects = 'learningPaths';
-                $webhookName = "Wordpress Trigger learning Paths Template Updated";
-                $node = SDKQueryBuilder::buildNode(Course::$learningPathFields);
-                $webhookIdOptionsKey = 'lp_webhook_id';
-            } else {
-                $queryName = 'courses';
-                $queryObjects = 'courseTemplates';
-                $webhookName = "Wordpress Trigger Course Template Updated";
-                $node = SDKQueryBuilder::buildNode(Course::$courseFields);
-                $webhookIdOptionsKey = 'courses_webhook_id';
+            switch ($type) {
+                case 'LP':
+                    $queryName = 'learningpath';
+                    $queryObjects = 'learningPaths';
+                    $webhookName = "Wordpress Trigger learning Paths Template Updated";
+                    $node = SDKQueryBuilder::buildNode(Course::$learningPathFields);
+                    $webhookIdOptionsKey = 'lp_webhook_id';
+                    break;
+                case 'EVENT':
+                    $queryName = 'events';
+                    $queryObjects = 'events';
+                    $webhookName = "Wordpress Trigger Events Updated";
+
+                    $courseFields = Course::$courseFields;
+                    $eventFields = array(
+                        'id',
+                        'courseTemplate' => $courseFields
+                    );
+
+                    $node = SDKQueryBuilder::buildNode($eventFields);
+                    $webhookIdOptionsKey = 'event_webhook_id';
+                    break;
+                default:
+                    $queryName = 'courses';
+                    $queryObjects = 'courseTemplates';
+                    $webhookName = "Wordpress Trigger Course Template Updated";
+                    $node = SDKQueryBuilder::buildNode(Course::$courseFields);
+                    $webhookIdOptionsKey = 'courses_webhook_id';
+                    break;
             }
 
             $edges = (new SDKQueryBuilder('edges'))->selectField($node);
