@@ -26,6 +26,11 @@ class WebhookController extends Base\ActionController
                     $node = json_decode(json_encode($node), true);
                     $import = Course::nodeToPost($node, 'COURSE');
                 }
+                if (isset($body->payload->events->edges[0])) {
+                    $node = $body->payload->events->edges[0]->node->courseTemplate;
+                    $node = json_decode(json_encode($node), true);
+                    $import = Course::nodeToPost($node, 'COURSE');
+                }
                 if (isset($body->payload->learningPaths->edges[0])) {
                     $node = $body->payload->learningPaths->edges[0]->node;
                     $node = json_decode(json_encode($node), true);
