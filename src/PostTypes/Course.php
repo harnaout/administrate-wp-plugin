@@ -137,11 +137,16 @@ if (!class_exists('Course')) {
             'introduction',
             'image' => array(
                 'id',
-                'name'
+                'name',
+                'latest' => array('revisionNumber')
             ),
             'imageGallery' => array(
                 'type' => 'edges',
-                'fields' => array('id', 'name')
+                'fields' => array(
+                    'id',
+                    'name',
+                    'latest' => array('revisionNumber')
+                )
             ),
             'learningCategories' => array(
                 'type' => 'edges',
@@ -208,11 +213,16 @@ if (!class_exists('Course')) {
             'description',
             'image' => array(
                 'id',
-                'name'
+                'name',
+                'latest' => array('revisionNumber')
             ),
             'imageGallery' => array(
                 'type' => 'edges',
-                'fields' => array('id', 'name')
+                'fields' => array(
+                    'id',
+                    'name',
+                    'latest' => array('revisionNumber')
+                )
             ),
             'learningCategories' => array(
                 'type' => 'edges',
@@ -893,59 +903,57 @@ if (!class_exists('Course')) {
             return $documentData;
         }
 
-        public static function setImageGallery($postId, $imageGallery)
+        public static function setImageGallery($postId, $imageGalleryTmsIds)
         {
 
             $imagePostIds = array();
-            foreach ($imageGallery as $image) {
-                if (isset($image['node']) && !empty($image['node'])) {
-                    $imageTmsId = $image['node']['id'];
+            foreach ($imageGalleryTmsIds as $imageTmsId) {
+                // Check if image already synced and use it before uploading another one
+                $imagePostId = self::checkifExists($imageTmsId);
+                if ($imagePostId) {
+                    $imagePostIds[] = $imagePostId;
+                    continue;
+                }
 
-                    // Check if image already synced and use it before uploading another one
-                    $imagePostId = self::checkifExists($imageTmsId);
-                    if ($imagePostId) {
-                        $imagePostIds[] = $imagePostId;
-                        continue;
-                    }
+                $imageTmsIdArray = explode("-", $imageTmsId);
 
-                    $document = self::getDocumentById($imageTmsId);
-                    $imageURL = "";
-                    $imageName = "";
-                    $imageDesc = "";
-                    if (!empty($document)) {
-                        $imageURL  = $document['url'];
-                        $imageName = $document['name'];
-                        $imageDesc = $document['description'];
-                    }
+                $document = self::getDocumentById($imageTmsIdArray[0]);
+                $imageURL = "";
+                $imageName = "";
+                $imageDesc = "";
+                if (!empty($document)) {
+                    $imageURL  = $document['url'];
+                    $imageName = $document['name'];
+                    $imageDesc = $document['description'];
+                }
 
-                    include_once(ABSPATH . 'wp-admin/includes/admin.php');
+                include_once(ABSPATH . 'wp-admin/includes/admin.php');
 
-                    if ($imageURL != "") {
-                        $file = array();
-                        $file['name'] = $imageName;
-                        $file['caption'] = $imageDesc;
-                        $file['tmp_name'] = download_url($imageURL);
-                        if (is_wp_error($file['tmp_name'])) {
+                if ($imageURL != "") {
+                    $file = array();
+                    $file['name'] = $imageName;
+                    $file['caption'] = $imageDesc;
+                    $file['tmp_name'] = download_url($imageURL);
+                    if (is_wp_error($file['tmp_name'])) {
+                        @unlink($file['tmp_name']);
+                        return $file['tmp_name']->get_error_messages();
+                    } else {
+                        $imageArgs = array(
+                            'post_title' => $imageName,
+                            'post_name' => sanitize_title($imageName),
+                            'post_content' => $imageDesc,
+                            'meta_input' => array(
+                                'admwpp_tms_id' => $imageTmsId
+                            ),
+                        );
+
+                        $attachmentId = media_handle_sideload($file, 0, $imageName, $imageArgs);
+
+                        if (is_wp_error($attachmentId)) {
                             @unlink($file['tmp_name']);
-                            return $file['tmp_name']->get_error_messages();
+                            return $attachmentId->get_error_messages();
                         } else {
-                            $imageArgs = array(
-                                'post_title' => $imageName,
-                                'post_name' => sanitize_title($imageName),
-                                'post_content' => $imageDesc,
-                                'meta_input' => array(
-                                    'admwpp_tms_id' => $imageTmsId
-                                ),
-                            );
-
-                            $attachmentId = media_handle_sideload($file, 0, $imageName, $imageArgs);
-
-                            if (is_wp_error($attachmentId)) {
-                                @unlink($file['tmp_name']);
-                                return $attachmentId->get_error_messages();
-                            } else {
-                                $imagePostIds[] = $attachmentId;
-                            }
+                            $imagePostIds[] = $attachmentId;
                         }
                     }
                 }
@@ -964,7 +972,9 @@ if (!class_exists('Course')) {
                 return wp_get_attachment_url($imagePostId);
             }
 
-            $document = self::getDocumentById($imageTmsId);
+            $imageTmsIdArray = explode("-", $imageTmsId);
+
+            $document = self::getDocumentById($imageTmsIdArray[0]);
             $imageURL = "";
             $imageName = "";
             $imageDesc = "";
@@ -1175,6 +1185,7 @@ if (!class_exists('Course')) {
             $metas = self::$metas;
             $learningCategories = array();
             $imageGallery = array();
+            $imageGalleryTmsIds = array();
             $imageTmsId = '';
             foreach ($metas as $key => $value) {
                 $tmsKey = $value['tmsKey'];
@@ -1185,6 +1196,10 @@ if (!class_exists('Course')) {
                     case 'image':
                         if (isset($node[$tmsKey])) {
                             $tmsValue = $node[$tmsKey]['id'];
+                            $revisionNumber = (int) $node[$tmsKey]['latest']['revisionNumber'];
+                            if ($revisionNumber > 0) {
+                                $tmsValue .= "-REV" . $revisionNumber;
+                            }
                             $imageTmsId = $tmsValue;
                         }
                         break;
@@ -1194,7 +1209,14 @@ if (!class_exists('Course')) {
                             $imageGalleryString = array();
                             foreach ($imageGallery as $image) {
                                 if (isset($image['node']) && !empty($image['node'])) {
-                                    $imageGalleryString[] = $image['node']['id'];
+                                    $imageNode = $image['node'];
+                                    $tmsValue = $imageNode['id'];
+                                    $revisionNumber = (int) $imageNode['latest']['revisionNumber'];
+                                    if ($revisionNumber > 0) {
+                                        $tmsValue .= "-REV" . $revisionNumber;
+                                    }
+                                    $imageGalleryTmsIds[] = $tmsValue;
+                                    $imageGalleryString[] = $tmsValue;
                                 }
                             }
                             $tmsValue = implode('|', $imageGalleryString);
@@ -1412,8 +1434,8 @@ if (!class_exists('Course')) {
             }
 
             // Update Post Image Gallery
-            if ($postId && !empty($imageGallery)) {
-                $results['imageGallery'] = self::setImageGallery($postId, $imageGallery);
+            if ($postId && !empty($imageGalleryTmsIds)) {
+                $results['imageGallery'] = self::setImageGallery($postId, $imageGalleryTmsIds);
             }
 
             if (isset($postArgs['meta_input'][TMS_STICKY_POST_KEY])) {
