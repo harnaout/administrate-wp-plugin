@@ -163,7 +163,7 @@ if (!class_exists('Search')) {
             $loc = filter_var_array(get_query_var('loc', array()), FILTER_SANITIZE_STRING);
             $dayofweek = filter_var_array(get_query_var('dayofweek', array()), FILTER_SANITIZE_STRING);
             $timeofday = filter_var(trim(get_query_var('timeofday', '')), FILTER_SANITIZE_STRING);
-            $minplaces = filter_var(trim(get_query_var('minplaces', '')), FILTER_SANITIZE_STRING);
+            $minplaces = filter_var(trim(get_query_var('minplaces', '')), FILTER_SANITIZE_NUMBER_INT);
 
             $page = get_query_var('paged') ? (int) filter_var(trim(get_query_var('paged')), FILTER_SANITIZE_NUMBER_INT) : 1;
             $per_page = (int) filter_var(trim(get_query_var('per_page', $per_page)), FILTER_SANITIZE_NUMBER_INT);
