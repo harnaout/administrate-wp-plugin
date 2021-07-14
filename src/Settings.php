@@ -311,6 +311,8 @@ if (!class_exists('Settings')) {
             Settings::createAdvancedSynchCategoriesSection($settings_index);
             Settings::seperatorSection($settings_index, 'categories');
             Settings::createAdvancedWebhookSection($settings_index);
+            Settings::seperatorSection($settings_index, 'webhooks');
+            Settings::createAdvancedLocationsSection($settings_index);
         }
 
         // --------------------------------------------------------------------
@@ -736,6 +738,34 @@ if (!class_exists('Settings')) {
                 )
             );
         }
+
+        function createAdvancedLocationsSection($settings_key)
+        {
+            add_settings_section(
+                'admwpp_advanced_locations',
+                "<span class='admwpp-section-title'>" . __('Append/Link a TMS Locations to a post', ADMWPP_TEXT_DOMAIN) . "</span>",
+                array($this, 'associatedPostTypes'),
+                "admwpp_" . $settings_key . "_settings"
+            );
+
+            add_settings_field(
+                'admwpp_append_location',
+                __('Select post types:', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldMultipleSelect'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_advanced_locations',
+                array(
+                    'field'        => 'append_location',
+                    'settings_key' => $settings_key,
+                    'section_key'  => '',
+                    'options'      => $this->getPostTypes(),
+                    'disabled'     => '',
+                    'info'         => __('By selecting post types you will enable linking a TMS location to the selected post type', ADMWPP_TEXT_DOMAIN),
+                    'per_column'   => 5,
+                    'type'         => 'checkbox',
+                )
+            );
+        }
         /** END ADVANCED Synch SECTION */
 
         /** UNISTALL SECTION */
@@ -883,6 +913,14 @@ if (!class_exists('Settings')) {
             echo "<i class='fa fa-refresh fa-spin admwpp_spinner'></i>";
             echo "</a>";
             echo "<div class='settings-section-info' id='admwpp-import-info-learning-path'></div>";
+        }
+
+        public function associatedPostTypes()
+        {
+            // Think of this as help text for the section.
+            echo "<div class='settings-section-info'>";
+            echo __('Select the type of posts where this option is available.', ADMWPP_TEXT_DOMAIN);
+            echo "</div>";
         }
         // --------------------------------------------------------------------
         // END Section Helper Text
@@ -1164,7 +1202,7 @@ if (!class_exists('Settings')) {
             $per_column   = $args['per_column'];
             $type         = $args['type'];
 
-            $default_lang = admwpp_primary_language();
+            $default_lang = admwppPrimaryLanguage();
 
             $edit_labels = "";
             if (isset($args['edit_labels'])) {

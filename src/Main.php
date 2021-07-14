@@ -190,8 +190,38 @@ if (!class_exists('Main')) {
         /**
          * Adds a box to the main column on the Post and Page edit screens.
          */
-        public function addMetaBoxes($post_type)
+        public function addMetaBoxes($postType)
         {
+            //Get Selected Post Types.
+            $selectedPostTypes = Settings::instance()->getSettingsOption('advanced', 'append_location');
+            $selectedPostTypes = $selectedPostTypes ? $selectedPostTypes : array();
+
+            if (in_array($postType, $selectedPostTypes)) {
+                add_meta_box(
+                    'admwpp-locations-box',
+                    __('Add a TMS Location to Post:', ADMWPP_TEXT_DOMAIN),
+                    array( $this, 'locationsBoxContent' ),
+                    $postType,
+                    'normal',
+                    'high',
+                    array(
+                        '__block_editor_compatible_meta_box' => true,
+                        'info' => ''
+                    )
+                );
+            }
+        }
+
+        /**
+         * Render Meta Box content.
+         *
+         * @param WP_Post $post The post object.
+         */
+        public static function locationsBoxContent($post, $metabox)
+        {
+            // Add an nonce field so we can check for it later.
+            wp_nonce_field(ADMWPP_PLUGIN_NAME, 'admwpp-locations-nonce');
+            include(ADMWPP_ADMIN_TEMPLATES_DIR . 'meta-boxes/locations.php');
         }
 
         /**
@@ -202,14 +232,58 @@ if (!class_exists('Main')) {
          * @return void
          *
          */
-        public static function savePost($post_id)
+        public static function savePost($postId)
         {
             // verify if this is an auto save routine.
             // If it is our form has not been submitted, so we don't want to do anything
             if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
                 return;
             }
+
+            // Check the user's permissions.
+            if (isset($_POST['post_type']) && 'page' == $_POST['post_type']) {
+                if (! current_user_can('edit_page', $postId)) {
+                    return $postId;
+                }
+            } else {
+                if (! current_user_can('edit_post', $postId)) {
+                    return $postId;
+                }
+            }
+
+            self::saveTmsLocationId($postId);
         }
+
+        /* Save TMS locaiton ID for post.
+         *
+         * @params  $postId, int, The post id.
+         *
+         * @return void
+         *
+         */
+        public static function saveTmsLocationId($postId)
+        {
+            // Verify nonce to check if the user intended to change this value.
+            if (!isset($_POST['admwpp-locations-nonce']) ||
+              !wp_verify_nonce($_POST['admwpp-locations-nonce'], ADMWPP_PLUGIN_NAME)) {
+                return;
+            }
+
+            //Get Post Type
+            $postType = get_post_type($postId);
+
+            //Get Selected Post Types.
+            $selectedPostTypes = Settings::instance()->getSettingsOption('advanced', 'append_location');
+            $selectedPostTypes = $selectedPostTypes ? $selectedPostTypes : array();
+
+            if (!in_array($postType, $selectedPostTypes)) {
+                return null;
+            }
+
+            // Update Post Meta
+            update_post_meta($postId, 'tms_location_id', $_POST['tms_location_id']);
+        }
+
 
         /**
          * Start Session
