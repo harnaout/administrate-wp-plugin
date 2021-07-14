@@ -456,6 +456,54 @@ if (!class_exists('Search')) {
             return array();
         }
 
+        public static function getAccountAssosiations($search)
+        {
+            $activate = Oauth2\Activate::instance();
+            $apiParams = $activate::$params;
+
+            $accessToken = $activate->getAuthorizeToken()['token'];
+            $appId = Settings::instance()->getSettingsOption('account', 'app_id');
+            $instance = Settings::instance()->getSettingsOption('account', 'instance');
+
+            $apiParams['accessToken'] = $accessToken;
+            $apiParams['clientId'] = $appId;
+            $apiParams['instance'] = $instance;
+
+            $authorizationHeaders = SDKClient::setHeaders($apiParams);
+            $client = new SDKClient($apiParams['apiUri'], $authorizationHeaders);
+
+            $gql = 'query partnerAccounts {
+              accounts(filters: [
+                {field: name, operation: like, value: "%' . $search . '%"}
+                {field: isPartner, operation: eq, value: "true"}]) {
+                pageInfo {
+                  hasNextPage
+                  hasPreviousPage
+                  totalRecords
+                }
+                edges {
+                  node {
+                    id
+                    name
+                    isPartner
+                  }
+                }
+              }
+            }';
+
+            $results = $client->runRawQuery($gql);
+            $data = $results->getData();
+
+            if (isset($data->accounts->edges)) {
+                $accounts = array();
+                foreach ($data->accounts->edges as $key => $edge) {
+                    $accounts[$edge->node->id] = $edge->node->name;
+                }
+                return $accounts;
+            }
+            return array();
+        }
+
 
         /**
          * Function to return the Design HTML template path.

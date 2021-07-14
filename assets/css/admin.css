@@ -449,3 +449,28 @@
     margin-left: 2%; } }
 
 /* Large devices (large desktops, 1200px and up) */
+.admwpp-box-wrapper .admwpp-autocomplete {
+  position: relative;
+  width: 200px;
+  float: left;
+  height: 25px;
+  line-height: 25px;
+  margin-right: 10px; }
+  .admwpp-box-wrapper .admwpp-autocomplete::after {
+    position: absolute;
+    top: 0px;
+    right: 10px;
+    background: url("../../../../../wp-admin/images/spinner.gif") no-repeat;
+    -webkit-background-size: 20px 20px;
+    background-size: 20px 20px;
+    display: none;
+    float: right;
+    opacity: 0.7;
+    filter: alpha(opacity=70);
+    width: 20px;
+    height: 20px;
+    margin: 2px 5px 0; }
+  .admwpp-box-wrapper .admwpp-autocomplete.ui-autocomplete-loading {
+    background-color: #eee; }
+    .admwpp-box-wrapper .admwpp-autocomplete.ui-autocomplete-loading::after {
+      display: block; }
