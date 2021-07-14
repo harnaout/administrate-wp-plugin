@@ -199,8 +199,27 @@ if (!class_exists('Main')) {
             if (in_array($postType, $selectedPostTypes)) {
                 add_meta_box(
                     'admwpp-locations-box',
-                    __('Add a TMS Location to Post:', ADMWPP_TEXT_DOMAIN),
+                    __('Add/Link a TMS Location to Post:', ADMWPP_TEXT_DOMAIN),
                     array( $this, 'locationsBoxContent' ),
+                    $postType,
+                    'normal',
+                    'high',
+                    array(
+                        '__block_editor_compatible_meta_box' => true,
+                        'info' => ''
+                    )
+                );
+            }
+
+            //Get Selected Post Types.
+            $selectedPostTypes = Settings::instance()->getSettingsOption('advanced', 'append_partner');
+            $selectedPostTypes = $selectedPostTypes ? $selectedPostTypes : array();
+
+            if (in_array($postType, $selectedPostTypes)) {
+                add_meta_box(
+                    'admwpp-partners-box',
+                    __('Add/Link a TMS Account to Post:', ADMWPP_TEXT_DOMAIN),
+                    array( $this, 'partnersBoxContent' ),
                     $postType,
                     'normal',
                     'high',
@@ -222,6 +241,18 @@ if (!class_exists('Main')) {
             // Add an nonce field so we can check for it later.
             wp_nonce_field(ADMWPP_PLUGIN_NAME, 'admwpp-locations-nonce');
             include(ADMWPP_ADMIN_TEMPLATES_DIR . 'meta-boxes/locations.php');
+        }
+
+        /**
+         * Render Meta Box content.
+         *
+         * @param WP_Post $post The post object.
+         */
+        public static function partnersBoxContent($post, $metabox)
+        {
+            // Add an nonce field so we can check for it later.
+            wp_nonce_field(ADMWPP_PLUGIN_NAME, 'admwpp-partners-nonce');
+            include(ADMWPP_ADMIN_TEMPLATES_DIR . 'meta-boxes/partners.php');
         }
 
         /**
@@ -252,6 +283,7 @@ if (!class_exists('Main')) {
             }
 
             self::saveTmsLocationId($postId);
+            self::saveTmsAccountId($postId);
         }
 
         /* Save TMS locaiton ID for post.
@@ -282,6 +314,37 @@ if (!class_exists('Main')) {
 
             // Update Post Meta
             update_post_meta($postId, 'tms_location_id', $_POST['tms_location_id']);
+        }
+
+        /* Save TMS locaiton ID for post.
+         *
+         * @params  $postId, int, The post id.
+         *
+         * @return void
+         *
+         */
+        public static function saveTmsAccountId($postId)
+        {
+            // Verify nonce to check if the user intended to change this value.
+            if (!isset($_POST['admwpp-partners-nonce']) ||
+              !wp_verify_nonce($_POST['admwpp-partners-nonce'], ADMWPP_PLUGIN_NAME)) {
+                return;
+            }
+
+            //Get Post Type
+            $postType = get_post_type($postId);
+
+            //Get Selected Post Types.
+            $selectedPostTypes = Settings::instance()->getSettingsOption('advanced', 'append_partner');
+            $selectedPostTypes = $selectedPostTypes ? $selectedPostTypes : array();
+
+            if (!in_array($postType, $selectedPostTypes)) {
+                return null;
+            }
+
+            // Update Post Meta
+            update_post_meta($postId, 'tms_partner_id', $_POST['tms_partner_id']);
+            update_post_meta($postId, 'tms_partner_name', $_POST['tms_partner_name']);
         }
 
 

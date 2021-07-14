@@ -50,4 +50,5 @@ Router::addRoute('GET', 'settings/importLearningCategories', 'settings#importLea
 Router::addRoute('GET', 'settings/importCourses', 'settings#importCourses');
 Router::addRoute('GET', 'settings/importLearningPathes', 'settings#importLearningPathes');
 
+Router::addRoute('GET', 'search/partners', 'search#partners');
 Router::run($args);
