@@ -15,6 +15,35 @@
 /* Colors */
 /* Fonts */
 /* Mixins */
+/* Messages */
+#admwpp-message-box {
+  display: none;
+  font-size: 14px;
+  padding: 10px;
+  margin: 0;
+  position: fixed;
+  max-width: 500px;
+  width: 100%;
+  z-index: 999999;
+  border-left: solid 4px transparent;
+  color: white;
+  border-radius: 4px;
+  transform: translateX(-50%);
+  left: 50%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+#admwpp-message-box.success {
+  background-color: #058064; }
+
+#admwpp-message-box.error {
+  background-color: #d23434; }
+
+#bwwpp-message-box.show {
+  display: block; }
+
+/* End Messages */
 .admwpp-categories-list a {
   color: #000000; }
   .admwpp-categories-list a:hover {

@@ -14,6 +14,7 @@
       $("body").append(html);
     }
 
+
     // Reposition message box
     if ($(defaults.message_box + '.show').length > 0) {
       $(defaults.message_box).appendTo("body");
