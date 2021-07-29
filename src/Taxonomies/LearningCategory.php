@@ -159,6 +159,22 @@ if (! class_exists('LearningCategory')) {
             return 0;
         }
 
+        public static function getSychedTmsIds()
+        {
+            global $wpdb;
+            $termsMetasTable = $wpdb->termmeta;
+            $sql = "SELECT distinct(meta_value) FROM $termsMetasTable WHERE `meta_key` = %s";
+            $sql = $wpdb->prepare($sql, 'admwpp_tms_id');
+            $lcatTmsIds = $wpdb->get_results($sql);
+            $tmsIds = array();
+            if ($lcatTmsIds) {
+                foreach ($lcatTmsIds as $tmsId) {
+                    $tmsIds[] = $tmsId->meta_value;
+                }
+            }
+            return $tmsIds;
+        }
+
         public static function getCategories($params)
         {
             $activate = Oauth2\Activate::instance();
