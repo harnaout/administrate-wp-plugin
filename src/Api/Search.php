@@ -5,6 +5,7 @@ use ADM\WPPlugin as ADMWPP;
 use ADM\WPPlugin\Oauth2;
 use ADM\WPPlugin\Settings;
 use ADM\WPPlugin\PostTypes\Course;
+use ADM\WPPlugin\Taxonomies\LearningCategory;
 
 use Administrate\PhpSdk\Catalogue as SDKCatalogue;
 use Administrate\PhpSdk\GraphQl\Client as SDKClient;
@@ -157,7 +158,10 @@ if (!class_exists('Search')) {
 
             $query = stripcslashes(urldecode(strip_tags(get_query_var('query', ''))));
             $query = filter_var(trim($query), FILTER_SANITIZE_STRING);
-            $lcat = filter_var_array(get_query_var('lcat', array()), FILTER_SANITIZE_STRING);
+            $lcat = self::sanitizeTmsCatIds(filter_var_array(
+                get_query_var('lcat', array()),
+                FILTER_SANITIZE_STRING
+            ));
             $fromDate = filter_var(trim(get_query_var('from')), FILTER_SANITIZE_STRING);
             $toDate = filter_var(trim(get_query_var('to')), FILTER_SANITIZE_STRING);
             $loc = filter_var_array(get_query_var('loc', array()), FILTER_SANITIZE_STRING);
@@ -165,8 +169,14 @@ if (!class_exists('Search')) {
             $timeofday = filter_var(trim(get_query_var('timeofday', '')), FILTER_SANITIZE_STRING);
             $minplaces = filter_var(trim(get_query_var('minplaces', '')), FILTER_SANITIZE_NUMBER_INT);
 
-            $page = get_query_var('paged') ? (int) filter_var(trim(get_query_var('paged')), FILTER_SANITIZE_NUMBER_INT) : 1;
-            $per_page = (int) filter_var(trim(get_query_var('per_page', $per_page)), FILTER_SANITIZE_NUMBER_INT);
+            $page = get_query_var('paged') ? (int) filter_var(
+                trim(get_query_var('paged')),
+                FILTER_SANITIZE_NUMBER_INT
+            ) : 1;
+            $per_page = (int) filter_var(
+                trim(get_query_var('per_page', $per_page)),
+                FILTER_SANITIZE_NUMBER_INT
+            );
 
             $params = array(
                 'query' => $query,
@@ -528,6 +538,18 @@ if (!class_exists('Search')) {
             }
 
             return $pluginTemplatePath . $template;
+        }
+
+        public static function sanitizeTmsCatIds($lcats)
+        {
+            $filteredLcats = array();
+            $allowedCats = LearningCategory::getSychedTmsIds();
+            foreach ($lcats as $tmsId) {
+                if (in_array($tmsId, $allowedCats)) {
+                    $filteredLcats[] = $tmsId;
+                }
+            }
+            return $filteredLcats;
         }
     }
 }
