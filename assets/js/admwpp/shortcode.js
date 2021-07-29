@@ -1,8 +1,9 @@
 (function ($) {
 
-  $.ADMShortcode = function () {
+  $.ADMShortcode = function (message) {
     // properties
     var self = this;
+    self.message  = message;
 
     // Ajax Call Flag.
     self.call = 0;
@@ -115,6 +116,10 @@
             }
 
             if ($(".weblink-Basket").length > 0) {
+              self.message.display_message({
+                message: response.message,
+                success: true,
+              });
               location.reload();
             }
 

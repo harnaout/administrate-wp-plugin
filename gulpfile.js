@@ -91,8 +91,9 @@ gulp.task('js-admin-min', () => {
 
 gulp.task('js-admwpp-min', () => {
     return gulp.src([
-          './assets/js/admwpp/*',
-          './assets/js/admwpp.js',
+        './assets/js/common/*',
+        './assets/js/admwpp/*',
+        './assets/js/admwpp.js',
       ])
     .pipe(concat('admwpp.js'))
     .pipe(minify({
