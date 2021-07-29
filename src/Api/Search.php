@@ -165,7 +165,7 @@ if (!class_exists('Search')) {
             $fromDate = filter_var(trim(get_query_var('from')), FILTER_SANITIZE_STRING);
             $toDate = filter_var(trim(get_query_var('to')), FILTER_SANITIZE_STRING);
             $loc = filter_var_array(get_query_var('loc', array()), FILTER_SANITIZE_STRING);
-            $dayofweek = filter_var_array(get_query_var('dayofweek', array()), FILTER_SANITIZE_STRING);
+            $dayofweek = self::sanitizeDayOfWeek(filter_var_array(get_query_var('dayofweek', array()), FILTER_SANITIZE_STRING));
             $timeofday = filter_var(trim(get_query_var('timeofday', '')), FILTER_SANITIZE_STRING);
             $minplaces = filter_var(trim(get_query_var('minplaces', '')), FILTER_SANITIZE_NUMBER_INT);
 
@@ -550,6 +550,18 @@ if (!class_exists('Search')) {
                 }
             }
             return $filteredLcats;
+        }
+
+        public static function sanitizeDayOfWeek($dayofweek)
+        {
+            $filteredDayOfWeek = array();
+            global $ADMWPP_SEARCH_DAYSOFWEEK;
+            foreach ($dayofweek as $value) {
+                if (in_array($value, array_keys($ADMWPP_SEARCH_DAYSOFWEEK))) {
+                    $filteredDayOfWeek[] = $value;
+                }
+            }
+            return $filteredDayOfWeek;
         }
     }
 }
