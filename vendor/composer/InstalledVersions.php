@@ -29,7 +29,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => 'af6db719796ad1f64a213a0bdf1f11798e9e58e7',
+    'reference' => 'f07e85b94017f54190060da59d50046fc6c12dc7',
     'name' => '__root__',
   ),
   'versions' => 
@@ -41,16 +41,16 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => 'af6db719796ad1f64a213a0bdf1f11798e9e58e7',
+      'reference' => 'f07e85b94017f54190060da59d50046fc6c12dc7',
     ),
     'administrate/phpsdk' => 
     array (
-      'pretty_version' => '1.9.0',
-      'version' => '1.9.0.0',
+      'pretty_version' => '1.10.0',
+      'version' => '1.10.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '5f5f43eb847f5becc80aaf3c2b1d63181e2c2fe8',
+      'reference' => '60d45136c9a968c77dcafa607fd4633641079f6b',
     ),
     'gmostafa/php-graphql-client' => 
     array (

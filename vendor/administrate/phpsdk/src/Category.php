@@ -137,7 +137,9 @@ class Category
         $args = Helper::setArgs($defaultArgs, $args);
         extract($args);
 
-        $node = QueryBuilder::buildNode($fields);
+        $nodeQueryResults = QueryBuilder::buildNode($fields);
+        $node = $nodeQueryResults['node'];
+        $nodeFilters = $nodeQueryResults['filters'];
 
         $builder = (new QueryBuilder($categories))
             ->setVariable('filters', "[$categoriesFilters]", true)
@@ -218,7 +220,9 @@ class Category
         $perPage = $paging['perPage'];
         $page = $paging['page'];
 
-        $node = QueryBuilder::buildNode($fields);
+        $nodeQueryResults = QueryBuilder::buildNode($fields);
+        $node = $nodeQueryResults['node'];
+        $nodeFilters = $nodeQueryResults['filters'];
 
         $first = $perPage;
         if ($page <= 0) {
@@ -245,12 +249,21 @@ class Category
                 (new QueryBuilder('edges'))->selectField($node)
             );
 
-        $gqlQuery = $builder->getQuery();
-
         $variablesArray = array(
             'filters' => $filters,
             'order' => Helper::toObject($sorting),
         );
+
+        if (!empty($nodeFilters)) {
+            foreach ($nodeFilters as $filterType => $filterTypeFilters) {
+                foreach ($filterTypeFilters as $filterKey => $value) {
+                    $builder->setVariable($filterKey, "[" . $filterType . "]", true);
+                    $variablesArray[$filterKey] = $value;
+                }
+            }
+        }
+
+        $gqlQuery = $builder->getQuery();
 
         $result = Client::sendSecureCall($this, $gqlQuery, $variablesArray);
         return Client::toType($returnType, $result);
