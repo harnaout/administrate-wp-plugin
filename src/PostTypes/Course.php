@@ -195,6 +195,14 @@ if (!class_exists('Course')) {
             ),
             'events' => array(
                 'type' => 'edges',
+                'filtersType' => 'EventFieldGraphFilter',
+                'filters' => array(
+                    array(
+                        'field' => 'status',
+                        'operation' => 'eq',
+                        'value' => 'Active'
+                    ),
+                ),
                 'fields' => array(
                     'id',
                     'title',
@@ -279,6 +287,14 @@ if (!class_exists('Course')) {
                             'id',
                             'events' => array(
                                 'type' => 'edges',
+                                'filtersType' => 'EventFieldGraphFilter',
+                                'filters' => array(
+                                    array(
+                                        'field' => 'status',
+                                        'operation' => 'eq',
+                                        'value' => 'Active'
+                                    ),
+                                ),
                                 'fields' => array(
                                     'id',
                                     'title',
