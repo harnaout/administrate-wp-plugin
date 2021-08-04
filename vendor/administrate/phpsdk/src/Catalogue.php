@@ -170,14 +170,14 @@ class Catalogue
         );
 
         $nodeOrder = 'CatalogueFieldOrder';
-        $nodeFilters = 'CatalogueFieldFilter';
-        $nodeCustomFieldFilters = 'CustomFieldFilterInput!';
+        $catalogueFilters = 'CatalogueFieldFilter';
+        $catalogueCustomFieldFilters = 'CustomFieldFilterInput!';
 
         if (isset($args['coreApi']) && $args['coreApi']) {
             $defaultArgs['fields'] = self::$defaultCoreFields;
             $nodeOrder = 'CatalogueItemFieldGraphOrder';
-            $nodeFilters = 'CatalogueItemFieldGraphFilter';
-            $nodeCustomFieldFilters = 'CustomFieldFilter';
+            $catalogueFilters = 'CatalogueItemFieldGraphFilter';
+            $catalogueCustomFieldFilters = 'CustomFieldFilter';
         }
 
         $args = Helper::setArgs($defaultArgs, $args);
@@ -186,7 +186,9 @@ class Catalogue
         $perPage = $paging['perPage'];
         $page = $paging['page'];
 
-        $node = QueryBuilder::buildNode($fields);
+        $nodeQueryResults = QueryBuilder::buildNode($fields);
+        $node = $nodeQueryResults['node'];
+        $nodeFilters = $nodeQueryResults['filters'];
 
         $first = $perPage;
         if ($page <= 0) {
@@ -201,9 +203,9 @@ class Catalogue
         ->setArgument('first', $first)
         ->setArgument('offset', $offset)
         ->setArgument('search', $search)
-        ->setVariable('filters', "[$nodeFilters]", true)
+        ->setVariable('filters', "[$catalogueFilters]", true)
         ->setArgument('filters', '$filters')
-        ->setVariable('customFieldFilters', "[$nodeCustomFieldFilters]", true)
+        ->setVariable('customFieldFilters', "[$catalogueCustomFieldFilters]", true)
         ->setArgument('customFieldFilters', '$customFieldFilters')
         ->selectField(
             (new QueryBuilder('pageInfo'))
@@ -218,14 +220,23 @@ class Catalogue
                 ->selectField($node)
         );
 
-        $gqlQuery = $builder->getQuery();
-
         $variablesArray = array(
             'search' => $search,
             'filters' => $filters,
             'customFieldFilters' => $customFieldFilters,
             'order' => Helper::toObject($sorting),
         );
+
+        if (!empty($nodeFilters)) {
+            foreach ($nodeFilters as $filterType => $filterTypeFilters) {
+                foreach ($filterTypeFilters as $filterKey => $value) {
+                    $builder->setVariable($filterKey, "[" . $filterType . "]", true);
+                    $variablesArray[$filterKey] = $value;
+                }
+            }
+        }
+
+        $gqlQuery = $builder->getQuery();
 
         $result = Client::sendSecureCall($this, $gqlQuery, $variablesArray);
         return Client::toType($returnType, $result);
