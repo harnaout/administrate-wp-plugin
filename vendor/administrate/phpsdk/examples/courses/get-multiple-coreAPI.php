@@ -30,7 +30,7 @@ $args = array(
     ),
     'paging' => array(
         'page' => 1,
-        'perPage' => 2
+        'perPage' => 50
     ),
     'sorting' => array(
         'field' => 'name',
@@ -42,6 +42,31 @@ $args = array(
     //     'name'
     // ),
     'coreApi' => true,
+    'fields' => array(
+        'id',
+        'legacyId',
+        'lifecycleState',
+        'code',
+        'title',
+        'events' => array(
+            'type' => 'edges',
+            'filtersType' => 'EventFieldGraphFilter',
+            'filters' => array(
+                array(
+                    'field' => 'status',
+                    'operation' => 'eq',
+                    'value' => 'Active'
+                ),
+            ),
+            'fields' => array(
+                'id',
+                'title',
+                'price',
+                'status',
+                'location' => array('id', 'name')
+            )
+        ),
+    )
 );
 
 $allCourses = $courseClass->loadAll($args);

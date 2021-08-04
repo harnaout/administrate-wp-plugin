@@ -171,7 +171,9 @@ class Course
         $args = Helper::setArgs($defaultArgs, $args);
         extract($args);
 
-        $node = QueryBuilder::buildNode($fields);
+        $nodeQueryResults = QueryBuilder::buildNode($fields);
+        $node = $nodeQueryResults['node'];
+        $nodeFilters = $nodeQueryResults['filters'];
 
         $builder = (new QueryBuilder($courses))
             ->setVariable('filters', "[$coursesFilters]", true)
@@ -181,9 +183,18 @@ class Course
                     ->selectField($node)
             );
 
-        $gqlQuery = $builder->getQuery();
-
         $variablesArray = array("filters" => $filters);
+
+        if (!empty($nodeFilters)) {
+            foreach ($nodeFilters as $filterType => $filterTypeFilters) {
+                foreach ($filterTypeFilters as $filterKey => $value) {
+                    $builder->setVariable($filterKey, "[" . $filterType . "]", true);
+                    $variablesArray[$filterKey] = $value;
+                }
+            }
+        }
+
+        $gqlQuery = $builder->getQuery();
 
         $result = Client::sendSecureCall($this, $gqlQuery, $variablesArray);
 
@@ -251,7 +262,9 @@ class Course
         $perPage = $paging['perPage'];
         $page = $paging['page'];
 
-        $node = QueryBuilder::buildNode($fields);
+        $nodeQueryResults = QueryBuilder::buildNode($fields);
+        $node = $nodeQueryResults['node'];
+        $nodeFilters = $nodeQueryResults['filters'];
 
         $first = $perPage;
         if ($page <= 0) {
@@ -262,7 +275,7 @@ class Course
 
         $builder = (new QueryBuilder($courses))
         ->setVariable('order', $coursesOrders, false)
-         ->setArgument('order', '$order')
+        ->setArgument('order', '$order')
         ->setArgument('first', $first)
         ->setArgument('offset', $offset)
         ->setVariable('filters', "[$coursesFilters]", true)
@@ -280,12 +293,21 @@ class Course
                 ->selectField($node)
         );
 
-        $gqlQuery = $builder->getQuery();
-
         $variablesArray = array(
             'filters' => $filters,
             'order' => Helper::toObject($sorting),
         );
+
+        if (!empty($nodeFilters)) {
+            foreach ($nodeFilters as $filterType => $filterTypeFilters) {
+                foreach ($filterTypeFilters as $filterKey => $value) {
+                    $builder->setVariable($filterKey, "[" . $filterType . "]", true);
+                    $variablesArray[$filterKey] = $value;
+                }
+            }
+        }
+
+        $gqlQuery = $builder->getQuery();
 
         $result = Client::sendSecureCall($this, $gqlQuery, $variablesArray);
         return Client::toType($returnType, $result);
