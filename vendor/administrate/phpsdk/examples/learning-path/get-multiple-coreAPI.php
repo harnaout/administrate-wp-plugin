@@ -21,7 +21,7 @@ $args = array(
     ),
     'paging' => array(
         'page' => 1,
-        'perPage' => 2
+        'perPage' => 50
     ),
     'sorting' => array(
         'field' => 'name',
@@ -38,6 +38,39 @@ $args = array(
     //     ),
     // ),
     'coreApi' => true,
+    'fields' => array(
+        'id',
+        'name',
+        'learningObjectives' => array(
+            'type' => 'edges',
+            'fields' => array(
+                'id',
+                '__typename',
+                '... on CourseObjective' => array(
+                    'courseTemplate' => array(
+                        'id',
+                        'events' => array(
+                            'type' => 'edges',
+                            'filtersType' => 'EventFieldGraphFilter',
+                            'filters' => array(
+                                array(
+                                    'field' => 'status',
+                                    'operation' => 'eq',
+                                    'value' => 'Active'
+                                ),
+                            ),
+                            'fields' => array(
+                                'id',
+                                'title',
+                                'status',
+                                'location' => array('id', 'name')
+                            )
+                        )
+                    )
+                )
+            )
+        ),
+    )
 );
 
 $result = $learningPathClass->loadAll($args);

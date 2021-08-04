@@ -2,17 +2,17 @@
     "packages": [
         {
             "name": "administrate/phpsdk",
-            "version": "1.8.0",
-            "version_normalized": "1.8.0.0",
+            "version": "1.9.0",
+            "version_normalized": "1.9.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Administrate/administrate-php-sdk.git",
-                "reference": "4115da14b5254236479910ec25f0f1c523a769f5"
+                "reference": "5f5f43eb847f5becc80aaf3c2b1d63181e2c2fe8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Administrate/administrate-php-sdk/zipball/4115da14b5254236479910ec25f0f1c523a769f5",
-                "reference": "4115da14b5254236479910ec25f0f1c523a769f5",
+                "url": "https://api.github.com/repos/Administrate/administrate-php-sdk/zipball/5f5f43eb847f5becc80aaf3c2b1d63181e2c2fe8",
+                "reference": "5f5f43eb847f5becc80aaf3c2b1d63181e2c2fe8",
                 "shasum": ""
             },
             "require": {
@@ -21,7 +21,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9"
             },
-            "time": "2021-03-04T11:33:10+00:00",
+            "time": "2021-08-04T13:32:19+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -47,23 +47,23 @@
             ],
             "description": "A GraphQL client written in PHP which provides very simple, yet powerful, query generator classes that make the process of interacting with a GraphQL server a very simple one.",
             "support": {
-                "source": "https://github.com/Administrate/administrate-php-sdk/tree/1.8.0"
+                "source": "https://github.com/Administrate/administrate-php-sdk/tree/1.9.0"
             },
             "install-path": "../administrate/phpsdk"
         },
         {
             "name": "gmostafa/php-graphql-client",
-            "version": "v1.9.2",
-            "version_normalized": "1.9.2.0",
+            "version": "v1.12",
+            "version_normalized": "1.12.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mghoneimy/php-graphql-client.git",
-                "reference": "53fb7984110cb1a3d0a2b494077fa36bc3886e16"
+                "reference": "02c5c71b31297672e1ba229e3f8f7db5f8086e2f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mghoneimy/php-graphql-client/zipball/53fb7984110cb1a3d0a2b494077fa36bc3886e16",
-                "reference": "53fb7984110cb1a3d0a2b494077fa36bc3886e16",
+                "url": "https://api.github.com/repos/mghoneimy/php-graphql-client/zipball/02c5c71b31297672e1ba229e3f8f7db5f8086e2f",
+                "reference": "02c5c71b31297672e1ba229e3f8f7db5f8086e2f",
                 "shasum": ""
             },
             "require": {
@@ -73,6 +73,9 @@
                 "psr/http-client": "^1.0",
                 "psr/http-message": "^1.0"
             },
+            "conflict": {
+                "guzzlehttp/psr7": "< 1.7.0"
+            },
             "require-dev": {
                 "codacy/coverage": "^1.4",
                 "phpunit/phpunit": "^7.5|^8.0"
@@ -80,7 +83,7 @@
             "suggest": {
                 "gmostafa/php-graphql-oqm": "To have object-to-query mapping support"
             },
-            "time": "2021-02-08T01:17:45+00:00",
+            "time": "2021-07-26T02:44:55+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -110,29 +113,29 @@
             ],
             "support": {
                 "issues": "https://github.com/mghoneimy/php-graphql-client/issues",
-                "source": "https://github.com/mghoneimy/php-graphql-client/tree/v1.9.2"
+                "source": "https://github.com/mghoneimy/php-graphql-client/tree/v1.12"
             },
             "install-path": "../gmostafa/php-graphql-client"
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "7.2.0",
-            "version_normalized": "7.2.0.0",
+            "version": "7.3.0",
+            "version_normalized": "7.3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "0aa74dfb41ae110835923ef10a9d803a22d50e79"
+                "reference": "7008573787b430c1c1f650e3722d9bba59967628"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/0aa74dfb41ae110835923ef10a9d803a22d50e79",
-                "reference": "0aa74dfb41ae110835923ef10a9d803a22d50e79",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/7008573787b430c1c1f650e3722d9bba59967628",
+                "reference": "7008573787b430c1c1f650e3722d9bba59967628",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "guzzlehttp/promises": "^1.4",
-                "guzzlehttp/psr7": "^1.7",
+                "guzzlehttp/psr7": "^1.7 || ^2.0",
                 "php": "^7.2.5 || ^8.0",
                 "psr/http-client": "^1.0"
             },
@@ -140,6 +143,7 @@
                 "psr/http-client-implementation": "1.0"
             },
             "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.4.1",
                 "ext-curl": "*",
                 "php-http/client-integration-tests": "^3.0",
                 "phpunit/phpunit": "^8.5.5 || ^9.3.5",
@@ -150,11 +154,11 @@
                 "ext-intl": "Required for Internationalized Domain Name (IDN) support",
                 "psr/log": "Required for using the Log middleware"
             },
-            "time": "2020-10-10T11:47:56+00:00",
+            "time": "2021-03-23T11:33:13+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "7.1-dev"
+                    "dev-master": "7.3-dev"
                 }
             },
             "installation-source": "dist",
@@ -195,21 +199,43 @@
                 "rest",
                 "web service"
             ],
+            "support": {
+                "issues": "https://github.com/guzzle/guzzle/issues",
+                "source": "https://github.com/guzzle/guzzle/tree/7.3.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/GrahamCampbell",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/Nyholm",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/alexeyshockov",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/gmponos",
+                    "type": "github"
+                }
+            ],
             "install-path": "../guzzlehttp/guzzle"
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "1.4.0",
-            "version_normalized": "1.4.0.0",
+            "version": "1.4.1",
+            "version_normalized": "1.4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "60d379c243457e073cff02bc323a2a86cb355631"
+                "reference": "8e7d04f1f6450fef59366c399cfad4b9383aa30d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/60d379c243457e073cff02bc323a2a86cb355631",
-                "reference": "60d379c243457e073cff02bc323a2a86cb355631",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/8e7d04f1f6450fef59366c399cfad4b9383aa30d",
+                "reference": "8e7d04f1f6450fef59366c399cfad4b9383aa30d",
                 "shasum": ""
             },
             "require": {
@@ -218,7 +244,7 @@
             "require-dev": {
                 "symfony/phpunit-bridge": "^4.4 || ^5.1"
             },
-            "time": "2020-09-30T07:37:28+00:00",
+            "time": "2021-03-07T09:25:29+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -249,53 +275,57 @@
             "keywords": [
                 "promise"
             ],
+            "support": {
+                "issues": "https://github.com/guzzle/promises/issues",
+                "source": "https://github.com/guzzle/promises/tree/1.4.1"
+            },
             "install-path": "../guzzlehttp/promises"
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.7.0",
-            "version_normalized": "1.7.0.0",
+            "version": "2.0.0",
+            "version_normalized": "2.0.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "53330f47520498c0ae1f61f7e2c90f55690c06a3"
+                "reference": "1dc8d9cba3897165e16d12bb13d813afb1eb3fe7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/53330f47520498c0ae1f61f7e2c90f55690c06a3",
-                "reference": "53330f47520498c0ae1f61f7e2c90f55690c06a3",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/1dc8d9cba3897165e16d12bb13d813afb1eb3fe7",
+                "reference": "1dc8d9cba3897165e16d12bb13d813afb1eb3fe7",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0",
-                "psr/http-message": "~1.0",
-                "ralouphie/getallheaders": "^2.0.5 || ^3.0.0"
+                "php": "^7.2.5 || ^8.0",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.0",
+                "ralouphie/getallheaders": "^3.0"
             },
             "provide": {
+                "psr/http-factory-implementation": "1.0",
                 "psr/http-message-implementation": "1.0"
             },
             "require-dev": {
-                "ext-zlib": "*",
-                "phpunit/phpunit": "~4.8.36 || ^5.7.27 || ^6.5.14 || ^7.5.20 || ^8.5.8 || ^9.3.10"
+                "bamarni/composer-bin-plugin": "^1.4.1",
+                "http-interop/http-factory-tests": "^0.9",
+                "phpunit/phpunit": "^8.5.8 || ^9.3.10"
             },
             "suggest": {
                 "laminas/laminas-httphandlerrunner": "Emit PSR-7 responses"
             },
-            "time": "2020-09-30T07:37:11+00:00",
+            "time": "2021-06-30T20:03:07+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.7-dev"
+                    "dev-master": "2.0-dev"
                 }
             },
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "GuzzleHttp\\Psr7\\": "src/"
-                },
-                "files": [
-                    "src/functions_include.php"
-                ]
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -310,6 +340,11 @@
                 {
                     "name": "Tobias Schultze",
                     "homepage": "https://github.com/Tobion"
+                },
+                {
+                    "name": "Márk Sági-Kazár",
+                    "email": "mark.sagikazar@gmail.com",
+                    "homepage": "https://sagikazarmark.hu"
                 }
             ],
             "description": "PSR-7 message implementation that also provides common utility methods",
@@ -323,6 +358,10 @@
                 "uri",
                 "url"
             ],
+            "support": {
+                "issues": "https://github.com/guzzle/psr7/issues",
+                "source": "https://github.com/guzzle/psr7/tree/2.0.0"
+            },
             "install-path": "../guzzlehttp/psr7"
         },
         {
@@ -376,6 +415,64 @@
                 "psr-18"
             ],
             "install-path": "../psr/http-client"
+        },
+        {
+            "name": "psr/http-factory",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-factory.git",
+                "reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
+                "reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0",
+                "psr/http-message": "^1.0"
+            },
+            "time": "2019-04-30T12:38:16+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Message\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interfaces for PSR-7 HTTP message factories",
+            "keywords": [
+                "factory",
+                "http",
+                "message",
+                "psr",
+                "psr-17",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/http-factory/tree/master"
+            },
+            "install-path": "../psr/http-factory"
         },
         {
             "name": "psr/http-message",

@@ -135,21 +135,23 @@ class LearningPath
             'coreApi' => false,
         );
 
-        $nodeType = 'learningPaths';
-        $nodeFilters = 'LearningPathFieldFilter!';
+        $lps = 'learningPaths';
+        $lpsFilters = 'LearningPathFieldFilter!';
 
         if (isset($args['coreApi']) && $args['coreApi']) {
             $defaultArgs['fields'] = self::$defaultCoreFields;
-            $nodeType = 'learningPaths';
-            $nodeFilters = 'LearningPathFieldGraphFilter';
+            $lps = 'learningPaths';
+            $lpsFilters = 'LearningPathFieldGraphFilter';
         }
         $args = Helper::setArgs($defaultArgs, $args);
         extract($args);
 
-        $node = QueryBuilder::buildNode($fields);
+        $nodeQueryResults = QueryBuilder::buildNode($fields);
+        $node = $nodeQueryResults['node'];
+        $nodeFilters = $nodeQueryResults['filters'];
 
-        $builder = (new QueryBuilder($nodeType))
-            ->setVariable('filters', "[$nodeFilters]", true)
+        $builder = (new QueryBuilder($lps))
+            ->setVariable('filters', "[$lpsFilters]", true)
             ->setArgument('filters', '$filters')
             ->selectField(
                 (new QueryBuilder('edges'))
@@ -158,14 +160,23 @@ class LearningPath
                     )
             );
 
-        $gqlQuery = $builder->getQuery();
-
         $variablesArray = array("filters" => $filters);
+
+        if (!empty($nodeFilters)) {
+            foreach ($nodeFilters as $filterType => $filterTypeFilters) {
+                foreach ($filterTypeFilters as $filterKey => $value) {
+                    $builder->setVariable($filterKey, "[" . $filterType . "]", true);
+                    $variablesArray[$filterKey] = $value;
+                }
+            }
+        }
+
+        $gqlQuery = $builder->getQuery();
 
         $result = Client::sendSecureCall($this, $gqlQuery, $variablesArray);
 
-        if (isset($result[$nodeType]['edges'][0]['node']) && !empty($result[$nodeType]['edges'][0]['node'])) {
-            return Client::toType($returnType, $result[$nodeType]['edges'][0]['node']);
+        if (isset($result[$lps]['edges'][0]['node']) && !empty($result[$lps]['edges'][0]['node'])) {
+            return Client::toType($returnType, $result[$lps]['edges'][0]['node']);
         }
     }
 
@@ -211,15 +222,15 @@ class LearningPath
             'coreApi' => false,
         );
 
-        $nodeType = 'learningPaths';
-        $nodeOrder = 'LearningPathFieldOrder';
-        $nodeFilters = 'LearningPathFieldFilter!';
+        $lps = 'learningPaths';
+        $lpsOrder = 'LearningPathFieldOrder';
+        $lpsFilters = 'LearningPathFieldFilter!';
 
         if (isset($args['coreApi']) && $args['coreApi']) {
             $defaultArgs['fields'] = self::$defaultCoreFields;
             $nodeType = 'learningPaths';
-            $nodeOrder = 'LearningPathFieldGraphOrder';
-            $nodeFilters = 'LearningPathFieldGraphFilter';
+            $lpsOrder = 'LearningPathFieldGraphOrder';
+            $lpsFilters = 'LearningPathFieldGraphFilter';
         }
 
         $args = Helper::setArgs($defaultArgs, $args);
@@ -229,7 +240,9 @@ class LearningPath
         $perPage = $paging['perPage'];
         $page = $paging['page'];
 
-        $node = QueryBuilder::buildNode($fields);
+        $nodeQueryResults = QueryBuilder::buildNode($fields);
+        $node = $nodeQueryResults['node'];
+        $nodeFilters = $nodeQueryResults['filters'];
 
         $first = $perPage;
         if ($page <= 0) {
@@ -237,12 +250,12 @@ class LearningPath
         }
         $offset = ($page - 1) * $perPage;
 
-        $builder = (new QueryBuilder($nodeType))
-            ->setVariable('order', $nodeOrder, false)
+        $builder = (new QueryBuilder($lps))
+            ->setVariable('order', $lpsOrder, false)
                 ->setArgument('first', $first)
                 ->setArgument('offset', $offset)
                 ->setArgument('order', '$order')
-            ->setVariable('filters', "[$nodeFilters]", true)
+            ->setVariable('filters', "[$lpsFilters]", true)
                 ->setArgument('filters', '$filters')
             ->selectField(
                 (new QueryBuilder('pageInfo'))
@@ -257,12 +270,21 @@ class LearningPath
                 ->selectField($node)
             );
 
-        $gqlQuery = $builder->getQuery();
-
         $variablesArray = array(
             'filters' => $filters,
             'order' => Helper::toObject($sorting),
         );
+
+        if (!empty($nodeFilters)) {
+            foreach ($nodeFilters as $filterType => $filterTypeFilters) {
+                foreach ($filterTypeFilters as $filterKey => $value) {
+                    $builder->setVariable($filterKey, "[" . $filterType . "]", true);
+                    $variablesArray[$filterKey] = $value;
+                }
+            }
+        }
+
+        $gqlQuery = $builder->getQuery();
 
         $result = Client::sendSecureCall($this, $gqlQuery, $variablesArray);
         return Client::toType($returnType, $result);

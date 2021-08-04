@@ -49,6 +49,7 @@ class Event
     private static $defaultCoreFields = array(
         'id',
         'title',
+        'status',
         'price',
         'classroomStart',
         'classroomEnd',
