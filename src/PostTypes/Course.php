@@ -336,10 +336,6 @@ if (!class_exists('Course')) {
             //ADD taxonomies
             Taxonomies\LearningCategory::instance();
 
-            //ADD webhooks
-            $webhook = Webhooks\Webhook::instance();
-            $webhook->createSynchWebhooks();
-
             return self::$instance;
         }
 
@@ -877,6 +873,21 @@ if (!class_exists('Course')) {
             return $transIds;
         }
 
+        public static function getApiParams()
+        {
+            $activate = Oauth2\Activate::instance();
+            $apiParams = $activate::$params;
+
+            $accessToken = $activate->getAuthorizeToken()['token'];
+            $appId = Settings::instance()->getSettingsOption('account', 'app_id');
+            $instance = Settings::instance()->getSettingsOption('account', 'instance');
+
+            $apiParams['accessToken'] = $accessToken;
+            $apiParams['clientId'] = $appId;
+            $apiParams['instance'] = $instance;
+            return $apiParams;
+        }
+
         public static function getDocumentById($imageTmsId)
         {
             // Get Image Url
@@ -892,17 +903,7 @@ if (!class_exists('Course')) {
                 }
             }';
 
-            $activate = Oauth2\Activate::instance();
-            $apiParams = $activate::$params;
-
-            $accessToken = $activate->getAuthorizeToken()['token'];
-            $appId = Settings::instance()->getSettingsOption('account', 'app_id');
-            $instance = Settings::instance()->getSettingsOption('account', 'instance');
-
-            $apiParams['accessToken'] = $accessToken;
-            $apiParams['clientId'] = $appId;
-            $apiParams['instance'] = $instance;
-
+            $apiParams = self::getApiParams();
             $authorizationHeaders = SDKClient::setHeaders($apiParams);
             $client = new SDKClient($apiParams['apiUri'], $authorizationHeaders);
             $results = $client->runRawQuery($gql);
@@ -1065,20 +1066,67 @@ if (!class_exists('Course')) {
             return $tmsCustomFiledsMapping;
         }
 
+        public static function getNodeById($nodeId, $type)
+        {
+            if ('LP' === $type) {
+                return self::getLearningPatheById($nodeId);
+            }
+            return self::getCourseById($nodeId);
+        }
+
+        public static function getCourseById($nodeId)
+        {
+            $SDKCourse = new SDKCourse(self::getApiParams());
+
+            $args = array(
+                'filters' => array(
+                    array(
+                        'field' => 'lifecycleState',
+                        'operation' => 'eq',
+                        'value' => 'published',
+                    ),
+                    array(
+                        'field' => 'id',
+                        'operation' => 'eq',
+                        'value' => $nodeId,
+                    )
+                ),
+                'fields' => self::$courseFields,
+                'returnType' => 'array', //array, obj, json
+                'coreApi' => true,
+            );
+
+            return $SDKCourse->load($args);
+        }
+
+        public static function getLearningPatheById($nodeId)
+        {
+            $SDKLearningPath = new SDKLearningPath(self::getApiParams());
+
+            $args = array(
+                'filters' => array(
+                    array(
+                        'field' => 'lifecycleState',
+                        'operation' => 'eq',
+                        'value' => 'active',
+                    ),
+                    array(
+                        'field' => 'id',
+                        'operation' => 'eq',
+                        'value' => $nodeId,
+                    )
+                ),
+                'fields' => self::$learningPathFields,
+                'returnType' => 'array', //array, obj, json
+                'coreApi' => true,
+            );
+
+            return $SDKLearningPath->load($args);
+        }
+
         public static function getCourses($params)
         {
-            $activate = Oauth2\Activate::instance();
-            $apiParams = $activate::$params;
-
-            $accessToken = $activate->getAuthorizeToken()['token'];
-            $appId = Settings::instance()->getSettingsOption('account', 'app_id');
-            $instance = Settings::instance()->getSettingsOption('account', 'instance');
-
-            $apiParams['accessToken'] = $accessToken;
-            $apiParams['clientId'] = $appId;
-            $apiParams['instance'] = $instance;
-
-            $SDKCourse = new SDKCourse($apiParams);
+            $SDKCourse = new SDKCourse(self::getApiParams());
 
             $args = array(
                 'filters' => array(
@@ -1111,18 +1159,7 @@ if (!class_exists('Course')) {
 
         public static function getLearningPathes($params)
         {
-            $activate = Oauth2\Activate::instance();
-            $apiParams = $activate::$params;
-
-            $accessToken = $activate->getAuthorizeToken()['token'];
-            $appId = Settings::instance()->getSettingsOption('account', 'app_id');
-            $instance = Settings::instance()->getSettingsOption('account', 'instance');
-
-            $apiParams['accessToken'] = $accessToken;
-            $apiParams['clientId'] = $appId;
-            $apiParams['instance'] = $instance;
-
-            $SDKLearningPath = new SDKLearningPath($apiParams);
+            $SDKLearningPath = new SDKLearningPath(self::getApiParams());
 
             $args = array(
                 'filters' => array(

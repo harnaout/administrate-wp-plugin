@@ -30,6 +30,8 @@ if (!class_exists('Main')) {
         protected $search;
         //Shortcodes
         protected $shortcodes;
+        //Webhooks
+        protected $webhooks;
 
         /**
          * Initializes plugin variables and sets up WordPress hooks/actions
@@ -87,6 +89,10 @@ if (!class_exists('Main')) {
 
                 // Add Shortcodes
                 $this->shortcodes = Shortcodes\Shortcode::instance();
+
+                //Add webhooks
+                $this->Webhooks = Webhooks\Webhook::instance();
+                $this->Webhooks->createSynchWebhooks();
 
                 // Add all filters
                 $this->addFilters();

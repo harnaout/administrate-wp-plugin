@@ -61,6 +61,7 @@ if (!class_exists('Settings')) {
                 $className = __CLASS__;
                 self::$instance = new $className;
             }
+
             self::$instance->loadSettings();
             return self::$instance;
         }

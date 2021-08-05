@@ -22,18 +22,18 @@ class WebhookController extends Base\ActionController
             $instance = Settings::instance()->getSettingsOption('account', 'instance');
             if ($responceInstance === $instance) {
                 if (isset($body->payload->courseTemplates->edges[0])) {
-                    $node = $body->payload->courseTemplates->edges[0]->node;
-                    $node = json_decode(json_encode($node), true);
+                    $nodeId = $body->payload->courseTemplates->edges[0]->node->id;
+                    $node = Course::getNodeById($nodeId, 'COURSE');
                     $import = Course::nodeToPost($node, 'COURSE');
                 }
                 if (isset($body->payload->events->edges[0])) {
-                    $node = $body->payload->events->edges[0]->node->courseTemplate;
-                    $node = json_decode(json_encode($node), true);
+                    $nodeId = $body->payload->events->edges[0]->node->courseTemplate->id;
+                    $node = Course::getNodeById($nodeId, 'COURSE');
                     $import = Course::nodeToPost($node, 'COURSE');
                 }
                 if (isset($body->payload->learningPaths->edges[0])) {
-                    $node = $body->payload->learningPaths->edges[0]->node;
-                    $node = json_decode(json_encode($node), true);
+                    $nodeId = $body->payload->learningPaths->edges[0]->node->id;
+                    $node = Course::getNodeById($nodeId, 'LP');
                     $import = Course::nodeToPost($node, 'LP');
                 }
             }
