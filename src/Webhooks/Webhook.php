@@ -38,119 +38,8 @@ if (! class_exists('Webhook')) {
             return self::$instance;
         }
 
-        public static function createSynchWebhooks()
+        public static function getClient()
         {
-
-            if (is_admin()
-                    && isset($_GET['page'])
-                    && isset($_GET['tab'])
-                    && $_GET['tab'] === 'admwpp_advanced_settings') {
-                $settings = get_option('admwpp_advanced_settings');
-
-                if (isset($settings['courses_webhook_type_id'])
-                    && !empty($settings['courses_webhook_type_id'])
-                ) {
-                    //Check if saved already before creating a webhook
-                    if (!isset($settings['courses_webhook_id'])
-                        || empty($settings['courses_webhook_id'])
-                    ) {
-                        self::createSynchWebhook($settings['courses_webhook_type_id']);
-                    }
-                }
-                if (isset($settings['lp_webhook_type_id'])
-                    && !empty($settings['lp_webhook_type_id'])
-                ) {
-                    //Check if saved already before creating a webhook
-                    if (!isset($settings['lp_webhook_id'])
-                        || empty($settings['lp_webhook_id'])
-                    ) {
-                        self::createSynchWebhook($settings['lp_webhook_type_id'], 'LP');
-                    }
-                }
-                if (isset($settings['event_webhook_type_id'])
-                    && !empty($settings['event_webhook_type_id'])
-                ) {
-                    //Check if saved already before creating a webhook
-                    if (!isset($settings['event_webhook_id'])
-                        || empty($settings['event_webhook_id'])
-                    ) {
-                        self::createSynchWebhook($settings['event_webhook_type_id'], 'EVENT');
-                    }
-                }
-            }
-        }
-
-        public static function createSynchWebhook($webhookTypeId, $type = 'COURSE')
-        {
-            $callbakUrl = ADMWPP_SITE_URL . "/wp-json/admwpp/webhook/callback";
-
-            switch ($type) {
-                case 'LP':
-                    $queryName = 'learningpath';
-                    $queryObjects = 'learningPaths';
-                    $webhookName = "Wordpress Trigger learning Paths Template Updated";
-                    $node = SDKQueryBuilder::buildNode(Course::$learningPathFields);
-                    $webhookIdOptionsKey = 'lp_webhook_id';
-                    break;
-                case 'EVENT':
-                    $queryName = 'events';
-                    $queryObjects = 'events';
-                    $webhookName = "Wordpress Trigger Events Updated";
-
-                    $courseFields = Course::$courseFields;
-                    $eventFields = array(
-                        'id',
-                        'courseTemplate' => $courseFields
-                    );
-
-                    $node = SDKQueryBuilder::buildNode($eventFields);
-                    $webhookIdOptionsKey = 'event_webhook_id';
-                    break;
-                default:
-                    $queryName = 'courses';
-                    $queryObjects = 'courseTemplates';
-                    $webhookName = "Wordpress Trigger Course Template Updated";
-                    $node = SDKQueryBuilder::buildNode(Course::$courseFields);
-                    $webhookIdOptionsKey = 'courses_webhook_id';
-                    break;
-            }
-
-            $edges = (new SDKQueryBuilder('edges'))->selectField($node);
-
-            $edgesQuery = $edges->getQuery();
-            $edgesQuery = str_replace("query ", "", $edgesQuery);
-            $edgesQuery = str_replace(array("\n", "\r"), ' ', $edgesQuery);
-            $edgesQuery = trim($edgesQuery);
-
-            $query = 'query ' . $queryName . ' ($objectid: String!) {' . $queryObjects . ' (filters: [{field: id, operation: eq, value: $objectid}]) ' . $edgesQuery . ' }';
-
-            $variables = array(
-                'name' => $webhookName,
-                'webhookTypeId' => $webhookTypeId,
-                'callbakUrl' => $callbakUrl,
-                'query' => $query,
-                'email' => "jck@administrate.co"
-            );
-
-            $gql = 'mutation createWebhook($name: String!, $email: String!, $webhookTypeId: ID!, $callbakUrl: String!, $query: String!) {
-              webhooks {
-                create(input: {
-                  name: $name,
-                  emailAddress: $email,
-                  webhookTypeId: $webhookTypeId,
-                  url: $callbakUrl,
-                  query: $query}
-                ) {
-                  webhook {
-                    id
-                  }
-                  errors {
-                    message
-                  }
-                }
-              }
-            }';
-
             $activate = Oauth2\Activate::instance();
             $apiParams = $activate::$params;
 
@@ -164,6 +53,155 @@ if (! class_exists('Webhook')) {
 
             $authorizationHeaders = SDKClient::setHeaders($apiParams);
             $client = new SDKClient($apiParams['apiUri'], $authorizationHeaders);
+            return $client;
+        }
+
+        public static function createSynchWebhooks()
+        {
+            if (is_admin()
+                    && isset($_GET['page'])
+                    && isset($_GET['tab'])
+                    && $_GET['tab'] === 'admwpp_advanced_settings'
+                    && isset($_GET['settings-updated'])) {
+                $settings = get_option('admwpp_advanced_settings');
+
+                if (isset($settings['courses_webhook_type_id'])
+                    && !empty($settings['courses_webhook_type_id'])
+                ) {
+                    //Check if saved already before creating a webhook
+                    if (!isset($settings['courses_webhook_id'])
+                        || empty($settings['courses_webhook_id'])
+                    ) {
+                        self::createSynchWebhook($settings['courses_webhook_type_id']);
+                    } else {
+                        self::updateSynchWebhook($settings['courses_webhook_id']);
+                    }
+                }
+                if (isset($settings['lp_webhook_type_id'])
+                    && !empty($settings['lp_webhook_type_id'])
+                ) {
+                    //Check if saved already before creating a webhook
+                    if (!isset($settings['lp_webhook_id'])
+                        || empty($settings['lp_webhook_id'])
+                    ) {
+                        self::createSynchWebhook($settings['lp_webhook_type_id'], 'LP');
+                    } else {
+                        self::updateSynchWebhook($settings['lp_webhook_id'], 'LP');
+                    }
+                }
+                if (isset($settings['event_webhook_type_id'])
+                    && !empty($settings['event_webhook_type_id'])
+                ) {
+                    //Check if saved already before creating a webhook
+                    if (!isset($settings['event_webhook_id'])
+                        || empty($settings['event_webhook_id'])
+                    ) {
+                        self::createSynchWebhook($settings['event_webhook_type_id'], 'EVENT');
+                    } else {
+                        self::updateSynchWebhook($settings['event_webhook_id'], 'EVENT');
+                    }
+                }
+            }
+        }
+
+        public static function buildCreateWebhooKInput($webhookTypeId = '', $type = 'COURSE', $webhookId = 0)
+        {
+            $callbakUrl = ADMWPP_SITE_URL . "/wp-json/admwpp/webhook/callback";
+            switch ($type) {
+                case 'LP':
+                    $webhookName = "Wordpress Trigger learning Paths Template Updated";
+                    $queryName = 'learningpath';
+                    $queryObjects = 'learningPaths';
+                    $learningPathFields = array(
+                        'id'
+                    );
+                    $buildNode = SDKQueryBuilder::buildNode($learningPathFields);
+                    $node = $buildNode['node'];
+                    break;
+                case 'EVENT':
+                    $webhookName = "Wordpress Trigger Events Updated";
+                    $queryName = 'events';
+                    $queryObjects = 'events';
+                    $eventFields = array(
+                        'id',
+                        'courseTemplate' => array(
+                            'id'
+                        )
+                    );
+                    $buildNode = SDKQueryBuilder::buildNode($eventFields);
+                    $node = $buildNode['node'];
+                    break;
+                default:
+                    $webhookName = "Wordpress Trigger Course Template Updated";
+                    $queryName = 'courses';
+                    $queryObjects = 'courseTemplates';
+                    $courseFields = array(
+                        'id'
+                    );
+                    $buildNode = SDKQueryBuilder::buildNode($courseFields);
+                    $node = $buildNode['node'];
+                    break;
+            }
+
+            $edges = (new SDKQueryBuilder('edges'))->selectField($node);
+
+            $edgesQuery = $edges->getQuery();
+            $edgesQuery = str_replace("query ", "", $edgesQuery);
+            $edgesQuery = str_replace(array("\n", "\r"), ' ', $edgesQuery);
+            $edgesQuery = trim($edgesQuery);
+
+            $query = 'query ' . $queryName . ' ($objectid: String!) {' . $queryObjects . ' (filters: [{field: id, operation: eq, value: $objectid}]) ' . $edgesQuery . ' }';
+
+            $input = array(
+                'name' => $webhookName,
+                'url' => $callbakUrl,
+                'query' => $query,
+                'emailAddress' => get_bloginfo('admin_email')
+            );
+
+            if ($webhookTypeId) {
+                $input['webhookTypeId'] = $webhookTypeId;
+            }
+
+            if ($webhookId) {
+                $input['webhookId'] = $webhookId;
+            }
+
+            return $input;
+        }
+
+        public static function createSynchWebhook($webhookTypeId, $type = 'COURSE')
+        {
+            switch ($type) {
+                case 'LP':
+                    $webhookIdOptionsKey = 'lp_webhook_id';
+                    break;
+                case 'EVENT':
+                    $webhookIdOptionsKey = 'event_webhook_id';
+                    break;
+                default:
+                    $webhookIdOptionsKey = 'courses_webhook_id';
+                    break;
+            }
+
+            $input = self::buildCreateWebhooKInput($webhookTypeId, $type);
+
+            $variables = array('input' => $input);
+
+            $gql = 'mutation createWebhook($input: WebhookCreateInput!) {
+              webhooks {
+                create(input: $input) {
+                  webhook {
+                    id
+                  }
+                  errors {
+                    message
+                  }
+                }
+              }
+            }';
+
+            $client = self::getClient();
             $results = $client->runRawQuery($gql, true, $variables);
             $webhook = $results->getData();
 
@@ -171,58 +209,116 @@ if (! class_exists('Webhook')) {
             if (isset($webhook['webhooks']['create']['webhook'])) {
                 $webhookId = $webhook['webhooks']['create']['webhook']['id'];
                 Settings::instance()->setSettingsOption('advanced', $webhookIdOptionsKey, $webhookId);
+                $messageArgs = array(
+                    'message' =>  __('Webhook successfully Created.', ADMWPP_TEXT_DOMAIN),
+                );
             } else {
+                $message = __('Webhook Creation Failed: ', ADMWPP_TEXT_DOMAIN);
                 if (isset($webhook['webhooks']['create']['errors'])) {
-                    $message = __('Webhooks Creation Failed: ', ADMWPP_TEXT_DOMAIN);
                     $message .= $webhook['webhooks']['create']['errors'][0]['message'];
-
-                    $flash = Main::instance()->getFlash();
-                    $flash->setMessage(array(
-                      'message' => $message,
-                      'success' => 'error',
-                    ));
                 }
+                $messageArgs = array(
+                    'message' =>  $message,
+                    'success' => 'error',
+                );
             }
+
+            $flash = Main::instance()->getFlash();
+            $flash->setMessage($messageArgs);
 
             // Activate webhook after creation
             if ($webhookId) {
-                $variables = array(
-                    'webhookId' => $webhookId
-                );
-
-                $gql = 'mutation updateWebhookConfig($webhookId: ID!) {
-                  webhooks {
-                    update(
-                      input: {
-                        webhookId: $webhookId,
-                        lifecycleState: active
-                        }
-                    ) {
-                      errors {
-                        message
-                      }
-                      webhook {
-                        id
-                      }
-                    }
-                  }
-                }';
-
-                $client = new SDKClient($apiParams['apiUri'], $authorizationHeaders);
-                $results = $client->runRawQuery($gql, true, $variables);
-                $webhook = $results->getData();
-
-                if (isset($webhook['webhooks']['update'])) {
-                    $webhookId = $webhook['webhooks']['update']['webhook']['id'];
+                $webhookId = self::activateSynchWebhook($webhookId, $type, $client);
+                if ($webhookId) {
                     Settings::instance()->setSettingsOption('advanced', $webhookIdOptionsKey, $webhookId);
-
-                    $flash = Main::instance()->getFlash();
-                    $flash->setMessage(array(
-                        'message' => 'Webhooks successfully created.',
-                        'success' => 'success',
-                    ));
                 }
             }
+        }
+
+        public static function activateSynchWebhook($webhookId, $type, $client)
+        {
+            if (!isset($client)) {
+                $client = self::getClient();
+            }
+            $input = array(
+                'webhookId' => $webhookId,
+                'lifecycleState'=> 'active'
+            );
+            $webhookId = self::updateSynchWebhook($webhookId, $type, $input, $client);
+            if ($webhookId) {
+                $messageArgs = array(
+                    'message' =>  __('Webhook successfully Activated.', ADMWPP_TEXT_DOMAIN),
+                );
+            } else {
+                $webhookId = "";
+                $message = __('Webhook Activation Failed: ', ADMWPP_TEXT_DOMAIN);
+                if (isset($webhook['webhooks']['create']['errors'])) {
+                    $message .= $webhook['webhooks']['create']['errors'][0]['message'];
+                }
+                $messageArgs = array(
+                    'message' =>  $message,
+                    'success' => 'error',
+                );
+            }
+
+            $flash = Main::instance()->getFlash();
+            $flash->setMessage($messageArgs);
+
+            return $webhookId;
+        }
+
+        public static function updateSynchWebhook($webhookId, $type = 'COURSE', $input = array(), $client = null)
+        {
+            if (!$client) {
+                $client = self::getClient();
+            }
+
+            if (empty($input)) {
+                $input = self::buildCreateWebhooKInput('', $type, $webhookId);
+            }
+
+            $variables = array('input' => $input);
+
+            $gql = 'mutation updateWebhookConfig($input: WebhookUpdateInput!) {
+              webhooks {
+                update(input: $input) {
+                  errors {
+                    message
+                  }
+                  webhook {
+                    id
+                  }
+                }
+              }
+            }';
+
+            $results = $client->runRawQuery($gql, true, $variables);
+            $webhook = $results->getData();
+
+            if (isset($webhook['webhooks']['update'])) {
+                if (isset($webhook['webhooks']['update']['webhook']['id'])) {
+                    $webhookId = $webhook['webhooks']['update']['webhook']['id'];
+                    $messageArgs = array(
+                        'message' =>  __('Webhook successfully Updated.', ADMWPP_TEXT_DOMAIN),
+                    );
+                } else {
+                    $webhookId = '';
+                    $message = __('Webhook Update Failed: ', ADMWPP_TEXT_DOMAIN);
+                    if (isset($webhook['webhooks']['update']['errors'])) {
+                        $message .= $webhook['webhooks']['update']['errors'][0]['message'];
+                    }
+                    $messageArgs = array(
+                        'message' =>  $message,
+                        'success' => 'error',
+                    );
+                }
+
+                $flash = Main::instance()->getFlash();
+                $flash->setMessage($messageArgs);
+
+                return $webhookId;
+            }
+            return '';
         }
     }
 }
