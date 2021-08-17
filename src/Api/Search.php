@@ -164,8 +164,14 @@ if (!class_exists('Search')) {
             ));
             $fromDate = filter_var(trim(get_query_var('from')), FILTER_SANITIZE_STRING);
             $toDate = filter_var(trim(get_query_var('to')), FILTER_SANITIZE_STRING);
-            $loc = filter_var_array(get_query_var('loc', array()), FILTER_SANITIZE_STRING);
-            $dayofweek = self::sanitizeDayOfWeek(filter_var_array(get_query_var('dayofweek', array()), FILTER_SANITIZE_STRING));
+            $loc = self::sanitizeLocationIds(filter_var_array(
+                get_query_var('loc', array()),
+                FILTER_SANITIZE_STRING
+            ));
+            $dayofweek = self::sanitizeDayOfWeek(filter_var_array(
+                get_query_var('dayofweek', array()),
+                FILTER_SANITIZE_STRING
+            ));
             $timeofday = filter_var(trim(get_query_var('timeofday', '')), FILTER_SANITIZE_STRING);
             $minplaces = filter_var(trim(get_query_var('minplaces', '')), FILTER_SANITIZE_NUMBER_INT);
 
@@ -430,6 +436,11 @@ if (!class_exists('Search')) {
 
         public static function getLocationsFilter()
         {
+            $locations = get_transient('admwpp_tms_locations');
+
+            if (!empty($locations)) {
+                return $locations;
+            }
 
             $activate = Oauth2\Activate::instance();
             $activate->setParams(true);
@@ -461,6 +472,7 @@ if (!class_exists('Search')) {
                 foreach ($data->locations->edges as $key => $edge) {
                     $locations[$edge->node->id] = $edge->node->name;
                 }
+                set_transient('admwpp_tms_locations', $locations, WEEK_IN_SECONDS);
                 return $locations;
             }
             return array();
@@ -562,6 +574,18 @@ if (!class_exists('Search')) {
                 }
             }
             return $filteredDayOfWeek;
+        }
+
+        public static function sanitizeLocationIds($locationIds)
+        {
+            $filteredLocationIds = array();
+            $allowedLocations = self::getLocationsFilter();
+            foreach ($locationIds as $value) {
+                if (in_array($value, array_keys($allowedLocations))) {
+                    $filteredLocationIds[] = $value;
+                }
+            }
+            return $filteredLocationIds;
         }
     }
 }
