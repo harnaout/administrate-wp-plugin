@@ -740,6 +740,34 @@ if (!class_exists('Settings')) {
                     'info'         => '<i>' . __('If you already created the webhook config add the TMS ID for it', ADMWPP_TEXT_DOMAIN) . '<br/>' . __('If not leave it blank and hit the <strong>"save settings"</strong> button the plugin will automatically create the webhook config for the <strong>webhook type ID</strong> inputed above and set it up.', ADMWPP_TEXT_DOMAIN) . '</i>'
                 )
             );
+
+            add_settings_field(
+                'admwpp-event-webhook-type-id',
+                __('Document Update Webhook Type ID:', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldInput'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_advanced_webhook_action',
+                array(
+                    'field'        => 'document_webhook_type_id',
+                    'settings_key' => $settings_key,
+                    'placeholder'  => 'WEBHOOK Type ID',
+                    'info'         => '<i>' . __('You must enter a valid Administrate <strong>WEBHOOK Type ID</strong>.', ADMWPP_TEXT_DOMAIN) . '</i>',
+                )
+            );
+
+            add_settings_field(
+                'admwpp-event-webhook-id',
+                __('Saved Document Webhook ID:', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldInput'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_advanced_webhook_action',
+                array(
+                    'field'        => 'document_webhook_id',
+                    'settings_key' => $settings_key,
+                    'placeholder'  => 'WEBHOOK ID',
+                    'info'         => '<i>' . __('If you already created the webhook config add the TMS ID for it', ADMWPP_TEXT_DOMAIN) . '<br/>' . __('If not leave it blank and hit the <strong>"save settings"</strong> button the plugin will automatically create the webhook config for the <strong>webhook type ID</strong> inputed above and set it up.', ADMWPP_TEXT_DOMAIN) . '</i>'
+                )
+            );
         }
 
         function createAdvancedLocationsSection($settings_key)

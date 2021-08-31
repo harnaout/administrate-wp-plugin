@@ -101,6 +101,18 @@ if (! class_exists('Webhook')) {
                         self::updateSynchWebhook($settings['event_webhook_id'], 'EVENT');
                     }
                 }
+                if (isset($settings['document_webhook_type_id'])
+                    && !empty($settings['document_webhook_type_id'])
+                ) {
+                    //Check if saved already before creating a webhook
+                    if (!isset($settings['document_webhook_id'])
+                        || empty($settings['document_webhook_id'])
+                    ) {
+                        self::createSynchWebhook($settings['document_webhook_type_id'], 'DOCUMENT');
+                    } else {
+                        self::updateSynchWebhook($settings['document_webhook_type_id'], 'DOCUMENT');
+                    }
+                }
             }
         }
 
@@ -129,6 +141,28 @@ if (! class_exists('Webhook')) {
                         )
                     );
                     $buildNode = SDKQueryBuilder::buildNode($eventFields);
+                    $node = $buildNode['node'];
+                    break;
+                case 'DOCUMENT':
+                    $webhookName = "Wordpress Trigger Document Updated";
+                    $queryName = 'documents';
+                    $queryObjects = 'documents';
+                    $documentFields = array(
+                        'id',
+                        'courseTemplates' => array(
+                            'type' => 'edges',
+                            'fields' => array(
+                                'id',
+                            )
+                        ),
+                        'learningPaths' => array(
+                            'type' => 'edges',
+                            'fields' => array(
+                                'id',
+                            )
+                        )
+                    );
+                    $buildNode = SDKQueryBuilder::buildNode($documentFields);
                     $node = $buildNode['node'];
                     break;
                 default:
@@ -178,6 +212,9 @@ if (! class_exists('Webhook')) {
                     break;
                 case 'EVENT':
                     $webhookIdOptionsKey = 'event_webhook_id';
+                    break;
+                case 'DOCUMENT':
+                    $webhookIdOptionsKey = 'document_webhook_id';
                     break;
                 default:
                     $webhookIdOptionsKey = 'courses_webhook_id';
