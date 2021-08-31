@@ -110,7 +110,7 @@ if (! class_exists('Webhook')) {
                     ) {
                         self::createSynchWebhook($settings['document_webhook_type_id'], 'DOCUMENT');
                     } else {
-                        self::updateSynchWebhook($settings['document_webhook_type_id'], 'DOCUMENT');
+                        self::updateSynchWebhook($settings['document_webhook_id'], 'DOCUMENT');
                     }
                 }
             }
