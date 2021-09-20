@@ -158,6 +158,7 @@ if (!class_exists('Search')) {
 
             $query = stripcslashes(urldecode(strip_tags(get_query_var('query', ''))));
             $query = filter_var(trim($query), FILTER_SANITIZE_STRING);
+            $query = str_replace("\\", "", $query);
             $lcat = self::sanitizeTmsCatIds(filter_var_array(
                 get_query_var('lcat', array()),
                 FILTER_SANITIZE_STRING
