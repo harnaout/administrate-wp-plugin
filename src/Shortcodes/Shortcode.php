@@ -20,8 +20,8 @@ if (! class_exists('Shortcode')) {
 
         function __construct()
         {
-            if (file_exists('../../../../../wp-load.php')) {
-                require_once('../../../../../wp-load.php');
+            if (file_exists(ABSPATH . 'wp-load.php')) {
+                require_once(ABSPATH . 'wp-load.php');
             }
 
             // Add all actions and filters

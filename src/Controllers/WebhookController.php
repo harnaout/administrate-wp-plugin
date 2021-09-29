@@ -6,8 +6,8 @@ use ADM\WPPlugin\Oauth2;
 use ADM\WPPlugin\Settings;
 use ADM\WPPlugin\PostTypes\Course;
 
-if (file_exists('../../../../../wp-load.php')) {
-    require_once('../../../../../wp-load.php');
+if (file_exists(ABSPATH . 'wp-load.php')) {
+    require_once(ABSPATH . 'wp-load.php');
 }
 
 class WebhookController extends Base\ActionController

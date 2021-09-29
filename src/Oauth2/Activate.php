@@ -6,8 +6,8 @@ use Administrate\PhpSdk\Oauth\Activator;
 use ADM\WPPlugin as ADMWPP;
 use ADM\WPPlugin\Settings;
 
-if (file_exists('../../../../wp-load.php')) {
-    require_once('../../../../wp-load.php');
+if (file_exists(ABSPATH . 'wp-load.php')) {
+    require_once(ABSPATH . 'wp-load.php');
 }
 
 if (!class_exists('Activate')) {
