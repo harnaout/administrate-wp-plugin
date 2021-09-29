@@ -7,8 +7,8 @@ use ADM\WPPlugin\Settings;
 use ADM\WPPlugin\Taxonomies\LearningCategory;
 use ADM\WPPlugin\PostTypes\Course;
 
-if (file_exists('../../../../../wp-load.php')) {
-    require_once('../../../../../wp-load.php');
+if (file_exists(ABSPATH . 'wp-load.php')) {
+    require_once(ABSPATH . 'wp-load.php');
 }
 
 class SettingsController extends Base\ActionController

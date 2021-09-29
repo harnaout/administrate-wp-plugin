@@ -48,7 +48,7 @@ define('ADMWPP_DATE_FORMAT', 'Y-m-d H:i:s');
 define('ADMWPP_TEXT_DOMAIN', 'admwpp');
 define('ADMWPP_PREFIX', 'admwpp');
 
-define('ADMWPP_WEBSITE', 'http://getadministrate.com/');
+define('ADMWPP_WEBSITE', 'https://getadministrate.com/');
 
 define('ADMWPP_TEMPLATES_DIR', plugin_dir_path(__FILE__) . 'templates/');
 define('ADMWPP_ADMIN_TEMPLATES_DIR', plugin_dir_path(__FILE__) . 'templates/admin-views/');
