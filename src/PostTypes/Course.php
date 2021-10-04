@@ -122,6 +122,12 @@ if (!class_exists('Course')) {
                 'tmsKey' => 'locations',
                 'showOnFront' => false,
             ),
+            'admwpp_tms_events' => array(
+                'type' => 'text',
+                'label' => 'Event IDs',
+                'tmsKey' => 'events',
+                'showOnFront' => false,
+            ),
         );
 
         static $inlineMetas = array();
@@ -1365,6 +1371,37 @@ if (!class_exists('Course')) {
                             }
                             $tmsValue = json_encode($accountArray);
                         }
+                        break;
+                    case 'events':
+                        $eventsIds = array();
+                        if ('LP' === $type) {
+                            $tmsKey = 'learningObjectives';
+                            if (isset($node[$tmsKey])) {
+                                if (isset($node[$tmsKey]['edges'])) {
+                                    $learningObjectives = $node[$tmsKey]['edges'];
+                                    foreach ($learningObjectives as $objective) {
+                                        if (isset($objective['node']['courseTemplate'])) {
+                                            $courseTemplate = $objective['node']['courseTemplate'];
+                                            if (isset($courseTemplate['events'])) {
+                                                $events = $courseTemplate['events']['edges'];
+                                                foreach ($events as $event) {
+                                                    $eventsIds[] = $event['node']['id'];
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            $tmsKey = 'events';
+                            if (isset($node[$tmsKey])) {
+                                $events = $node[$tmsKey]['edges'];
+                                foreach ($events as $event) {
+                                    $eventsIds[] = $event['node']['id'];
+                                }
+                            }
+                        }
+                        $tmsValue = implode('|', $eventsIds);
                         break;
                     case 'locations':
                         $locationIds = array();

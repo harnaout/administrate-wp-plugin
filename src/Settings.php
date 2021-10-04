@@ -742,7 +742,7 @@ if (!class_exists('Settings')) {
             );
 
             add_settings_field(
-                'admwpp-event-webhook-type-id',
+                'admwpp-document-webhook-type-id',
                 __('Document Update Webhook Type ID:', ADMWPP_TEXT_DOMAIN),
                 array($this, 'settingsFieldInput'),
                 "admwpp_" . $settings_key . "_settings",
@@ -756,7 +756,7 @@ if (!class_exists('Settings')) {
             );
 
             add_settings_field(
-                'admwpp-event-webhook-id',
+                'admwpp-document-webhook-id',
                 __('Saved Document Webhook ID:', ADMWPP_TEXT_DOMAIN),
                 array($this, 'settingsFieldInput'),
                 "admwpp_" . $settings_key . "_settings",
