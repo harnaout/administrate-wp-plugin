@@ -113,12 +113,50 @@ if (! class_exists('Webhook')) {
                         self::updateSynchWebhook($settings['document_webhook_id'], 'DOCUMENT');
                     }
                 }
+
+                if (isset($settings['courses_delete_webhook_type_id'])
+                    && !empty($settings['courses_delete_webhook_type_id'])
+                ) {
+                    //Check if saved already before creating a webhook
+                    if (!isset($settings['courses_delete_webhook_id'])
+                        || empty($settings['courses_delete_webhook_id'])
+                    ) {
+                        self::createSynchWebhook($settings['courses_delete_webhook_type_id'], 'COURSE', 'delete');
+                    } else {
+                        self::updateSynchWebhook($settings['courses_delete_webhook_id'], 'COURSE', 'delete');
+                    }
+                }
+
+                if (isset($settings['lp_delete_webhook_type_id'])
+                    && !empty($settings['lp_delete_webhook_type_id'])
+                ) {
+                    //Check if saved already before creating a webhook
+                    if (!isset($settings['lp_delete_webhook_id'])
+                        || empty($settings['lp_delete_webhook_id'])
+                    ) {
+                        self::createSynchWebhook($settings['lp_delete_webhook_type_id'], 'LP', 'delete');
+                    } else {
+                        self::updateSynchWebhook($settings['lp_delete_webhook_id'], 'LP', 'delete');
+                    }
+                }
+
+                if (isset($settings['event_delete_webhook_type_id'])
+                    && !empty($settings['event_delete_webhook_type_id'])
+                ) {
+                    //Check if saved already before creating a webhook
+                    if (!isset($settings['event_delete_webhook_id'])
+                        || empty($settings['event_delete_webhook_id'])
+                    ) {
+                        self::createSynchWebhook($settings['event_delete_webhook_type_id'], 'EVENT', 'delete');
+                    } else {
+                        self::updateSynchWebhook($settings['event_delete_webhook_id'], 'EVENT', 'delete');
+                    }
+                }
             }
         }
 
         public static function buildCreateWebhooKInput($webhookTypeId = '', $type = 'COURSE', $webhookId = 0)
         {
-            $callbakUrl = ADMWPP_SITE_URL . "/wp-json/admwpp/webhook/callback";
             switch ($type) {
                 case 'LP':
                     $webhookName = "Wordpress Trigger learning Paths Template Updated";
@@ -188,7 +226,7 @@ if (! class_exists('Webhook')) {
 
             $input = array(
                 'name' => $webhookName,
-                'url' => $callbakUrl,
+                'url' => ADMWPP_WEBHOOK_CALLBACK,
                 'query' => $query,
                 'emailAddress' => get_bloginfo('admin_email')
             );
@@ -204,7 +242,7 @@ if (! class_exists('Webhook')) {
             return $input;
         }
 
-        public static function createSynchWebhook($webhookTypeId, $type = 'COURSE')
+        public static function createSynchWebhook($webhookTypeId, $type = 'COURSE', $action = 'synch')
         {
             switch ($type) {
                 case 'LP':
@@ -221,7 +259,11 @@ if (! class_exists('Webhook')) {
                     break;
             }
 
-            $input = self::buildCreateWebhooKInput($webhookTypeId, $type);
+            if ($action === 'delete') {
+                $input = self::buildDeleteWebhooKInput($webhookTypeId, $type);
+            } else {
+                $input = self::buildCreateWebhooKInput($webhookTypeId, $type);
+            }
 
             $variables = array('input' => $input);
 
@@ -265,14 +307,14 @@ if (! class_exists('Webhook')) {
 
             // Activate webhook after creation
             if ($webhookId) {
-                $webhookId = self::activateSynchWebhook($webhookId, $type, $client);
+                $webhookId = self::activateSynchWebhook($webhookId, $type, $action, $client);
                 if ($webhookId) {
                     Settings::instance()->setSettingsOption('advanced', $webhookIdOptionsKey, $webhookId);
                 }
             }
         }
 
-        public static function activateSynchWebhook($webhookId, $type, $client)
+        public static function activateSynchWebhook($webhookId, $type, $action, $client)
         {
             if (!isset($client)) {
                 $client = self::getClient();
@@ -281,7 +323,7 @@ if (! class_exists('Webhook')) {
                 'webhookId' => $webhookId,
                 'lifecycleState'=> 'active'
             );
-            $webhookId = self::updateSynchWebhook($webhookId, $type, $input, $client);
+            $webhookId = self::updateSynchWebhook($webhookId, $type, $action, $input, $client);
             if ($webhookId) {
                 $messageArgs = array(
                     'message' =>  __('Webhook successfully Activated.', ADMWPP_TEXT_DOMAIN),
@@ -304,14 +346,18 @@ if (! class_exists('Webhook')) {
             return $webhookId;
         }
 
-        public static function updateSynchWebhook($webhookId, $type = 'COURSE', $input = array(), $client = null)
+        public static function updateSynchWebhook($webhookId, $type = 'COURSE', $action = 'synch', $input = array(), $client = null)
         {
             if (!$client) {
                 $client = self::getClient();
             }
 
             if (empty($input)) {
-                $input = self::buildCreateWebhooKInput('', $type, $webhookId);
+                if ($action === 'delete') {
+                    $input = self::buildDeleteWebhooKInput('', $type, $webhookId);
+                } else {
+                    $input = self::buildCreateWebhooKInput('', $type, $webhookId);
+                }
             }
 
             $variables = array('input' => $input);
@@ -356,6 +402,43 @@ if (! class_exists('Webhook')) {
                 return $webhookId;
             }
             return '';
+        }
+
+        public static function buildDeleteWebhooKInput($webhookTypeId = '', $type = 'COURSE', $webhookId = 0)
+        {
+            switch ($type) {
+                case 'LP':
+                    $webhookName = "Wordpress Trigger learning Paths Template Delete";
+                    $queryName = 'learningpath';
+                    break;
+                case 'EVENT':
+                    $webhookName = "Wordpress Trigger Events Delete";
+                    $queryName = 'events';
+                    break;
+                default:
+                    $webhookName = "Wordpress Trigger Course Template Delete";
+                    $queryName = 'courses';
+                    break;
+            }
+
+            $query = 'query ' . $queryName . ' ($objectid: String!) {echo(value: $objectid)}';
+
+            $input = array(
+                'name' => $webhookName,
+                'url' => ADMWPP_WEBHOOK_CALLBACK,
+                'query' => $query,
+                'emailAddress' => get_bloginfo('admin_email')
+            );
+
+            if ($webhookTypeId) {
+                $input['webhookTypeId'] = $webhookTypeId;
+            }
+
+            if ($webhookId) {
+                $input['webhookId'] = $webhookId;
+            }
+
+            return $input;
         }
     }
 }

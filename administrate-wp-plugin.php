@@ -75,6 +75,8 @@ if (!defined('ADMWPP_SITE_URL')) {
     define('ADMWPP_SITE_URL', get_site_url());
 }
 
+define('ADMWPP_WEBHOOK_CALLBACK', ADMWPP_SITE_URL . "/wp-json/admwpp/webhook/callback");
+
 // Minutes to consider the portal token expired.
 if (!defined('ADMWPP_PORTAL_TOKEN_EXPIRY_PERIOD')) {
     define('ADMWPP_PORTAL_TOKEN_EXPIRY_PERIOD', 60);
