@@ -244,24 +244,34 @@ if (! class_exists('Webhook')) {
 
         public static function createSynchWebhook($webhookTypeId, $type = 'COURSE', $action = 'synch')
         {
-            switch ($type) {
-                case 'LP':
-                    $webhookIdOptionsKey = 'lp_webhook_id';
-                    break;
-                case 'EVENT':
-                    $webhookIdOptionsKey = 'event_webhook_id';
-                    break;
-                case 'DOCUMENT':
-                    $webhookIdOptionsKey = 'document_webhook_id';
-                    break;
-                default:
-                    $webhookIdOptionsKey = 'courses_webhook_id';
-                    break;
-            }
-
             if ($action === 'delete') {
+                switch ($type) {
+                    case 'LP':
+                        $webhookIdOptionsKey = 'lp_delete_webhook_id';
+                        break;
+                    case 'EVENT':
+                        $webhookIdOptionsKey = 'event_delete_webhook_id';
+                        break;
+                    default:
+                        $webhookIdOptionsKey = 'courses_delete_webhook_id';
+                        break;
+                }
                 $input = self::buildDeleteWebhooKInput($webhookTypeId, $type);
             } else {
+                switch ($type) {
+                    case 'LP':
+                        $webhookIdOptionsKey = 'lp_webhook_id';
+                        break;
+                    case 'EVENT':
+                        $webhookIdOptionsKey = 'event_webhook_id';
+                        break;
+                    case 'DOCUMENT':
+                        $webhookIdOptionsKey = 'document_webhook_id';
+                        break;
+                    default:
+                        $webhookIdOptionsKey = 'courses_webhook_id';
+                        break;
+                }
                 $input = self::buildCreateWebhooKInput($webhookTypeId, $type);
             }
 

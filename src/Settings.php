@@ -799,7 +799,7 @@ if (!class_exists('Settings')) {
 
             add_settings_field(
                 'admwpp-event-delete-webhook-type-id',
-                __('Event Update Webhook Type ID:', ADMWPP_TEXT_DOMAIN),
+                __('Event Delete Webhook Type ID:', ADMWPP_TEXT_DOMAIN),
                 array($this, 'settingsFieldInput'),
                 "admwpp_" . $settings_key . "_settings",
                 'admwpp_advanced_webhook_action',
@@ -812,7 +812,7 @@ if (!class_exists('Settings')) {
             );
 
             add_settings_field(
-                'admwpp-event-webhook-id',
+                'admwpp-event-delete-webhook-id',
                 __('Saved Event Delete Webhook ID:', ADMWPP_TEXT_DOMAIN),
                 array($this, 'settingsFieldInput'),
                 "admwpp_" . $settings_key . "_settings",

@@ -815,6 +815,20 @@ if (!class_exists('Course')) {
             return 0;
         }
 
+        public static function getPostIdsByEventId($tmsId)
+        {
+            global $wpdb;
+            $wpPostsIds = array();
+            $postMetasTable = $wpdb->postmeta;
+            $sql = "SELECT post_id FROM $postMetasTable WHERE meta_key = %s AND meta_value LIKE '%s'";
+            $sql = $wpdb->prepare($sql, 'admwpp_tms_events', '%' . $wpdb->esc_like($tmsId) . '%');
+            $wpPosts = $wpdb->get_results($sql);
+            foreach ($wpPosts as $wpPost) {
+                $wpPostsIds[] = $wpPost->post_id;
+            }
+            return $wpPostsIds;
+        }
+
         public static function setTerms($postId, $learningCategories)
         {
             global $wpdb;
@@ -1078,6 +1092,15 @@ if (!class_exists('Course')) {
                 return self::getLearningPatheById($nodeId);
             }
             return self::getCourseById($nodeId);
+        }
+
+        public static function deleteCourseByNodeId($nodeId)
+        {
+            $postId = checkifExists($tmsId);
+            if ($postId) {
+                return wp_delete_post($postId, true);
+            }
+            return false;
         }
 
         public static function getCourseById($nodeId)

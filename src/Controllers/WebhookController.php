@@ -21,6 +21,23 @@ class WebhookController extends Base\ActionController
             $responceInstance = $body->metadata->instance;
             $instance = Settings::instance()->getSettingsOption('account', 'instance');
             if ($responceInstance === $instance) {
+                // if delete webhook call back check echo
+                if (isset($body->payload->echo)) {
+                    $nodeId = $body->payload->echo;
+                    $nodeIdDecoded = base64_decode($nodeId);
+                    $nodeIdDecoded = explode(":", $nodeIdDecoded);
+                    if ($nodeIdDecoded[0] === 'Course') { // for an Event
+                        $postIds = Course::getPostIdsByEventId($nodeId);
+                        foreach ($postIds as $postId) {
+                            $nodeId = get_post_meta($postId, 'admwpp_tms_id', true);
+                            $nodeType = get_post_meta($postId, 'admwpp_tms_type', true);
+                            $node = Course::getNodeById($nodeId, $nodeType);
+                            $import = Course::nodeToPost($node, $nodeType);
+                        }
+                    } else {
+                        Course::deleteCourseByNodeId($nodeId);
+                    }
+                }
                 if (isset($body->payload->courseTemplates->edges[0])) {
                     $nodeId = $body->payload->courseTemplates->edges[0]->node->id;
                     $node = Course::getNodeById($nodeId, 'COURSE');
