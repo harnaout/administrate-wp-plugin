@@ -32,26 +32,26 @@ class WebhookController extends Base\ActionController
                             $nodeId = get_post_meta($postId, 'admwpp_tms_id', true);
                             $nodeType = get_post_meta($postId, 'admwpp_tms_type', true);
                             $node = Course::getNodeById($nodeId, $nodeType);
-                            $import = Course::nodeToPost($node, $nodeType);
+                            $import[$nodeId] = Course::nodeToPost($node, $nodeType);
                         }
                     } else {
-                        Course::deleteCourseByNodeId($nodeId);
+                        $import[$nodeId] = Course::deleteCourseByNodeId($nodeId);
                     }
                 }
                 if (isset($body->payload->courseTemplates->edges[0])) {
                     $nodeId = $body->payload->courseTemplates->edges[0]->node->id;
                     $node = Course::getNodeById($nodeId, 'COURSE');
-                    $import = Course::nodeToPost($node, 'COURSE');
+                    $import[$nodeId] = Course::nodeToPost($node, 'COURSE');
                 }
                 if (isset($body->payload->events->edges[0])) {
                     $nodeId = $body->payload->events->edges[0]->node->courseTemplate->id;
                     $node = Course::getNodeById($nodeId, 'COURSE');
-                    $import = Course::nodeToPost($node, 'COURSE');
+                    $import[$nodeId] = Course::nodeToPost($node, 'COURSE');
                 }
                 if (isset($body->payload->learningPaths->edges[0])) {
                     $nodeId = $body->payload->learningPaths->edges[0]->node->id;
                     $node = Course::getNodeById($nodeId, 'LP');
-                    $import = Course::nodeToPost($node, 'LP');
+                    $import[$nodeId] = Course::nodeToPost($node, 'LP');
                 }
                 if (isset($body->payload->documents->edges[0])) {
                     $documentNode = $body->payload->documents->edges[0]->node;
