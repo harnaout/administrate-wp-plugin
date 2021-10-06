@@ -1094,9 +1094,9 @@ if (!class_exists('Course')) {
             return self::getCourseById($nodeId);
         }
 
-        public static function deleteCourseByNodeId($nodeId)
+        public static function deleteCourseByNodeId($tmsId)
         {
-            $postId = checkifExists($tmsId);
+            $postId = self::checkifExists($tmsId);
             if ($postId) {
                 return wp_delete_post($postId, true);
             }
