@@ -1110,11 +1110,6 @@ if (!class_exists('Course')) {
             $args = array(
                 'filters' => array(
                     array(
-                        'field' => 'lifecycleState',
-                        'operation' => 'eq',
-                        'value' => 'published',
-                    ),
-                    array(
                         'field' => 'id',
                         'operation' => 'eq',
                         'value' => $nodeId,
@@ -1134,11 +1129,6 @@ if (!class_exists('Course')) {
 
             $args = array(
                 'filters' => array(
-                    array(
-                        'field' => 'lifecycleState',
-                        'operation' => 'eq',
-                        'value' => 'active',
-                    ),
                     array(
                         'field' => 'id',
                         'operation' => 'eq',
