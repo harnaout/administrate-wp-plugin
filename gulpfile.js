@@ -1,11 +1,10 @@
 'use strict';
 var gulp = require('gulp');
-var sass = require('gulp-sass');
+const sass = require('gulp-sass')(require('node-sass'));
 var concat = require('gulp-concat');
 const rename = require('gulp-rename');
 const del = require('del');
 const minify = require('gulp-minify');
-sass.compiler = require('node-sass');
 
 gulp.task('sass-min', () => {
    return gulp.src('./assets/sass/admin.scss')
