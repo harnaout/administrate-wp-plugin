@@ -1,15 +1,12 @@
 <?php
 $locationsFilter = ADM\WPPlugin\Api\Search::getLocationsFilter();
 ?>
-<div class="adwmpp-filter-wrapper adwmpp-locations-wrapper locations-wrapper adwmpp-dropdown dropdown">
-    <div class="adwmpp-input-wrapper">
-        <label><?php _e('Locations', ADMWPP_TEXT_DOMAIN); ?></label>
-    </div>
+<div class="adwmpp-filter-wrapper adwmpp-locations-wrapper adwmpp-dropdown dropdown">
     <div class="adwmpp-dropdown-wrapper dropdown-wrapper">
         <div class="adwmpp-dropdown-body dropdown-body">
             <select class="admwpp-select admwpp-custom-select" name="loc[]" multiple>
-                <option class="adwmpp-option-item option-item" value="" disabled="disabled">
-                    <?php _e('Select Locations', 'admwpp'); ?>
+                <option class="adwmpp-option-item option-item" value="">
+                    <?php _e('Locations', 'admwpp'); ?>
                 </option>
                 <?php
                 if ($locationsFilter) :
