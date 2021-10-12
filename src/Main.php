@@ -527,8 +527,16 @@ if (!class_exists('Main')) {
                 '1.13.0'
             );
 
+            wp_register_style(
+                'admwpp-jquery-ui',
+                'https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css',
+                array(),
+                '1.12.1'
+            );
+
             $stylesArray = array(
                 'thickbox',
+                'admwpp-jquery-ui',
                 'wp-jquery-ui-dialog',
             );
 

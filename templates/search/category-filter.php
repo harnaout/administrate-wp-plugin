@@ -6,16 +6,13 @@ $categories = get_terms(array(
 ));
 ?>
 <div class="adwmpp-filter-wrapper adwmpp-categories-wrapper categories-wrapper adwmpp-dropdown dropdown">
-    <div class="adwmpp-input-wrapper">
-        <label><?php _e('Categories', 'admwpp'); ?></label>
-    </div>
     <div class="adwmpp-dropdown-wrapper dropdown-wrapper">
         <div class="adwmpp-dropdown-body dropdown-body">
             <?php if (!empty($categories)) :
                 if ($categories_filter_type == 'select') : ?>
                     <select class="admwpp-select admwpp-custom-select" name="lcat[]" multiple autocomplete="off">
-                        <option class="adwmpp-option-item option-item" value="" disabled="disabled" selected="selected">
-                            <?php _e("Select a category", 'admwpp'); ?>
+                        <option class="adwmpp-option-item option-item" value="">
+                            <?php _e("Categories", 'admwpp'); ?>
                         </option>
                         <?php foreach ($categories as $category) :
                             $admwpp_tms_id = get_term_meta($category->term_id, 'admwpp_tms_id', true);
