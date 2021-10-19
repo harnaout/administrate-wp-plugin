@@ -231,6 +231,7 @@ if (! class_exists('Shortcode')) {
                 shortcode_atts(
                     array(
                         'email' => '',
+                        'status' => 'active'
                     ),
                     $atts
                 )
@@ -238,10 +239,12 @@ if (! class_exists('Shortcode')) {
 
             // For now we kept the user email empty as this value should be
             // filled by a dependent plugin or on the theme level using the
-            // filter: admwpp_user_email_workshops.
+            // Filter: admwpp_user_email_workshops used to override the Learner Email.
             $email = apply_filters('admwpp_user_email_workshops', $email);
+            // Filter: admwpp_user_status_workshops used to override the Events Learners status.
+            $status = apply_filters('admwpp_user_status_workshops', $status);
 
-            $workshops = self::getUserWorkshops($email);
+            $workshops = self::getUserWorkshops($email, $status);
             $template = self::getTemplatePath('my-workshops');
             ob_start();
             include $template;
@@ -256,14 +259,14 @@ if (! class_exists('Shortcode')) {
          * @param  string $email User Email
          * @return array         array of workshops
          */
-        public static function getUserWorkshops($email)
+        public static function getUserWorkshops($email, $status = "active")
         {
             if ($email) {
-                $gql = 'query contacts {
-                  contacts(filters: [{field: emailAddress, operation: eq, value: "' . $email . '"}]) {
+                $gql = 'query contacts($email: String!, $status: String!) {
+                  contacts(filters: [{field: emailAddress, operation: eq, value: $email}]) {
                     edges {
                       node {
-                        learners {
+                        learners(filters:[{field: lifecycleState, operation:eq, value: $status}]) {
                           edges {
                             node {
                               id
@@ -297,6 +300,11 @@ if (! class_exists('Shortcode')) {
                   }
                 }';
 
+                $variables = array(
+                    'email' => $email,
+                    'status' => $status
+                );
+
                 $activate = Oauth2\Activate::instance();
                 $apiParams = $activate::$params;
 
@@ -310,7 +318,7 @@ if (! class_exists('Shortcode')) {
 
                 $authorizationHeaders = SDKClient::setHeaders($apiParams);
                 $client = new SDKClient($apiParams['apiUri'], $authorizationHeaders);
-                $results = $client->runRawQuery($gql);
+                $results = $client->runRawQuery($gql, false, $variables);
                 $contacts = $results->getData();
 
                 $workshops = array();
