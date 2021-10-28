@@ -437,7 +437,7 @@ if (!class_exists('Search')) {
 
         public static function getLocationsFilter()
         {
-            $locations = get_transient('admwpp_tms_locations');
+            $locations = get_transient(ADMWPP_TRANS_TMS_LOCATIONS);
 
             if (!empty($locations)) {
                 return $locations;
@@ -473,7 +473,7 @@ if (!class_exists('Search')) {
                 foreach ($data->locations->edges as $key => $edge) {
                     $locations[$edge->node->id] = $edge->node->name;
                 }
-                set_transient('admwpp_tms_locations', $locations, WEEK_IN_SECONDS);
+                set_transient(ADMWPP_TRANS_TMS_LOCATIONS, $locations, WEEK_IN_SECONDS);
                 return $locations;
             }
             return array();

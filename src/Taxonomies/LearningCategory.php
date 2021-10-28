@@ -161,7 +161,7 @@ if (! class_exists('LearningCategory')) {
 
         public static function getSychedTmsIds()
         {
-            $tmsIds = get_transient('admwpp_tms_categories_ids');
+            $tmsIds = get_transient(ADMWPP_TRANS_TMS_LC_IDS);
 
             if (!empty($tmsIds)) {
                 return $tmsIds;
@@ -179,7 +179,7 @@ if (! class_exists('LearningCategory')) {
                 }
             }
 
-            set_transient('admwpp_tms_categories_ids', $tmsIds, WEEK_IN_SECONDS);
+            set_transient(ADMWPP_TRANS_TMS_LC_IDS, $tmsIds, WEEK_IN_SECONDS);
             return $tmsIds;
         }
 

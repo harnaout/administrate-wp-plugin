@@ -125,6 +125,8 @@ if (!class_exists('Settings')) {
             add_action('admin_notices', array($this, 'adminWarnings'));
 
             add_action('admin_enqueue_scripts', array('ADM\WPPlugin\Main', 'adminScripts'));
+
+            add_action('update_option_admwpp_search_settings', array($this, 'updatedSearchOptions'), 10, 2);
         }
 
         /*
@@ -142,6 +144,19 @@ if (!class_exists('Settings')) {
                 'uninstall' => (array) get_option($this->uninstall_settings_key),
             );
         }
+
+        /*
+         * Callback method on update options
+         */
+        public function updatedSearchOptions($oldValues, $newValues)
+        {
+            if (isset($newValues['transients']) && !empty($newValues['transients'])) {
+                foreach ($newValues['transients'] as $transientkey) {
+                    delete_transient($transientkey);
+                }
+            }
+        }
+
 
         /*
          * Get settings from instance.
@@ -217,8 +232,8 @@ if (!class_exists('Settings')) {
 
                 // Check if on Settings page and we are updating
                 // the settings then flush the rewrite rules.
-                if (isset($_GET['page']) && "admwpp-settings" == $_GET['page']) {
-                    if (isset($_GET['settings-updated']) && "true" == $_GET['settings-updated']) {
+                if (isset($_GET['settings-updated']) && "true" === $_GET['settings-updated']) {
+                    if (isset($_GET['page']) && "admwpp-settings" === $_GET['page']) {
                         flush_rewrite_rules(false);
                     }
                 }
@@ -332,6 +347,8 @@ if (!class_exists('Settings')) {
 
             $settings_index = 'search';
 
+            //Reset transients flags
+            $settings['transients'] = array();
             if (empty($settings)) {
                 //Setup defaults
             }
@@ -484,6 +501,34 @@ if (!class_exists('Settings')) {
                     'settings_key' => $settings_key,
                     'placeholder'  => 'Locations Filters',
                     'info'         => '<p>' . __('This will Disable / Enable Locations Filters in the search page', ADMWPP_TEXT_DOMAIN) . '</p>',
+                )
+            );
+
+            add_settings_section(
+                'admwpp_search_trans_section',
+                "<span class='admwpp-section-title'>" . __('Search Filters Validation Transients', ADMWPP_TEXT_DOMAIN) . "</span>",
+                array(),
+                "admwpp_" . $settings_key . "_settings"
+            );
+
+            add_settings_field(
+                'admwpp_clear_search_transients',
+                __('Select transients to Clear:', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldMultipleSelect'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_search_trans_section',
+                array(
+                    'field'        => 'transients',
+                    'settings_key' => $settings_key,
+                    'section_key'  => '',
+                    'options'      => array(
+                        ADMWPP_TRANS_TMS_LC_IDS => 'Categories',
+                        ADMWPP_TRANS_TMS_LOCATIONS => 'Location',
+                    ),
+                    'disabled'     => '',
+                    'info'         => __('Validation transients selection will be reset after saving the settings', ADMWPP_TEXT_DOMAIN),
+                    'per_column'   => 6,
+                    'type'         => 'checkbox',
                 )
             );
         }
