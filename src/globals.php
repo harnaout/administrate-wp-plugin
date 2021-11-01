@@ -20,26 +20,19 @@ if (!defined('ADMWPP_VOUCHER_CURRENCY_CODE')) {
 if (!defined('ADMWPP_NOT_NUMBER_MESSAGE')) {
     define(
         'ADMWPP_NOT_NUMBER_MESSAGE',
-        _x('Please enter a valid number.', 'Gift Voucher', 'admwpp')
+        'Please enter a valid number.'
     );
 }
 if (!defined('ADMWPP_VOUCHER_EMPTY_AMOUNT_MESSAGE')) {
     define(
         'ADMWPP_VOUCHER_EMPTY_AMOUNT_MESSAGE',
-        sprintf(
-            _x('Gift voucher is below the minimum value of 0.01 %s', 'Gift Voucher', 'admwpp'),
-            ADMWPP_VOUCHER_CURRENCY
-        )
+        'Gift voucher is below the minimum value of 0.01 %s'
     );
 }
 if (!defined('ADMWPP_VOUCHER_MAX_AMOUNT_MESSAGE')) {
     define(
         'ADMWPP_VOUCHER_MAX_AMOUNT_MESSAGE',
-        sprintf(
-            _x('Gift voucher is above the maximum value of %s %s', 'Gift Voucher', 'admwpp'),
-            ADMWPP_MAX_VOUCHER_AMOUNT,
-            ADMWPP_VOUCHER_CURRENCY
-        )
+        'Gift voucher is above the maximum value of %s %s'
     );
 }
 if (!defined('ADMWPP_NO_WEBLINK')) {

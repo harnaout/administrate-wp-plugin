@@ -598,9 +598,16 @@ if (!class_exists('Main')) {
                     'maxAmount' => ADMWPP_MAX_VOUCHER_AMOUNT,
                     'currencySymbol' => ADMWPP_VOUCHER_CURRENCY,
                     'error' => array(
-                        'notNumber' => ADMWPP_NOT_NUMBER_MESSAGE,
-                        'emptyAmount' => ADMWPP_VOUCHER_EMPTY_AMOUNT_MESSAGE,
-                        'maxAmount' => ADMWPP_VOUCHER_MAX_AMOUNT_MESSAGE,
+                        'notNumber' => _x(ADMWPP_NOT_NUMBER_MESSAGE, 'Gift Voucher', 'admwpp'),
+                        'emptyAmount' => sprintf(
+                            _x(ADMWPP_VOUCHER_EMPTY_AMOUNT_MESSAGE, 'Gift Voucher', 'admwpp'),
+                            ADMWPP_VOUCHER_CURRENCY
+                        ),
+                        'maxAmount' => sprintf(
+                            _x(ADMWPP_VOUCHER_MAX_AMOUNT_MESSAGE, 'Gift Voucher', 'admwpp'),
+                            ADMWPP_MAX_VOUCHER_AMOUNT,
+                            ADMWPP_VOUCHER_CURRENCY
+                        ),
                         'weblink' => ADMWPP_NO_WEBLINK,
                     )
                 )
