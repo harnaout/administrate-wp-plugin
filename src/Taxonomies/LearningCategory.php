@@ -161,6 +161,12 @@ if (! class_exists('LearningCategory')) {
 
         public static function getSychedTmsIds()
         {
+            $tmsIds = get_transient(ADMWPP_TRANS_TMS_LC_IDS);
+
+            if (!empty($tmsIds)) {
+                return $tmsIds;
+            }
+
             global $wpdb;
             $termsMetasTable = $wpdb->termmeta;
             $sql = "SELECT distinct(meta_value) FROM $termsMetasTable WHERE `meta_key` = %s";
@@ -172,6 +178,8 @@ if (! class_exists('LearningCategory')) {
                     $tmsIds[] = $tmsId->meta_value;
                 }
             }
+
+            set_transient(ADMWPP_TRANS_TMS_LC_IDS, $tmsIds, WEEK_IN_SECONDS);
             return $tmsIds;
         }
 

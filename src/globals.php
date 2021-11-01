@@ -57,6 +57,12 @@ define('ADMWPP_SEARCH_DATE_FORMAT', 'mm/dd/yy');
 define('ADMWPP_PER_PAGE', 20);
 
 // --------------------------------------------------------------------
+// Define Global For Transients Keys
+// --------------------------------------------------------------------
+define('ADMWPP_TRANS_TMS_LOCATIONS', 'admwpp_tms_locations');
+define('ADMWPP_TRANS_TMS_LC_IDS', 'admwpp_tms_categories_ids');
+
+// --------------------------------------------------------------------
 // Define Global variable To define the App Environments
 // --------------------------------------------------------------------
 global $ADMWPP_APP_ENVIRONMENT;
