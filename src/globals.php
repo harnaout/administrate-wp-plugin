@@ -36,7 +36,7 @@ if (!defined('ADMWPP_VOUCHER_MAX_AMOUNT_MESSAGE')) {
     );
 }
 if (!defined('ADMWPP_NO_WEBLINK')) {
-    define('ADMWPP_NO_WEBLINK', __('Weblink not active', 'admwpp'));
+    define('ADMWPP_NO_WEBLINK', 'Weblink not active');
 }
 // --------------------------------------------------------------------
 // Define Global variables For Search

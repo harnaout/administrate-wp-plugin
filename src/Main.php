@@ -608,7 +608,7 @@ if (!class_exists('Main')) {
                             ADMWPP_MAX_VOUCHER_AMOUNT,
                             ADMWPP_VOUCHER_CURRENCY
                         ),
-                        'weblink' => ADMWPP_NO_WEBLINK,
+                        'weblink' => _x(ADMWPP_NO_WEBLINK, 'Gift Voucher', 'admwpp'),
                     )
                 )
             );
