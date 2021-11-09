@@ -295,7 +295,7 @@ if (!class_exists('Search')) {
             $timezoneOffset = $today->format('P');
 
             if (isset($params['from']) && !empty($params['from'])) {
-                $from = date('Y-m-d', strtotime($params['from']));
+                $from = date(ADMWPP_SEARCH_DATE_GQL_FORMAT, strtotime($params['from']));
                 $from .= "T00:00:00" . $timezoneOffset;
                 $args['filters'][] = array(
                     'field' => 'start',
@@ -305,7 +305,7 @@ if (!class_exists('Search')) {
             }
 
             if (isset($params['to']) && !empty($params['to'])) {
-                $to = date('Y-m-d', strtotime($params['to']));
+                $to = date(ADMWPP_SEARCH_DATE_GQL_FORMAT, strtotime($params['to']));
                 $to .= "T23:59:59" . $timezoneOffset;
                 $args['filters'][] = array(
                     'field' => 'end',

@@ -42,10 +42,13 @@ if (!defined('ADMWPP_NO_WEBLINK')) {
 // Define Global variables For Search
 // --------------------------------------------------------------------
 define('ADMWPP_SEARCH_PER_PAGE', 10);
+define('ADMWPP_SEARCH_DATE_GQL_FORMAT', 'Y-m-d');
 
-if (!defined('ADMWPP_SEARCH_DATE_FORMAT')) {
-    define('ADMWPP_SEARCH_DATE_FORMAT', 'mm-dd-yy');
+if (!defined('ADMWPP_SEARCH_DATE_DISPLAY_FORMAT')) {
+    define('ADMWPP_SEARCH_DATE_DISPLAY_FORMAT', 'mm-dd-yy');
 }
+
+
 
 // --------------------------------------------------------------------
 // Define Global variables add a selection Block

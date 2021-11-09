@@ -590,7 +590,7 @@ if (!class_exists('Main')) {
                 'routeUrl' => ADMWPP_URL_ROUTES,
                 'ajaxUrl' => admin_url('admin-ajax.php'),
                 'search' => array(
-                    'dateFormat' => ADMWPP_SEARCH_DATE_FORMAT,
+                    'dateFormat' => ADMWPP_SEARCH_DATE_DISPLAY_FORMAT,
                     'perPage' => ADMWPP_SEARCH_PER_PAGE
                 ),
                 'giftVoucher' => array(
