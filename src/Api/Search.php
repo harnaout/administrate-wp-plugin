@@ -290,22 +290,23 @@ if (!class_exists('Search')) {
                 );
             }
 
-            if (isset($params['from']) && !empty($params['from'])
-                && isset($params['to']) && !empty($params['to'])) {
+            $timeZoneString = wp_timezone_string();
+            $today = new \DateTime("now", new \DateTimeZone($timeZoneString));
+            $timezoneOffset = $today->format('P');
+
+            if (isset($params['from']) && !empty($params['from'])) {
                 $from = date('Y-m-d', strtotime($params['from']));
-                $to = date('Y-m-d', strtotime($params['to']));
-
-                $timeZoneString = wp_timezone_string();
-                $today = new \DateTime("now", new \DateTimeZone($timeZoneString));
-                $timezoneOffset = $today->format('P');
                 $from .= "T00:00:00" . $timezoneOffset;
-                $to .= "T23:59:59" . $timezoneOffset;
-
                 $args['filters'][] = array(
                     'field' => 'start',
                     'operation' => 'ge',
                     'value' => $from,
                 );
+            }
+
+            if (isset($params['to']) && !empty($params['to'])) {
+                $to = date('Y-m-d', strtotime($params['to']));
+                $to .= "T23:59:59" . $timezoneOffset;
                 $args['filters'][] = array(
                     'field' => 'end',
                     'operation' => 'le',
