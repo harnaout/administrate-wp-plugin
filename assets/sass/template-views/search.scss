@@ -69,6 +69,12 @@
     }
     .adwmpp-dropdown-body {
         margin-bottom: 15px;
+        .admwpp-has-children {
+            background-color: #6c757d;
+        }
+        .admwpp-child-item {
+            padding-left: 10px;
+        }
     }
     .selectric-wrapper {
         width: 100%;

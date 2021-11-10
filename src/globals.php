@@ -57,6 +57,7 @@ define('ADMWPP_PER_PAGE', 20);
 // Define Global For Transients Keys
 // --------------------------------------------------------------------
 define('ADMWPP_TRANS_TMS_LOCATIONS', 'admwpp_tms_locations');
+define('ADMWPP_TRANS_TMS_CATEGORIES', 'admwpp_tms_categories');
 define('ADMWPP_TRANS_TMS_LC_IDS', 'admwpp_tms_categories_ids');
 
 // --------------------------------------------------------------------

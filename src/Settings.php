@@ -598,8 +598,9 @@ if (!class_exists('Settings')) {
                     'settings_key' => $settings_key,
                     'section_key'  => '',
                     'options'      => array(
-                        ADMWPP_TRANS_TMS_LC_IDS => 'Categories',
-                        ADMWPP_TRANS_TMS_LOCATIONS => 'Location',
+                        ADMWPP_TRANS_TMS_LC_IDS => 'Categories TMS Ids',
+                        ADMWPP_TRANS_TMS_CATEGORIES => 'Categories Filter',
+                        ADMWPP_TRANS_TMS_LOCATIONS => 'Location Filter',
                     ),
                     'disabled'     => '',
                     'info'         => __('Validation transients selection will be reset after saving the settings', ADMWPP_TEXT_DOMAIN),

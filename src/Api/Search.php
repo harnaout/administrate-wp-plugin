@@ -525,6 +525,62 @@ if (!class_exists('Search')) {
             return $catalogueOutput;
         }
 
+        public static function getCategoriesFilter()
+        {
+            $categories = get_transient(ADMWPP_TRANS_TMS_CATEGORIES);
+
+            if (!empty($categories)) {
+                return $categories;
+            }
+
+            $activate = Oauth2\Activate::instance();
+            $activate->setParams(true);
+            $apiParams = $activate::$params;
+
+            $portalToken = $activate->getAuthorizeToken(true);
+            $apiParams['portalToken'] = $portalToken;
+            $apiParams['portal'] = Settings::instance()->getSettingsOption('account', 'portal');
+
+            $authorizationHeaders = SDKClient::setHeaders($apiParams);
+            $client = new SDKClient($apiParams['apiUri'], $authorizationHeaders);
+
+            $gql = 'query categories {
+                categories(first: 1000) {
+                   edges {
+                        node {
+                            id
+                            name
+                            parent {
+                                id
+                                name
+                            }
+                        }
+                    }
+                }
+            }';
+
+            $results = $client->runRawQuery($gql);
+            $data = $results->getData();
+
+            if (isset($data->categories->edges)) {
+                $categoriesKeys = array();
+                $categories = array();
+                foreach ($data->categories->edges as $key => $edge) {
+                    $categoryNode = $edge->node;
+                    $categoriesKeys[] = $categoryNode->id;
+                    if (isset($categoryNode->parent->id)) {
+                        $categories[$categoryNode->parent->id]['children'][$categoryNode->id] = $categoryNode->name;
+                    } else {
+                        $categories[$categoryNode->id]['name'] = $categoryNode->name;
+                    }
+                }
+                set_transient(ADMWPP_TRANS_TMS_CATEGORIES, $categories, WEEK_IN_SECONDS);
+                set_transient(ADMWPP_TRANS_TMS_LC_IDS, $categoriesKeys, WEEK_IN_SECONDS);
+                return $categories;
+            }
+            return array();
+        }
+
         public static function getLocationsFilter()
         {
             $locations = get_transient(ADMWPP_TRANS_TMS_LOCATIONS);
