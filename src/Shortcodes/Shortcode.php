@@ -6,6 +6,7 @@ use ADM\WPPlugin\Oauth2;
 use ADM\WPPlugin\Settings;
 use ADM\WPPlugin\PostTypes\Course;
 
+use Administrate\PhpSdk\Catalogue as SDKCatalogue;
 use Administrate\PhpSdk\GraphQl\Client as SDKClient;
 
 if (! class_exists('Shortcode')) {
@@ -76,6 +77,7 @@ if (! class_exists('Shortcode')) {
         {
             add_shortcode('admwpp-gift-voucher', array($this, 'addGiftVoucherForm'));
             add_shortcode('admwpp-my-workshops', array($this, 'myWorkshops'));
+            add_shortcode('admwpp-bundled-lps', array($this, 'bundledLps'));
         }
 
         /*
@@ -345,6 +347,149 @@ if (! class_exists('Shortcode')) {
             }
 
             return array();
+        }
+
+        public static function bundledLps($atts)
+        {
+            extract(
+                shortcode_atts(
+                    array(
+                        'page' => 1,
+                        'per_page' => ADMWPP_PER_PAGE
+                    ),
+                    $atts
+                )
+            );
+
+            $params = array(
+                'page' => $page,
+                'per_page' => $per_page,
+            );
+
+            $bundledLps = self::getBundledLps($params);
+            $template = self::getTemplatePath('bundled-lps');
+            ob_start();
+            include $template;
+            $html = ob_get_contents();
+            ob_end_clean();
+
+            return $html;
+        }
+
+        /**
+         * Method to fetch BundledLps
+         */
+        public static function getBundledLps($params)
+        {
+            $activate = Oauth2\Activate::instance();
+            $activate->setParams(true);
+            $apiParams = $activate::$params;
+
+            $portalToken = $activate->getAuthorizeToken(true);
+            $apiParams['portalToken'] = $portalToken;
+            $apiParams['portal'] = Settings::instance()->getSettingsOption('account', 'portal');
+
+            $SDKCatalogue = new SDKCatalogue($apiParams);
+
+            $page = (int) $params['page'];
+            $perPage = (int) $params['per_page'];
+
+            $searchFields = array(
+                '__typename',
+                '... on LearningPath' => array(
+                    'id',
+                    'name',
+                    'start',
+                    'end',
+                    'price' => array(
+                        'amount',
+                        "financialUnit" => array('symbol')
+                    ),
+                    'learningObjectives' => array(
+                        'type' => 'edges',
+                        'fields' => array(
+                            'id',
+                            '__typename',
+                            '... on EventObjective' => array(
+                                'id',
+                                'event' => array(
+                                    'id',
+                                    'name',
+                                    'remainingPlaces',
+                                )
+                            )
+                        )
+                    )
+                ),
+            );
+
+            $args = array(
+                'search' => 'Bundled TEST', // this is for testing should be removed
+                'filters' => array(
+                    array(
+                        'field' => 'type',
+                        'operation' => 'eq',
+                        'value' => 'LearningPath',
+                    ),
+                    // array(
+                    //     'field' => 'isBundle',
+                    //     'operation' => 'eq',
+                    //     'value' => 'true',
+                    // )
+                ),
+                'customFieldFilters' => array(),
+                'fields' => $searchFields,
+                'paging' => array(
+                    'page' => $page,
+                    'perPage' => $perPage,
+                ),
+                'sorting' => array(
+                    'field' => 'name',
+                    'direction' => 'asc'
+                ),
+                'returnType' => 'array', //array, obj, json
+            );
+
+            $args = apply_filters('admwpp_bundled_lps_shortcode_args', $args);
+
+            $allCatalogue = $SDKCatalogue->loadAll($args);
+            $catalogue = $allCatalogue['catalogue'];
+
+            $bundledLps = array();
+            if (!empty($catalogue['edges'])) {
+                foreach ($catalogue['edges'] as $lp) {
+                    $lp = $lp['node'];
+                    $price = '';
+                    $symbol = '';
+                    $events = array();
+                    if (isset($lp['price']['amount'])) {
+                        $price = $lp['price']['amount'];
+                        if (isset($lp['price']['financialUnit'])) {
+                            $symbol = $lp['price']['financialUnit']['symbol'];
+                        }
+                    }
+                    if (isset($lp["learningObjectives"]["edges"]) && !empty($lp["learningObjectives"]["edges"])) {
+                        $learningObjectives = $lp["learningObjectives"]["edges"];
+                        foreach ($learningObjectives as $objective) {
+                            $objectiveNode = $objective['node'];
+                            if ($objectiveNode['__typename'] === 'EventObjective') {
+                                $events[] = $objectiveNode["event"];
+                            }
+                        }
+                    }
+                    $bundledLps[$lp['id']] = array(
+                        'type' => $lp['__typename'],
+                        'name' => $lp['name'],
+                        'start' => $lp['start'],
+                        'end' => $lp['end'],
+                        'formattedPrice' => $symbol . $price,
+                        'price' => $price,
+                        'symbol' => $symbol,
+                        'events' => $events,
+                    );
+                }
+            }
+            return $bundledLps;
         }
 
       /**
