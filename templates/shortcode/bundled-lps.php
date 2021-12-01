@@ -32,7 +32,7 @@
             echo "<tr class='admwpp-lp admwpp-lp-$tmsId'>";
             echo "<td class='admwpp-title'>" . $lp['name'] . "</td>";
             echo "<td class='admwpp-ojectives'>" . implode("<br/>", $ojectives) ."</td>";
-            echo "<td class='admwpp-language'></td>";
+            echo "<td class='admwpp-language'>" . $lp['language'] . "</td>";
             echo "<td class='admwpp-date'>$start - $end</td>";
             echo "<td class='admwpp-time'>$startTime - $endTime</td>";
             echo "<td class='admwpp-price'>" . $lp['formattedPrice'] . "</td>";

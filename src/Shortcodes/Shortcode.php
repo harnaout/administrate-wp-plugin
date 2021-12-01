@@ -401,9 +401,12 @@ if (! class_exists('Shortcode')) {
                     'name',
                     'start',
                     'end',
+                    // 'locale' => array (
+                    //     'name'
+                    // )
                     'price' => array(
                         'amount',
-                        "financialUnit" => array('symbol')
+                        'financialUnit' => array('symbol')
                     ),
                     'learningObjectives' => array(
                         'type' => 'edges',
@@ -461,8 +464,9 @@ if (! class_exists('Shortcode')) {
                     $lp = $lp['node'];
                     $price = '';
                     $symbol = '';
+                    $language = '';
                     $events = array();
-                    if (isset($lp['price']['amount'])) {
+                    if (isset($lp['price']) && isset($lp['price']['amount'])) {
                         $price = $lp['price']['amount'];
                         if (isset($lp['price']['financialUnit'])) {
                             $symbol = $lp['price']['financialUnit']['symbol'];
@@ -477,6 +481,9 @@ if (! class_exists('Shortcode')) {
                             }
                         }
                     }
+                    if (isset($lp['locale']) && isset($lp['locale']['name'])) {
+                        $language = $lp['locale']['name'];
+                    }
                     $bundledLps[$lp['id']] = array(
                         'type' => $lp['__typename'],
                         'name' => $lp['name'],
@@ -486,6 +493,7 @@ if (! class_exists('Shortcode')) {
                         'price' => $price,
                         'symbol' => $symbol,
                         'events' => $events,
+                        'language' => $language,
                     );
                 }
             }
