@@ -68,6 +68,9 @@ if (! class_exists('Shortcode')) {
         {
             add_action("wp_ajax_addGiftVoucher", array($this, 'addGiftVoucher'));
             add_action("wp_ajax_nopriv_addGiftVoucher", array($this, 'addGiftVoucher'));
+
+            add_action("wp_ajax_getBundledLpsAjax", array($this, 'getBundledLpsAjax'));
+            add_action("wp_ajax_nopriv_getBundledLpsAjax", array($this, 'getBundledLpsAjax'));
         }
 
         /**
@@ -355,11 +358,37 @@ if (! class_exists('Shortcode')) {
                 shortcode_atts(
                     array(
                         'page' => 1,
-                        'per_page' => ADMWPP_PER_PAGE
+                        'per_page' => ADMWPP_PER_PAGE,
+                        'ajax' => false
                     ),
                     $atts
                 )
             );
+
+            if (filter_var($ajax, FILTER_VALIDATE_BOOLEAN)) {
+                $template = self::getTemplatePath('bundled-lps-ajax');
+            } else {
+                $params = array(
+                    'page' => $page,
+                    'per_page' => $per_page,
+                );
+                $bundledLps = self::getBundledLps($params);
+                $template = self::getTemplatePath('bundled-lps');
+            }
+
+            ob_start();
+            include $template;
+            $html = ob_get_contents();
+            ob_end_clean();
+
+
+            return $html;
+        }
+
+        public static function getBundledLpsAjax()
+        {
+            $page = $_GET['page'];
+            $per_page = $_GET['per_page'];
 
             $params = array(
                 'page' => $page,
@@ -367,13 +396,25 @@ if (! class_exists('Shortcode')) {
             );
 
             $bundledLps = self::getBundledLps($params);
-            $template = self::getTemplatePath('bundled-lps');
+
+            if ($page == 1) {
+                $template = self::getTemplatePath('bundled-lps');
+            } else {
+                $template = self::getTemplatePath('bundled-lps-rows');
+            }
+
             ob_start();
             include $template;
             $html = ob_get_contents();
             ob_end_clean();
 
-            return $html;
+            $response = array(
+                'bundledLps' => $bundledLps,
+                'params' => $params,
+                'html' => $html,
+            );
+            echo json_encode($response);
+            wp_die();
         }
 
         /**
@@ -401,9 +442,9 @@ if (! class_exists('Shortcode')) {
                     'name',
                     'start',
                     'end',
-                    // 'locale' => array (
-                    //     'name'
-                    // )
+                    'locale' => array(
+                        'name'
+                    ),
                     'price' => array(
                         'amount',
                         'financialUnit' => array('symbol')
@@ -427,18 +468,12 @@ if (! class_exists('Shortcode')) {
             );
 
             $args = array(
-                'search' => 'Bundled TEST', // this is for testing should be removed
                 'filters' => array(
                     array(
-                        'field' => 'type',
+                        'field' => 'isBundle',
                         'operation' => 'eq',
-                        'value' => 'LearningPath',
-                    ),
-                    // array(
-                    //     'field' => 'isBundle',
-                    //     'operation' => 'eq',
-                    //     'value' => 'true',
-                    // )
+                        'value' => 'true',
+                    )
                 ),
                 'customFieldFilters' => array(),
                 'fields' => $searchFields,
@@ -457,6 +492,7 @@ if (! class_exists('Shortcode')) {
 
             $allCatalogue = $SDKCatalogue->loadAll($args);
             $catalogue = $allCatalogue['catalogue'];
+            $pageInfo = $catalogue['pageInfo'];
 
             $bundledLps = array();
             if (!empty($catalogue['edges'])) {
@@ -497,7 +533,17 @@ if (! class_exists('Shortcode')) {
                     );
                 }
             }
-            return $bundledLps;
+
+            $response = array(
+                'totalRecords' => $pageInfo['totalRecords'],
+                'totalNumPages' => (int) ceil($pageInfo['totalRecords'] / $perPage),
+                'currentPage' => $page,
+                'hasNextPage' => $pageInfo['hasNextPage'],
+                'hasPreviousPage' => $pageInfo['hasPreviousPage'],
+                'bundledLps' => $bundledLps,
+            );
+
+            return $response;
         }
 
       /**

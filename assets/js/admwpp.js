@@ -1,6 +1,7 @@
 /**
  * Main Administrate JS file
  *
+ * @depend common/base.js
  * @depend common/message.js
  *
  * @depend admwpp/shortcode.js
@@ -8,9 +9,9 @@
  */
 (function ($) {
     $(document).ready(function () {
-
       var message = new $.ADMMessage();
-      var shortcode = new $.ADMShortcode(message);
+      var base = new $.ADMBase(message);
+      var shortcode = new $.ADMShortcode(base, message);
 
       // Selectric
       if(jQuery().selectric) {

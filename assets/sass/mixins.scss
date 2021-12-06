@@ -28,6 +28,11 @@
   visibility: visible;
 }
 
+@mixin show-inline() {
+  display:    inline-block;
+  visibility: visible;
+}
+
 // Radius
 @mixin border-radius($radius: $border-radius) {
   -webkit-border-radius:  $radius;

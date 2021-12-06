@@ -1,11 +1,11 @@
 /**
  * Main Administrate JS file
  *
- * @depend admin/base.js
+ * @depend common/base.js
+ * @depend common/message.js
+ *
  * @depend admin/settings.js
  * @depend admin/metabox.js
- *
- * @depend common/message.js
  *
  */
 (function ($) {
