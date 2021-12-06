@@ -1,6 +1,6 @@
 'use strict';
 var gulp = require('gulp');
-const sass = require('gulp-sass')(require('node-sass'));
+const sass = require('gulp-sass')(require('sass'));
 var concat = require('gulp-concat');
 const rename = require('gulp-rename');
 const del = require('del');
