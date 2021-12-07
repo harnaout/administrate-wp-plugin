@@ -1,8 +1,9 @@
 (function ($) {
 
-  $.ADMShortcode = function (message) {
+  $.ADMShortcode = function (base, message) {
     // properties
     var self = this;
+    self.base  = base;
     self.message  = message;
 
     // Ajax Call Flag.
@@ -31,6 +32,19 @@
         }
       );
     }
+
+    if ($(defaults.bundledLpsAjax).length > 0) {
+      self.getBundledLps($(defaults.bundledLpsAjax));
+    }
+
+    $('body').on(
+      'click',
+      defaults.bundledLpsAjaxLoadMore,
+      function(e){
+        e.preventDefault();
+        self.getBundledLps($(this));
+      }
+    );
   };
 
   $.ADMShortcode.prototype = {
@@ -133,6 +147,53 @@
         }
       });
 
+    },
+
+    getBundledLps: function(button){
+      var self = this;
+      var defaults = $.ADMShortcode.defaults;
+      var baseDefaults  = $.ADMBase.defaults;
+
+      var page = button.data('page');
+      var parentId = button.data('container');
+      var parent    = $('#' + parentId);
+
+      if (button.hasClass(baseDefaults.loadingClass)) {
+        return;
+      }
+
+      button.addClass(baseDefaults.loadingClass);
+
+      var data = {
+        "action" : "getBundledLpsAjax",
+        "page" : button.data('page'),
+        "per_page": button.data('per_page'),
+        "post_id": button.data('post_id')
+      };
+
+      $.ajax({
+        type: "get",
+        url: admwpp.ajaxUrl,
+        data: data,
+        dataType: "json",
+        success: function (response) {
+
+          if (page == 1) {
+            $(parent).html(response.html);
+          } else {
+            $('tbody', parent).append(response.html);
+
+            if (response.hasNextPage) {
+              button.data('page', response.hasNextPage + 1);
+            } else {
+              button.remove();
+            }
+          }
+
+          button.removeClass(baseDefaults.loadingClass);
+        }
+      });
+
     }
   };
 
@@ -142,6 +203,9 @@
     giftVoucherFormAmount: 'admwpp-gift-voucher-amount',
     giftVoucherFormAmountValidate: '.admwpp-gift-voucher-amount-validate',
     giftVoucherMessage: '.admwpp-message',
+    bundledLpsAjax: '.admwpp-bundled-lps-ajax',
+    bundledLpsAjaxLoadMore: '.admwpp-bundled-loadmore-btn',
+    bundledLpsAjaxWrapper: '.admwpp-bundled-lps',
   };
 
 }(jQuery));

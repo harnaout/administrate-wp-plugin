@@ -1,0 +1,29 @@
+/* Shortcodes */
+.admwpp-bundled-lps {
+  margin-bottom: 20px;
+}
+.admwpp-bundled-loadmore-btn {
+  position: relative;
+  .admwpp-loader {
+    @include hide();
+    font-size: 15px;
+    position: absolute;
+    top: 4px;
+    right: 5px;
+  }
+  &.admwpp-loading {
+    cursor: default !important;
+    background-color: $grey;
+    border-color: $grey;
+    padding-right: 25px;
+    &:hover {
+      cursor: default !important;
+      background-color: $grey;
+      border-color: $grey;
+    }
+    .admwpp-loader {
+       @include show-inline();
+    }
+  }
+}
+/* End Shoprtcodes */

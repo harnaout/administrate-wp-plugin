@@ -6,6 +6,7 @@ use ADM\WPPlugin\Oauth2;
 use ADM\WPPlugin\Settings;
 use ADM\WPPlugin\PostTypes\Course;
 
+use Administrate\PhpSdk\Catalogue as SDKCatalogue;
 use Administrate\PhpSdk\GraphQl\Client as SDKClient;
 
 if (! class_exists('Shortcode')) {
@@ -67,6 +68,9 @@ if (! class_exists('Shortcode')) {
         {
             add_action("wp_ajax_addGiftVoucher", array($this, 'addGiftVoucher'));
             add_action("wp_ajax_nopriv_addGiftVoucher", array($this, 'addGiftVoucher'));
+
+            add_action("wp_ajax_getBundledLpsAjax", array($this, 'getBundledLpsAjax'));
+            add_action("wp_ajax_nopriv_getBundledLpsAjax", array($this, 'getBundledLpsAjax'));
         }
 
         /**
@@ -76,6 +80,7 @@ if (! class_exists('Shortcode')) {
         {
             add_shortcode('admwpp-gift-voucher', array($this, 'addGiftVoucherForm'));
             add_shortcode('admwpp-my-workshops', array($this, 'myWorkshops'));
+            add_shortcode('admwpp-bundled-lps', array($this, 'bundledLps'));
         }
 
         /*
@@ -345,6 +350,200 @@ if (! class_exists('Shortcode')) {
             }
 
             return array();
+        }
+
+        public static function bundledLps($atts)
+        {
+            extract(
+                shortcode_atts(
+                    array(
+                        'page' => 1,
+                        'per_page' => ADMWPP_PER_PAGE,
+                        'ajax' => false
+                    ),
+                    $atts
+                )
+            );
+
+            if (filter_var($ajax, FILTER_VALIDATE_BOOLEAN)) {
+                $template = self::getTemplatePath('bundled-lps-ajax');
+            } else {
+                $params = array(
+                    'page' => $page,
+                    'per_page' => $per_page,
+                );
+                $bundledLps = self::getBundledLps($params);
+                $template = self::getTemplatePath('bundled-lps');
+            }
+
+            ob_start();
+            include $template;
+            $html = ob_get_contents();
+            ob_end_clean();
+
+
+            return $html;
+        }
+
+        public static function getBundledLpsAjax()
+        {
+            $page = $_GET['page'];
+            $per_page = $_GET['per_page'];
+
+            $params = array(
+                'page' => $page,
+                'per_page' => $per_page,
+            );
+
+            $bundledLps = self::getBundledLps($params);
+
+            if ($page == 1) {
+                $template = self::getTemplatePath('bundled-lps');
+            } else {
+                $template = self::getTemplatePath('bundled-lps-rows');
+            }
+
+            ob_start();
+            include $template;
+            $html = ob_get_contents();
+            ob_end_clean();
+
+            $response = array(
+                'bundledLps' => $bundledLps,
+                'params' => $params,
+                'html' => $html,
+            );
+            echo json_encode($response);
+            wp_die();
+        }
+
+        /**
+         * Method to fetch BundledLps
+         */
+        public static function getBundledLps($params)
+        {
+            $activate = Oauth2\Activate::instance();
+            $activate->setParams(true);
+            $apiParams = $activate::$params;
+
+            $portalToken = $activate->getAuthorizeToken(true);
+            $apiParams['portalToken'] = $portalToken;
+            $apiParams['portal'] = Settings::instance()->getSettingsOption('account', 'portal');
+
+            $SDKCatalogue = new SDKCatalogue($apiParams);
+
+            $page = (int) $params['page'];
+            $perPage = (int) $params['per_page'];
+
+            $searchFields = array(
+                '__typename',
+                '... on LearningPath' => array(
+                    'id',
+                    'name',
+                    'start',
+                    'end',
+                    'locale' => array(
+                        'name'
+                    ),
+                    'price' => array(
+                        'amount',
+                        'financialUnit' => array('symbol')
+                    ),
+                    'learningObjectives' => array(
+                        'type' => 'edges',
+                        'fields' => array(
+                            'id',
+                            '__typename',
+                            '... on EventObjective' => array(
+                                'id',
+                                'event' => array(
+                                    'id',
+                                    'name',
+                                    'remainingPlaces',
+                                )
+                            )
+                        )
+                    )
+                ),
+            );
+
+            $args = array(
+                'filters' => array(
+                    array(
+                        'field' => 'isBundle',
+                        'operation' => 'eq',
+                        'value' => 'true',
+                    )
+                ),
+                'customFieldFilters' => array(),
+                'fields' => $searchFields,
+                'paging' => array(
+                    'page' => $page,
+                    'perPage' => $perPage,
+                ),
+                'sorting' => array(
+                    'field' => 'name',
+                    'direction' => 'asc'
+                ),
+                'returnType' => 'array', //array, obj, json
+            );
+
+            $args = apply_filters('admwpp_bundled_lps_shortcode_args', $args);
+
+            $allCatalogue = $SDKCatalogue->loadAll($args);
+            $catalogue = $allCatalogue['catalogue'];
+            $pageInfo = $catalogue['pageInfo'];
+
+            $bundledLps = array();
+            if (!empty($catalogue['edges'])) {
+                foreach ($catalogue['edges'] as $lp) {
+                    $lp = $lp['node'];
+                    $price = '';
+                    $symbol = '';
+                    $language = '';
+                    $events = array();
+                    if (isset($lp['price']) && isset($lp['price']['amount'])) {
+                        $price = $lp['price']['amount'];
+                        if (isset($lp['price']['financialUnit'])) {
+                            $symbol = $lp['price']['financialUnit']['symbol'];
+                        }
+                    }
+                    if (isset($lp["learningObjectives"]["edges"]) && !empty($lp["learningObjectives"]["edges"])) {
+                        $learningObjectives = $lp["learningObjectives"]["edges"];
+                        foreach ($learningObjectives as $objective) {
+                            $objectiveNode = $objective['node'];
+                            if ($objectiveNode['__typename'] === 'EventObjective') {
+                                $events[] = $objectiveNode["event"];
+                            }
+                        }
+                    }
+                    if (isset($lp['locale']) && isset($lp['locale']['name'])) {
+                        $language = $lp['locale']['name'];
+                    }
+                    $bundledLps[$lp['id']] = array(
+                        'type' => $lp['__typename'],
+                        'name' => $lp['name'],
+                        'start' => $lp['start'],
+                        'end' => $lp['end'],
+                        'formattedPrice' => $symbol . $price,
+                        'price' => $price,
+                        'symbol' => $symbol,
+                        'events' => $events,
+                        'language' => $language,
+                    );
+                }
+            }
+
+            $response = array(
+                'totalRecords' => $pageInfo['totalRecords'],
+                'totalNumPages' => (int) ceil($pageInfo['totalRecords'] / $perPage),
+                'currentPage' => $page,
+                'hasNextPage' => $pageInfo['hasNextPage'],
+                'hasPreviousPage' => $pageInfo['hasPreviousPage'],
+                'bundledLps' => $bundledLps,
+            );
+
+            return $response;
         }
 
       /**
