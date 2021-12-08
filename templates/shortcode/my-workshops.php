@@ -33,7 +33,7 @@
                         $reserved = $event['reserved'] ? 'YES' : 'NO';
                         $type = $event['type'];
                         $location = $event['location'];
-                        $start = date(ADMWPP_DATE_FORMAT, strtotime($event['start']));
+                        $start = date(ADMWPP_DATE_TIME_FORMAT, strtotime($event['start']));
                         echo "<tr class='admwpp-event admwpp-event-$key admwpp-event-$type'>";
                         echo "<td class='admwpp-title'>$title</td>";
                         echo "<td class='admwpp-location'>$location</td>";
