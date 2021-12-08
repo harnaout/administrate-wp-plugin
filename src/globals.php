@@ -48,10 +48,8 @@ if (!defined('ADMWPP_SEARCH_DATE_DISPLAY_FORMAT')) {
     define('ADMWPP_SEARCH_DATE_DISPLAY_FORMAT', 'mm-dd-yy');
 }
 
-
-
 // --------------------------------------------------------------------
-// Define Global variables add a selection Block
+// Define Global variables for Shortcodes / Listings
 // --------------------------------------------------------------------
 define('ADMWPP_PER_PAGE', 20);
 

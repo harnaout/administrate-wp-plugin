@@ -310,11 +310,11 @@ abstract class ActiveModel
         $array = array();
 
         if ($this->is_new()) {
-            $array['created_at']    = date(ADMWPP_DATE_FORMAT);
-            $array['updated_at']    = date(ADMWPP_DATE_FORMAT);
+            $array['created_at']    = date(ADMWPP_DATE_TIME_FORMAT);
+            $array['updated_at']    = date(ADMWPP_DATE_TIME_FORMAT);
             $array['status']        = $this->get_status();
         } else {
-            $array['updated_at']    = date(ADMWPP_DATE_FORMAT);
+            $array['updated_at']    = date(ADMWPP_DATE_TIME_FORMAT);
             $array['id']            = $this->get_id();
             $array['status']        = $this->get_status();
         }

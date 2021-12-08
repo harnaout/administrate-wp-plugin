@@ -44,7 +44,10 @@ define('ADMWPP_URL_ROUTES', plugin_dir_url(__FILE__) . ADMWPP_SRC . 'routes.php'
 define('ADMWPP_PLUGIN_NAME', plugin_basename(__FILE__));
 define('ADMWPP_ASSETS_URL', plugin_dir_url(__FILE__) . "assets/");
 
-define('ADMWPP_DATE_FORMAT', 'Y-m-d H:i:s');
+define('ADMWPP_DATE_FORMAT', 'Y-m-d');
+define('ADMWPP_TIME_FORMAT', 'H:i:s');
+define('ADMWPP_DATE_TIME_FORMAT', ADMWPP_DATE_FORMAT . ' ' . ADMWPP_TIME_FORMAT);
+
 define('ADMWPP_TEXT_DOMAIN', 'admwpp');
 define('ADMWPP_PREFIX', 'admwpp');
 

@@ -5,8 +5,8 @@ foreach ($bundledLps['bundledLps'] as $tmsId => $lp) {
         $ojectives[] = $event['name'];
     }
 
-    $start = date('d/m/Y', strtotime($lp['start']));
-    $end = date('d/m/Y', strtotime($lp['end']));
+    $start = date(ADMWPP_DATE_FORMAT, strtotime($lp['start']));
+    $end = date(ADMWPP_DATE_FORMAT, strtotime($lp['end']));
 
     $startTime = date('h:m', strtotime($lp['start']));
     $endTime = date('h:m', strtotime($lp['end']));
