@@ -1484,6 +1484,12 @@ if (!class_exists('Course')) {
                 }
             }
 
+            $content = '';
+            if ('LP' == $type) {
+                $content = $node['description'];
+            }
+            $postArgs['post_content'] = $content;
+
             if ($postMetas) {
                 $postArgs['meta_input'] = $postMetas;
 
@@ -1497,7 +1503,9 @@ if (!class_exists('Course')) {
                 $tmsCourseContentMetaKeys = array(); // TODO: populate this array from settings
                 $tmsCourseContentMetaKeys = apply_filters('admwpp_course_content_meta_keys', $tmsCourseContentMetaKeys);
 
-                $content = '';
+                if ($content && !empty($tmsCourseContentMetaKeys)) {
+                    $content .= "<br/>";
+                }
                 foreach ($tmsCourseContentMetaKeys as $fieldKey) {
                     $content .= $postMetas[$fieldKey];
                     $content .= "<br/>";
