@@ -351,6 +351,7 @@ if (!class_exists('Settings')) {
             $settings['transients'] = array();
             if (empty($settings)) {
                 //Setup defaults
+                $settings['search_suggestions'] = 0;
             }
 
             $this->settings[$settings_index] = $settings;
@@ -501,6 +502,26 @@ if (!class_exists('Settings')) {
                     'settings_key' => $settings_key,
                     'placeholder'  => 'Locations Filters',
                     'info'         => '<p>' . __('This will Disable / Enable Locations Filters in the search page', ADMWPP_TEXT_DOMAIN) . '</p>',
+                )
+            );
+
+            add_settings_section(
+                'admwpp_search_auto',
+                "<span class='admwpp-section-title'>" . __('Auto Complete Suggestions', ADMWPP_TEXT_DOMAIN) . "</span>",
+                array(),
+                "admwpp_" . $settings_key . "_settings"
+            );
+
+            add_settings_field(
+                'admwpp_search_auto_section',
+                __('Auto complete Suggestions', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldInputBoolean'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_search_auto',
+                array(
+                    'field'        => 'search_suggestions',
+                    'settings_key' => $settings_key,
+                    'info'         => '<p>' . __('This will Disable / Enable Auto complete Suggestions on the search input field', ADMWPP_TEXT_DOMAIN) . '</p>',
                 )
             );
 

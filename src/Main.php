@@ -573,6 +573,7 @@ if (!class_exists('Main')) {
                 'jquery-ui-dialog',
                 'jquery-effects-core',
                 'jquery-ui-datepicker',
+                'jquery-ui-autocomplete',
             );
 
             if (!$stylesSettings) :

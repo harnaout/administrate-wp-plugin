@@ -93,6 +93,18 @@
   position: absolute;
   right: 5px;
 }
+.adwmpp-search-wrapper .adwmpp-search-auto-complete.ui-autocomplete-loading {
+  background: url("../../../../../wp-admin/images/spinner.gif") no-repeat right center;
+}
+
+.adwmpp-filter-wrapper {
+  position: relative;
+}
+
+.adwmpp-autocomplete-dropdown {
+  overflow-x: auto;
+  max-height: 300px;
+}
 
 .adwmpp-mobile-filter-button-wrapper {
   display: none;
