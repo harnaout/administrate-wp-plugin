@@ -456,15 +456,20 @@ if (!class_exists('Search')) {
             $client = new SDKClient($apiParams['apiUri'], $authorizationHeaders);
 
             $gql = 'query locations {
-              locations {
-                edges {
-                  node {
-                    id
-                    name
+                locations(filters: [{
+                  field: status,
+                  operation: eq
+                  value: "active"
+                }]) {
+                  edges {
+                    node {
+                      id
+                      name
+                      status
+                    }
                   }
                 }
-              }
-            }';
+              }';
 
             $results = $client->runRawQuery($gql);
             $data = $results->getData();
