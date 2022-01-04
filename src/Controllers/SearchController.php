@@ -32,4 +32,23 @@ class SearchController extends Base\ActionController
         echo json_encode($accounts);
         die();
     }
+
+    public static function autoComplete()
+    {
+        $params = self::$params;
+        $search = $params['query'];
+        $courses = Api\Search::getCoursesTitles($search);
+        $coursesTitles = array();
+        if ($courses) {
+            $coursesTitles = array();
+            foreach ($courses as $key => $value) {
+                $coursesTitles[] = array(
+                    'value' => $value,
+                    'label' => $value
+                );
+            }
+        }
+        echo json_encode($coursesTitles);
+        die();
+    }
 }

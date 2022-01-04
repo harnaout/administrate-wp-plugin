@@ -58,6 +58,16 @@ if (!class_exists('Search')) {
             ),
         );
 
+        static $searchAutoCompleteFields = array(
+            '__typename',
+            '... on Course' => array(
+                'name',
+            ),
+            '... on LearningPath' => array(
+                'name',
+            ),
+        );
+
         function __construct()
         {
             if (file_exists(ABSPATH . 'wp-load.php')) {
@@ -149,6 +159,8 @@ if (!class_exists('Search')) {
                 $attsArray['locations_filter_type'] = 'select';
             }
 
+            $searchSuggestions = (int) Settings::instance()->getSettingsOption('search', 'search_suggestions');
+
             extract(
                 shortcode_atts(
                     $attsArray,
@@ -234,7 +246,7 @@ if (!class_exists('Search')) {
             return $html;
         }
 
-        public static function search($params)
+        public static function search($params, $autoComplete = false)
         {
             $activate = Oauth2\Activate::instance();
             $activate->setParams(true);
@@ -265,6 +277,10 @@ if (!class_exists('Search')) {
                 ),
                 'returnType' => 'array', //array, obj, json
             );
+
+            if ($autoComplete) {
+                $args['fields'] = self::$searchAutoCompleteFields;
+            }
 
             if (isset($params['lcat']) && !empty($params['lcat'])) {
                 $args['filters'][] = array(
@@ -365,7 +381,12 @@ if (!class_exists('Search')) {
 
             $pageInfo = $catalogue['pageInfo'];
             $catalogue = $catalogue['edges'];
-            $catalogue = self::formatCatalogueOutput($catalogue);
+
+            if ($autoComplete) {
+                $catalogue = self::formatAutoCompleteCatalogueOutput($catalogue);
+            } else {
+                $catalogue = self::formatCatalogueOutput($catalogue);
+            }
 
             $results = array(
                 'totalRecords' => $pageInfo['totalRecords'],
@@ -377,6 +398,37 @@ if (!class_exists('Search')) {
             );
 
             return $results;
+        }
+
+        /**
+         * Function to get course titles from catalogue
+         * Used for autocomplete on search input filed.
+         *
+         * @param  string    $query to search for.
+         *
+         * @return array    of Courses/LPs titles to select from.
+         */
+        public static function getCoursesTitles($query)
+        {
+            $query = stripcslashes(urldecode(strip_tags($query)));
+            $query = filter_var(trim($query), FILTER_SANITIZE_STRING);
+            $query = str_replace("\\", "", $query);
+
+            $params = array(
+                'query' => $query,
+                'page' => 1,
+                'per_page' => 100
+            );
+
+            $results = self::search($params, true);
+            $coursesTitles = array();
+            if (!empty($results['courses'])) {
+                $courses = $results['courses'];
+                foreach ($courses as $course) {
+                    $coursesTitles[] = $course['name'];
+                }
+            }
+            return $coursesTitles;
         }
 
         /**
@@ -433,6 +485,26 @@ if (!class_exists('Search')) {
                 );
             }
 
+            return $catalogueOutput;
+        }
+
+        /**
+         * Function to format catalogue output
+         *
+         * @param  array    $catalogue array of courses & learnings paths
+         *
+         * @return array    array of formatted course output
+         */
+        public static function formatAutoCompleteCatalogueOutput($catalogue)
+        {
+            $catalogueOutput = array();
+            foreach ($catalogue as $course) {
+                $course = $course['node'];
+                $catalogueOutput[] = array(
+                    'type' => $course['__typename'],
+                    'name' => $course['name'],
+                );
+            }
             return $catalogueOutput;
         }
 

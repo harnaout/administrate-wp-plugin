@@ -11,10 +11,18 @@
     <form class="adwmpp-filters-form" id="adwmpp-search-form" method="GET">
         <div class='row adwmpp-filters-row'>
             <div class='col-sm-12 col-md-4 input-wrapper adwmpp-search-wrapper'>
-                <input class="adwmpp-search-input" type="text" name='query' value='<?php echo $query; ?>' placeholder="<?php _e('Search...', ADMWPP_TEXT_DOMAIN); ?>" autocomplete="off"/>
-                <button type="submit" class="adwmpp-search-button btn">
-                    <i class="fa fa-search"></i>
-                </button>
+                <div class="adwmpp-filter-wrapper adwmpp-input-wrapper adwmpp-text">
+                    <?php
+                    $searchInputClass = "";
+                    if ($searchSuggestions) {
+                        $searchInputClass = "adwmpp-search-auto-complete";
+                    }
+                    ?>
+                    <input class="adwmpp-search-input <?php echo $searchInputClass; ?>" type="text" name='query' value='<?php echo $query; ?>' placeholder="<?php _e('Search...', ADMWPP_TEXT_DOMAIN); ?>" autocomplete="off"/>
+                    <button type="submit" class="adwmpp-search-button btn">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
             </div>
             <div class='col-sm-12 col-md-4'><?php include($categoryFilterTemplate); ?></div>
             <div class='col-sm-12 col-md-4'><?php include($locationsFilterTemplate); ?></div>
