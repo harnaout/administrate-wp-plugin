@@ -618,8 +618,8 @@
           } else {
             $('tbody', parent).append(response.html);
 
-            if (response.hasNextPage) {
-              button.data('page', response.hasNextPage + 1);
+            if (response.bundledLps.hasNextPage) {
+              button.data('page', response.bundledLps.currentPage + 1);
             } else {
               button.remove();
             }
