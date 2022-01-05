@@ -1,11 +1,11 @@
 <?php
 global $post;
-$postId = 0;
+$post_id = 0;
 if (isset($post)) {
-    $postId = $post->ID;
+    $post_id = $post->ID;
 }
 if (isset($_GET['post_id'])) {
-    $postId = $_GET['post_id'];
+    $post_id = $_GET['post_id'];
 }
 ?>
 <div id='amwpp-bundled-lps' class="admwpp-bundled-lps row justify-content-center">
