@@ -137,6 +137,7 @@ if (!class_exists('Search')) {
             $vars[] = 'dayofweek';
             $vars[] = 'timeofday';
             $vars[] = 'minplaces';
+            $vars[] = 'type';
             return $vars;
         }
 
@@ -196,6 +197,7 @@ if (!class_exists('Search')) {
                 trim(get_query_var('per_page', $per_page)),
                 FILTER_SANITIZE_NUMBER_INT
             );
+            $type = self::sanitizeCourseTypes(filter_var(trim(get_query_var('type')), FILTER_SANITIZE_STRING));
 
             $params = array(
                 'query' => $query,
@@ -219,6 +221,9 @@ if (!class_exists('Search')) {
             if ($loc) {
                 $params['loc'] = $loc;
             }
+            if ($type) {
+                $params['type'] = $type;
+            }
 
             $searchResults = self::search($params);
 
@@ -229,6 +234,7 @@ if (!class_exists('Search')) {
             $dayOfWeekTemplate = self::getTemplatePath('dayofweek-filter');
             $timeOfDayTemplate = self::getTemplatePath('timeofday-filter');
             $minPlacesTemplate = self::getTemplatePath('minplaces-filter');
+            $typesTemplate = self::getTemplatePath('types-filter');
             $courseTemplate = self::getTemplatePath('course');
             $pagerTemplate = self::getTemplatePath('pager');
 
@@ -237,6 +243,9 @@ if (!class_exists('Search')) {
 
             global $ADMWPP_SEARCH_TIMEOFDAY;
             $timeofdayFilter = apply_filters('admwpp_time_of_day_filter', $ADMWPP_SEARCH_TIMEOFDAY);
+
+            global $ADMWPP_SEARCH_COURSES_TYPES;
+            $typesFilter = apply_filters('admwpp_course_types_filter', $ADMWPP_SEARCH_COURSES_TYPES);
 
             ob_start();
             include $template;
@@ -371,6 +380,14 @@ if (!class_exists('Search')) {
                     'field' => 'remainingPlaces',
                     'operation' => 'ge',
                     'value' => $params['minplaces'],
+                );
+            }
+
+            if (isset($params['type']) && !empty($params['type'])) {
+                $args['filters'][] = array(
+                    'field' => 'type',
+                    'operation' => 'eq',
+                    'value' => $params['type'],
                 );
             }
 
@@ -666,6 +683,17 @@ if (!class_exists('Search')) {
                 }
             }
             return $filteredLocationIds;
+        }
+
+        public static function sanitizeCourseTypes($type)
+        {
+            if (!empty($type)) {
+                global $ADMWPP_SEARCH_COURSES_TYPES;
+                if (in_array($type, array_keys($ADMWPP_SEARCH_COURSES_TYPES))) {
+                    return $type;
+                }
+            }
+            return '';
         }
     }
 }

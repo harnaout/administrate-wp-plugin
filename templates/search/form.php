@@ -24,18 +24,18 @@
                     </button>
                 </div>
             </div>
+            <div class='col-sm-12 col-md-4'><?php include($typesTemplate); ?></div>
             <div class='col-sm-12 col-md-4'><?php include($categoryFilterTemplate); ?></div>
-            <div class='col-sm-12 col-md-4'><?php include($locationsFilterTemplate); ?></div>
         </div>
         <div class='row adwmpp-filters-row'>
+            <div class='col-sm-12 col-md-4'><?php include($locationsFilterTemplate); ?></div>
             <div class='col-sm-12 col-md-4'><?php include($dayOfWeekTemplate); ?></div>
             <div class='col-sm-12 col-md-4'><?php include($timeOfDayTemplate); ?></div>
-            <div class='col-sm-12 col-md-4'><?php include($minPlacesTemplate); ?></div>
         </div>
         <div class='row adwmpp-filters-row'>
+            <div class='col-sm-12 col-md-4'><?php include($minPlacesTemplate); ?></div>
             <div class='col-sm-12 col-md-4'><?php include($dateFilterTemplate); ?></div>
-            <div class='col-sm-12 col-md-6'></div>
-            <div class='col-sm-12 col-md-2'>
+            <div class='col-sm-12 col-md-4'>
                 <div class="adwmpp-dropdown-footer dropdown-footer pull-right">
                     <div class="adwmpp-links-wrapper links-wrapper">
                         <?php
