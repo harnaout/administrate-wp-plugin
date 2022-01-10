@@ -134,3 +134,9 @@ $ADMWPP_SEARCH_TIMEOFDAY = array(
     'evening' => 'Evening',
     'allday' => 'All day',
 );
+
+global $ADMWPP_SEARCH_COURSES_TYPES;
+$ADMWPP_SEARCH_COURSES_TYPES = array(
+    'CourseTemplate' => __('Course', 'admwpp'),
+    'LearningPath' => __('Learning Path', 'admwpp'),
+);
