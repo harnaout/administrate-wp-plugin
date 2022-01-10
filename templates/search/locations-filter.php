@@ -6,7 +6,7 @@ $locationsFilter = ADM\WPPlugin\Api\Search::getLocationsFilter();
         <div class="adwmpp-dropdown-body dropdown-body">
             <select class="admwpp-select admwpp-custom-select" name="loc[]" multiple>
                 <option class="adwmpp-option-item option-item" value="">
-                    <?php _e('Locations', 'admwpp'); ?>
+                    <?php _e('All Locations', 'admwpp'); ?>
                 </option>
                 <?php
                 if ($locationsFilter) :
