@@ -3,7 +3,7 @@
         <div class="adwmpp-dropdown-body dropdown-body">
             <select class="admwpp-select admwpp-custom-select" name="type">
                 <option class="adwmpp-option-item option-item" value="">
-                    <?php _e('Type', 'admwpp'); ?>
+                    <?php _e('All Types', 'admwpp'); ?>
                 </option>
                 <?php
                 if ($typesFilter) :
