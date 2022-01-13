@@ -359,7 +359,9 @@ if (! class_exists('Shortcode')) {
                     array(
                         'page' => 1,
                         'per_page' => ADMWPP_PER_PAGE,
-                        'ajax' => false
+                        'ajax' => false,
+                        'order_by' => 'name',
+                        'order_direction' => 'asc'
                     ),
                     $atts
                 )
@@ -371,6 +373,10 @@ if (! class_exists('Shortcode')) {
                 $params = array(
                     'page' => $page,
                     'per_page' => $per_page,
+                    'sorting' => array(
+                        'field' => $order_by,
+                        'direction' => $order_direction
+                    )
                 );
                 $bundledLps = self::getBundledLps($params);
                 $template = self::getTemplatePath('bundled-lps');
@@ -389,10 +395,17 @@ if (! class_exists('Shortcode')) {
         {
             $page = $_GET['page'];
             $per_page = $_GET['per_page'];
+            $order_by = $_GET['order_by'];
+            $order_direction = $_GET['order_direction'];
+            $sorting = array(
+                'field' => $order_by,
+                'direction' => $order_direction
+            );
 
             $params = array(
                 'page' => $page,
                 'per_page' => $per_page,
+                'sorting' => $sorting
             );
 
             $bundledLps = self::getBundledLps($params);
@@ -481,12 +494,11 @@ if (! class_exists('Shortcode')) {
                     'page' => $page,
                     'perPage' => $perPage,
                 ),
-                'sorting' => array(
-                    'field' => 'name',
-                    'direction' => 'asc'
-                ),
                 'returnType' => 'array', //array, obj, json
             );
+            if (isset($params['sorting']) && !empty($params['sorting'])) {
+                $args['sorting'] = $params['sorting'];
+            }
 
             $args = apply_filters('admwpp_bundled_lps_shortcode_args', $args);
 
