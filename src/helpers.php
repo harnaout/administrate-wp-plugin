@@ -71,18 +71,28 @@ function admwppPrimaryLanguage()
     return $languages[0];
 }
 
-function admwppTrimText($string, $wordsreturned=25)
+function admwppTrimText($string, $wordsreturned = 25)
 {
     $retval = $string = strip_tags($string);
 
     $array = explode(" ", $string);
-    if (count($array) <= $wordsreturned)
-    {
+    if (count($array) <= $wordsreturned) {
         $retval = $string;
-    } else
-    {
+    } else {
         array_splice($array, $wordsreturned);
         $retval = implode(" ", $array) . " ...";
     }
     return $retval;
+}
+
+function buildDataAttributes($params, $return = 'array')
+{
+    $dataAttr = array();
+    foreach ($params as $key => $value) {
+        $dataAttr[] = "data-$key='$value'";
+    }
+    if ('string' == $return) {
+        return implode(" ", $dataAttr);
+    }
+    return $dataAttr;
 }

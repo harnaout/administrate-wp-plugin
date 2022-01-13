@@ -354,27 +354,39 @@ if (! class_exists('Shortcode')) {
 
         public static function bundledLps($atts)
         {
-            extract(
-                shortcode_atts(
-                    array(
-                        'page' => 1,
-                        'per_page' => ADMWPP_PER_PAGE,
-                        'ajax' => false
+            $params = shortcode_atts(
+                array(
+                    'page' => 1,
+                    'per_page' => ADMWPP_PER_PAGE,
+                    'ajax' => false,
+                    'order_by' => 'name',
+                    'order_direction' => 'asc',
+                    'post_id' => 0
                     ),
-                    $atts
-                )
+                $atts
             );
 
-            if (filter_var($ajax, FILTER_VALIDATE_BOOLEAN)) {
+            global $post;
+            if (isset($post)) {
+                $params['post_id'] = $post->ID;
+            }
+            if (isset($_GET['post_id'])) {
+                $params['post_id'] = $_GET['post_id'];
+            }
+
+            if (filter_var($params['ajax'], FILTER_VALIDATE_BOOLEAN)) {
                 $template = self::getTemplatePath('bundled-lps-ajax');
             } else {
-                $params = array(
-                    'page' => $page,
-                    'per_page' => $per_page,
-                );
                 $bundledLps = self::getBundledLps($params);
+                if ($bundledLps['hasNextPage']) {
+                    $params['page'] = $bundledLps['currentPage'] + 1;
+                }
                 $template = self::getTemplatePath('bundled-lps');
             }
+
+            $params['data_attr'] = buildDataAttributes($params, 'string');
+
+            extract($params);
 
             ob_start();
             include $template;
@@ -387,21 +399,20 @@ if (! class_exists('Shortcode')) {
 
         public static function getBundledLpsAjax()
         {
-            $page = $_GET['page'];
-            $per_page = $_GET['per_page'];
-
-            $params = array(
-                'page' => $page,
-                'per_page' => $per_page,
-            );
-
+            $params = $_GET['params'];
             $bundledLps = self::getBundledLps($params);
 
-            if ($page == 1) {
+            if ($params['page'] == 1) {
                 $template = self::getTemplatePath('bundled-lps');
             } else {
                 $template = self::getTemplatePath('bundled-lps-rows');
             }
+
+            if ($bundledLps['hasNextPage']) {
+                $params['page'] = $bundledLps['currentPage'] + 1;
+            }
+
+            $data_attr = buildDataAttributes($params, 'string');
 
             ob_start();
             include $template;
@@ -434,6 +445,8 @@ if (! class_exists('Shortcode')) {
 
             $page = (int) $params['page'];
             $perPage = (int) $params['per_page'];
+            $order_by = $params['order_by'];
+            $order_direction = $params['order_direction'];
 
             $searchFields = array(
                 '__typename',
@@ -477,13 +490,13 @@ if (! class_exists('Shortcode')) {
                 ),
                 'customFieldFilters' => array(),
                 'fields' => $searchFields,
+                'sorting' => array(
+                    'field' => $order_by,
+                    'direction' => $order_direction
+                ),
                 'paging' => array(
                     'page' => $page,
                     'perPage' => $perPage,
-                ),
-                'sorting' => array(
-                    'field' => 'name',
-                    'direction' => 'asc'
                 ),
                 'returnType' => 'array', //array, obj, json
             );
