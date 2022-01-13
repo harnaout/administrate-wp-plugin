@@ -1,13 +1,3 @@
-<?php
-global $post;
-$post_id = 0;
-if (isset($post)) {
-    $post_id = $post->ID;
-}
-if (isset($_GET['post_id'])) {
-    $post_id = $_GET['post_id'];
-}
-?>
 <div id='amwpp-bundled-lps' class="admwpp-bundled-lps row justify-content-center">
     <?php
     if ($bundledLps['bundledLps']) {
@@ -31,10 +21,9 @@ if (isset($_GET['post_id'])) {
             </table>
             <?php
             if ($bundledLps['hasNextPage']) {
-                $next = $bundledLps['currentPage'] + 1;
                 ?>
                 <div class="col-md-12 text-center">
-                    <a class='admwpp-button admwpp-bundled-loadmore-btn btn btn-lg btn-secondary' data-page='<?php echo $next; ?>' data-per_page='<?php echo $per_page; ?>' data-post_id='<?php echo $post_id; ?>' data-container='amwpp-bundled-lps'><?php _e('Load More', 'admwpp'); ?> <div class='admwpp-loader fa-3x text-center'><i class='fas fa-circle-notch fa-spin'></i></div></a>
+                    <a class='admwpp-button admwpp-bundled-loadmore-btn btn btn-lg btn-secondary' data-container='amwpp-bundled-lps' <?php echo $data_attr; ?>><?php _e('Load More', 'admwpp'); ?> <div class='admwpp-loader fa-3x text-center'><i class='fas fa-circle-notch fa-spin'></i></div></a>
                 </div>
                 <?php
             } ?>

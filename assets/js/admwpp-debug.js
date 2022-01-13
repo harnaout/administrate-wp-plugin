@@ -601,9 +601,7 @@
 
       var data = {
         "action" : "getBundledLpsAjax",
-        "page" : button.data('page'),
-        "per_page": button.data('per_page'),
-        "post_id": button.data('post_id')
+        "params": button.data(),
       };
 
       $.ajax({
