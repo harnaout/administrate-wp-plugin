@@ -38,8 +38,9 @@ if (!class_exists('Settings')) {
         static $TRANSIENTS_DURATION = array(
             'one_hour' => HOUR_IN_SECONDS,
             'two_hours' => HOUR_IN_SECONDS * 2,
-            'foor_hours' => HOUR_IN_SECONDS * 4,
+            'four_hours' => HOUR_IN_SECONDS * 4,
             'six_hours' => HOUR_IN_SECONDS * 6,
+            'half_day' => DAY_IN_SECONDS / 2,
             'day' => DAY_IN_SECONDS,
             'week' => WEEK_IN_SECONDS,
             'month' => MONTH_IN_SECONDS,
