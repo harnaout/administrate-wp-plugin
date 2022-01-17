@@ -35,6 +35,20 @@ if (!class_exists('Settings')) {
 
         private $plugin_settings_tabs   = array();
 
+        static $TRANSIENTS_DURATION = array(
+            'one_hour' => HOUR_IN_SECONDS,
+            'two_hours' => HOUR_IN_SECONDS * 2,
+            'four_hours' => HOUR_IN_SECONDS * 4,
+            'six_hours' => HOUR_IN_SECONDS * 6,
+            'half_day' => DAY_IN_SECONDS / 2,
+            'day' => DAY_IN_SECONDS,
+            'week' => WEEK_IN_SECONDS,
+            'month' => MONTH_IN_SECONDS,
+            'year' => YEAR_IN_SECONDS,
+        );
+
+        static $TRANSIENTS_DEFAULT_DURATION = 'day';
+
         function __construct()
         {
             // Add all actions and filters
@@ -186,6 +200,27 @@ if (!class_exists('Settings')) {
                 return $value;
             }
             return false;
+        }
+
+        /*
+         * Get get Transients Duration value from settings instance.
+         */
+        public function getTransientsDuration()
+        {
+            $transientDurationKey = self::getSettingsOption('search', 'transients_duration');
+            if ($transientDurationKey) {
+                return self::$TRANSIENTS_DURATION[$transientDurationKey];
+            }
+            return self::$TRANSIENTS_DURATION[self::$TRANSIENTS_DEFAULT_DURATION];
+        }
+
+        public function getTransientsDurationOptions()
+        {
+            $options = array();
+            foreach (array_keys(self::$TRANSIENTS_DURATION) as $value) {
+                $options[$value] = ucwords(str_replace("_", " ", $value));
+            }
+            return $options;
         }
 
         /*
@@ -347,12 +382,14 @@ if (!class_exists('Settings')) {
 
             $settings_index = 'search';
 
-            //Reset transients flags
-            $settings['transients'] = array();
             if (empty($settings)) {
                 //Setup defaults
                 $settings['search_suggestions'] = 0;
+                $settings['transients_duration'] = self::$TRANSIENTS_DEFAULT_DURATION;
             }
+
+            //Reset transients flags
+            $settings['transients'] = array();
 
             $this->settings[$settings_index] = $settings;
             update_option($settings_key, $settings);
@@ -527,9 +564,27 @@ if (!class_exists('Settings')) {
 
             add_settings_section(
                 'admwpp_search_trans_section',
-                "<span class='admwpp-section-title'>" . __('Search Filters Validation Transients', ADMWPP_TEXT_DOMAIN) . "</span>",
+                "<span class='admwpp-section-title'>" . __('Search Filters Transients', ADMWPP_TEXT_DOMAIN) . "</span>",
                 array(),
                 "admwpp_" . $settings_key . "_settings"
+            );
+
+            add_settings_field(
+                'admwpp_clear_search_transients_duration',
+                __('Select transients duration:', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldSelect'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_search_trans_section',
+                array(
+                    'field'        => 'transients_duration',
+                    'settings_key' => $settings_key,
+                    'section_key'  => '',
+                    'options'      => self::getTransientsDurationOptions(),
+                    'disabled'     => '',
+                    'info'         => __('Select a Duration for the Transients', ADMWPP_TEXT_DOMAIN),
+                    'type'         => 'select',
+                    'allow_null'   => false,
+                )
             );
 
             add_settings_field(

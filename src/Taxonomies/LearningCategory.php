@@ -179,7 +179,12 @@ if (! class_exists('LearningCategory')) {
                 }
             }
 
-            set_transient(ADMWPP_TRANS_TMS_LC_IDS, $tmsIds, WEEK_IN_SECONDS);
+            set_transient(
+                ADMWPP_TRANS_TMS_LC_IDS,
+                $tmsIds,
+                Settings::instance()->getTransientsDuration()
+            );
+
             return $tmsIds;
         }
 

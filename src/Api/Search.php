@@ -563,7 +563,11 @@ if (!class_exists('Search')) {
                 foreach ($data->locations->edges as $key => $edge) {
                     $locations[$edge->node->id] = $edge->node->name;
                 }
-                set_transient(ADMWPP_TRANS_TMS_LOCATIONS, $locations, WEEK_IN_SECONDS);
+                set_transient(
+                    ADMWPP_TRANS_TMS_LOCATIONS,
+                    $locations,
+                    Settings::instance()->getTransientsDuration()
+                );
                 return $locations;
             }
             return array();
