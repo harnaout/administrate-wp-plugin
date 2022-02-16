@@ -5,15 +5,17 @@
         <div class="col-auto table-responsive">
             <table class="table table-striped table-hover">
                 <thead class="thead-light">
-                   <tr>
-                     <th scope="col"><?php echo __("Bundle", "admwpp"); ?></th>
-                     <th scope="col"><?php echo __("Objectives", "admwpp"); ?></th>
-                     <th scope="col"><?php echo __("Language", "admwpp"); ?></th>
-                     <th scope="col"><?php echo __("Date", "admwpp"); ?></th>
-                     <th scope="col"><?php echo __("Time", "admwpp"); ?></th>
-                     <th scope="col"><?php echo __("Price*", "admwpp"); ?></th>
-                     <th scope="col"></th>
-                   </tr>
+                    <tr>
+                        <th scope="col"><?php echo __("Bundle", "admwpp"); ?></th>
+                        <th scope="col"><?php echo __("Objectives", "admwpp"); ?></th>
+                        <th scope="col"><?php echo __("Language", "admwpp"); ?></th>
+                        <th scope="col"><?php echo __("Date", "admwpp"); ?></th>
+                        <th scope="col"><?php echo __("Time", "admwpp"); ?></th>
+                        <th scope="col"><?php echo __("Price*", "admwpp"); ?></th>
+                        <?php if ($showAddToCart): ?>
+                            <th scope="col"></th>
+                        <?php endif; ?>
+                    </tr>
                 </thead>
                 <tbody>
                     <?php include('bundled-lps-rows.php'); ?>

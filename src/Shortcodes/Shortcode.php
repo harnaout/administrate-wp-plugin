@@ -386,6 +386,10 @@ if (! class_exists('Shortcode')) {
 
             $params['data_attr'] = buildDataAttributes($params, 'string');
 
+            // Set showAddToCart flag based on showAddToCart option
+            // (from Administrate Weblink2 Shortcodes plugin - admwswp)
+            $showAddToCart = get_field('showAddToCart', 'options');
+
             extract($params);
 
             ob_start();
@@ -413,6 +417,10 @@ if (! class_exists('Shortcode')) {
             }
 
             $data_attr = buildDataAttributes($params, 'string');
+
+            // Set showAddToCart flag based on showAddToCart option
+            // (from Administrate Weblink2 Shortcodes plugin - admwswp)
+            $showAddToCart = get_field('showAddToCart', 'options');
 
             ob_start();
             include $template;
