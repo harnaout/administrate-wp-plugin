@@ -18,6 +18,8 @@ foreach ($bundledLps['bundledLps'] as $tmsId => $lp) {
     echo "<td class='admwpp-date'>$start - $end</td>";
     echo "<td class='admwpp-time'>$startTime - $endTime</td>";
     echo "<td class='admwpp-price'>" . $lp['formattedPrice'] . "</td>";
-    echo "<td class='admwpp-action'>" . do_shortcode("[admwswp-addToCart path_id='$tmsId']") . "</td>";
+    if ($showAddToCart) {
+        echo "<td class='admwpp-action'>" . do_shortcode("[admwswp-addToCart path_id='$tmsId']") . "</td>";
+    }
     echo "</tr>";
 }
