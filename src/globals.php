@@ -3,13 +3,13 @@
 // Define Global variables For GIFT Voucher
 // --------------------------------------------------------------------
 if (!defined('ADMWPP_MIN_VOUCHER_AMOUNT')) {
-    define('ADMWPP_MIN_VOUCHER_AMOUNT', 0.01);
+    define('ADMWPP_MIN_VOUCHER_AMOUNT', 1);
 }
 if (!defined('ADMWPP_MAX_VOUCHER_AMOUNT')) {
     define('ADMWPP_MAX_VOUCHER_AMOUNT', 250.00);
 }
 if (!defined('ADMWPP_VOUCHER_AMOUNT_STEP')) {
-    define('ADMWPP_VOUCHER_AMOUNT_STEP', 0.01);
+    define('ADMWPP_VOUCHER_AMOUNT_STEP', 1);
 }
 if (!defined('ADMWPP_VOUCHER_CURRENCY')) {
     define('ADMWPP_VOUCHER_CURRENCY', '€');
