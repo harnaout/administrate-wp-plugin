@@ -602,6 +602,7 @@ if (!class_exists('Main')) {
                         'notNumber' => _x(ADMWPP_NOT_NUMBER_MESSAGE, 'Gift Voucher', 'admwpp'),
                         'emptyAmount' => sprintf(
                             _x(ADMWPP_VOUCHER_EMPTY_AMOUNT_MESSAGE, 'Gift Voucher', 'admwpp'),
+                            ADMWPP_MIN_VOUCHER_AMOUNT,
                             ADMWPP_VOUCHER_CURRENCY
                         ),
                         'maxAmount' => sprintf(
