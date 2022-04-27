@@ -1223,18 +1223,19 @@ if (!class_exists('Course')) {
                 $title = $node['name'];
             }
 
+            $postStatus = 'pending';
             $postArgs = array(
                 'post_type' => self::$slug,
                 'post_title' => $title,
                 'post_name' => sanitize_title($title),
                 'post_content' => '',
-                'post_status' => 'pending',
+                'post_status' => $postStatus,
             );
 
             // "published" is used for Courses
             // "active" is used for LPs
             if ($node['lifecycleState'] === 'published' || $node['lifecycleState'] === 'active') {
-                $postArgs['post_status'] = 'publish';
+                $postStatus = 'publish';
             }
 
             // Process Custom Fields
@@ -1483,6 +1484,11 @@ if (!class_exists('Course')) {
                     }
                 }
             }
+
+            // Use admwpp_course_post_status to alter the post status based on synced post meta values
+            // To be used to apply some custom handling on special meta values condition based on client integrations
+            $postStatus = apply_filters('admwpp_course_post_status', $postStatus, $type, $postMetas, $node);
+            $postArgs['post_status'] = $postStatus;
 
             $content = '';
             if ('LP' == $type) {
