@@ -128,6 +128,12 @@ if (!class_exists('Course')) {
                 'tmsKey' => 'events',
                 'showOnFront' => false,
             ),
+            'admwpp_tms_is_bundle' => array(
+                'type' => 'text',
+                'label' => 'isBundle',
+                'tmsKey' => 'isBundle',
+                'showOnFront' => false,
+            ),
         );
 
         static $inlineMetas = array();
@@ -225,6 +231,7 @@ if (!class_exists('Course')) {
             'code',
             'name',
             'description',
+            'isBundle',
             'image' => array(
                 'id',
                 'name',
@@ -1457,6 +1464,13 @@ if (!class_exists('Course')) {
                             }
                         }
                         $tmsValue = implode('|', $locationIds);
+                        break;
+                    case 'isBundle':
+                        if ($node[$tmsKey]) {
+                            $tmsValue = 'true';
+                        } else {
+                            $tmsValue = 'false';
+                        }
                         break;
                     default:
                         if (isset($node[$tmsKey])) {
