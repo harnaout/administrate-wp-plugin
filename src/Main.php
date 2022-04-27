@@ -3,6 +3,7 @@ namespace ADM\WPPlugin;
 
 use ADM\WPPlugin\Api;
 use ADM\WPPlugin\PostTypes;
+use ADM\WPPlugin\Builders;
 
 /**
  * Construct the main plugin class "Main"
@@ -752,6 +753,9 @@ if (!class_exists('Main')) {
          */
         public static function activate()
         {
+
+            Builders\DbViews::onIstall();
+
             // Adds rewrite rules flag
             add_option('admwpp_flush_rewrite_rules', 'true');
         }
@@ -794,9 +798,13 @@ if (!class_exists('Main')) {
                 // Delete Settings Params.
                 delete_option('admwpp_account_settings');
                 delete_option('admwpp_general_settings');
+                delete_option('admwpp_advanced_settings');
+                delete_option('admwpp_search_settings');
                 delete_option('admwpp_uninstall_settings');
             }
             self::deleteOptions();
+
+            Builders\DbViews::onUninstall();
         }
     }
     // END Main

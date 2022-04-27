@@ -6,6 +6,7 @@ use ADM\WPPlugin\Oauth2;
 use ADM\WPPlugin\Settings;
 use ADM\WPPlugin\Taxonomies\LearningCategory;
 use ADM\WPPlugin\PostTypes\Course;
+use ADM\WPPlugin\Builders;
 
 if (file_exists(ABSPATH . 'wp-load.php')) {
     require_once(ABSPATH . 'wp-load.php');
@@ -120,6 +121,8 @@ class SettingsController extends Base\ActionController
         if ($results['hasNextPage'] == true) {
             $next = (int) $params['page'] + 1;
             $results['message'] .= '<br/>Next Page: ' . $next;
+        } else {
+            Builders\DbViews::onBackfill();
         }
 
         if (($results['imported'] + $results['exists']) == $results['totalRecords']) {
@@ -173,6 +176,8 @@ class SettingsController extends Base\ActionController
         if ($results['hasNextPage'] == true) {
             $next = (int) $params['page'] + 1;
             $results['message'] .= '<br/>Next Page: ' . $next;
+        } else {
+            Builders\DbViews::onBackfill();
         }
 
         if (($results['imported'] + $results['exists']) == $results['totalRecords']) {

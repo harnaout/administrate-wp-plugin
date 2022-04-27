@@ -5,6 +5,7 @@ use ADM\WPPlugin as ADMWPP;
 use ADM\WPPlugin\Base;
 use ADM\WPPlugin\Oauth2;
 use ADM\WPPlugin\Settings;
+use ADM\WPPlugin\Builders;
 
 if (file_exists(ABSPATH . 'wp-load.php')) {
     require_once(ABSPATH . 'wp-load.php');
@@ -70,6 +71,8 @@ class ActivationController extends Base\ActionController
             update_option('admwpp_active', 1);
 
             ADMWPP\Main::instance()->loadActiveFeatures();
+
+            Builders\DbViews::onActivation();
 
             if (self::formatIsJson()) {
                 $response = array(
