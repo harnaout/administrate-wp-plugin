@@ -2,6 +2,7 @@
 namespace ADM\WPPlugin;
 
 use ADM\WPPlugin\Main as Main;
+use ADM\WPPlugin\Builders as Builders;
 
 /**
  * Construct the settings class for the plugin
@@ -48,6 +49,14 @@ if (!class_exists('Settings')) {
         );
 
         static $TRANSIENTS_DEFAULT_DURATION = 'day';
+
+        static $SUGGESTIONS_SOURCE = array(
+            'api' => 'API',
+            'db' => 'WordPress',
+        );
+
+        static $SUGGESTIONS_DEFAULT_SOURCE = 'api';
+        static $SUGGESTIONS_DB_SOURCE = 'db';
 
         function __construct()
         {
@@ -167,6 +176,12 @@ if (!class_exists('Settings')) {
             if (isset($newValues['transients']) && !empty($newValues['transients'])) {
                 foreach ($newValues['transients'] as $transientkey) {
                     delete_transient($transientkey);
+                }
+            }
+
+            if (isset($newValues['search_suggestions_source']) && !empty($newValues['search_suggestions_source'])) {
+                if ($newValues['search_suggestions_source'] == self::$SUGGESTIONS_DB_SOURCE) {
+                    Builders\DbViews::onActivation();
                 }
             }
         }
@@ -386,6 +401,7 @@ if (!class_exists('Settings')) {
                 //Setup defaults
                 $settings['search_suggestions'] = 0;
                 $settings['transients_duration'] = self::$TRANSIENTS_DEFAULT_DURATION;
+                $settings['search_suggestions_source'] = self::$SUGGESTIONS_DEFAULT_SOURCE;
             }
 
             //Reset transients flags
@@ -550,7 +566,7 @@ if (!class_exists('Settings')) {
             );
 
             add_settings_field(
-                'admwpp_search_auto_section',
+                'admwpp_search_suggestions',
                 __('Auto complete Suggestions', ADMWPP_TEXT_DOMAIN),
                 array($this, 'settingsFieldInputBoolean'),
                 "admwpp_" . $settings_key . "_settings",
@@ -559,6 +575,24 @@ if (!class_exists('Settings')) {
                     'field'        => 'search_suggestions',
                     'settings_key' => $settings_key,
                     'info'         => '<p>' . __('This will Disable / Enable Auto complete Suggestions on the search input field', ADMWPP_TEXT_DOMAIN) . '</p>',
+                )
+            );
+
+            add_settings_field(
+                'admwpp_search_suggestions_source',
+                __('Suggestions from API / WordPress', ADMWPP_TEXT_DOMAIN),
+                array($this, 'settingsFieldSelect'),
+                "admwpp_" . $settings_key . "_settings",
+                'admwpp_search_auto',
+                array(
+                    'field'        => 'search_suggestions_source',
+                    'settings_key' => $settings_key,
+                    'section_key'  => '',
+                    'options'      => self::$SUGGESTIONS_SOURCE,
+                    'disabled'     => '',
+                    'info'         => __('Select the Source of the search suggestions', ADMWPP_TEXT_DOMAIN),
+                    'type'         => 'select',
+                    'allow_null'   => false,
                 )
             );
 
