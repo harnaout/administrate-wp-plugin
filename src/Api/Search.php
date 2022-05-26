@@ -347,7 +347,7 @@ if (!class_exists('Search')) {
                 switch ($params['timeofday']) {
                     case 'morning':
                         $sessionStartTime = "00:00:00";
-                        $sessionEndTime = "00:01:00";
+                        $sessionEndTime = "12:01:00";
                         break;
                     case 'afternoon':
                         $sessionStartTime = "12:00:00";
