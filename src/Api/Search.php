@@ -359,7 +359,7 @@ if (!class_exists('Search')) {
                         break;
                     default:
                         $sessionStartTime = "00:00:00";
-                        $sessionEndTime = "11:59:59";
+                        $sessionEndTime = "23:59:59";
                         break;
                 }
 
