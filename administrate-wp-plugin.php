@@ -1,7 +1,7 @@
 <?php
 /*
   Plugin Name: Administrate
-  Description: This is a plugin for Administrate
+  Description: Administrate WordPress Plugin to facilitate the integration and synchronization of TMS content into WordPress content and Taxonomies, with the ability to display the content in templates using short-codes / custom filters / template overrides.
   Version: 1.0.0
   Author: Administrate
   Author URI: http://getadministrate.com/
