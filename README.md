@@ -1,4 +1,4 @@
-# Administrate WrodPress Plugin
+# Administrate Wordpress Plugin
 
 Requires at least: 5.0.0
 
@@ -13,11 +13,11 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 ## Description
 
-Administrate WordPress Plugin to facilitate the integration and synchronization of TMS content into WordPress content and Taxonomies, with the ability to display the content in templates using short-codes / custom filters / template overrides.
+Administrate WordPress Plugin facilitates the integration and synchronization of TMS content into WordPress content and Taxonomies, with the ability to display the content in templates using short-codes / custom filters / template overrides. 
 
 ## Installation
 
-The plugin is not released on wordpress.org yet, so if you need to use it please contact Administrate by sending us en email at support@getadministrate.com and we will send you the files needed to install the plugin.
+Please contact Administrate by sending us en email at support@getadministrate.com and we will send you the latest files needed to install the plugin.
 
 or
 
@@ -25,20 +25,22 @@ Clone the plugin to your project [Administrate WordPress Plugin](https://github.
 
 **Note:** you can add it to the main WordPress project as a git sub-module.
 
+### Pre-requisites:
+You will need to get and setup your API Credentials to use the plugin. The app credentials will be provided for you by the Administrate team (or you can get them from [Administrate Developer Portal](https://developer.getadministrate.com/))
+
 ### Steps:
 
 1. Upload the zip files "administrate-wp-plugin.zip" to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Now go to the plugin my account settings and activate the plugin `/wp-admin/admin.php?page=admwpp-settings&tab=admwpp_account_settings`
+3. Next, from the WordPress menu go to Administrate plugin and click on My Account to go to the settings to fill in the needed information and activate the plugin `/wp-admin/admin.php?page=admwpp-settings&tab=admwpp_account_settings`
 
 ![Authorization screen](/assets/images/authorization-screen.png)
 
-4. The app credentials will be provided for you by the Administrate team (or you can get them from [Administrate Developer Portal](https://developer.getadministrate.com/))
-5. Once you activate the plugin with the proper instance the plugin will automatically create a new post type `course` as well as a custom taxonomy `learning-category` as well to granting you access to more settings tabs.
+6. Once you activated the plugin will automatically create a new post type `course`, a custom taxonomy `learning-category` and additional advanced settings to fine tune your synchronization options.
 
 ![Settings menu](/assets/images/settings-menu.png)
 
-6. Next go to advanced settings tab `/wp-admin/admin.php?page=admwpp-settings&tab=admwpp_advanced_settings` to import the courses/LPs and Learning categories.
+6. For intial pull, start by importing the necessary content. Go to advanced settings tab `/wp-admin/admin.php?page=admwpp-settings&tab=admwpp_advanced_settings` to import the courses/LPs and Learning categories.
 
 ![Courses Back fill](/assets/images/backfill.png)
 
@@ -315,7 +317,7 @@ if (!defined('ADMWPP_PORTAL_TOKEN_EXPIRY_PERIOD')) {
 ```
 
 ## Plugin PHP Classes / Helper Methods
-The plugin has Exposed classes methods and Helper methods available for the Developer to use on their own on the theme level, create custom search API calls, create custom filters etc....
+The plugin has exposed classes methods and Helper methods available for the developer to use on their own on the theme level, create custom search API calls, create custom filters etc....
 To a certain extent those are more or less self explanatory on how to use and extend.
 
 ## Tech
